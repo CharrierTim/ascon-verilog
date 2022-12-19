@@ -67,7 +67,7 @@ echo "-----------------------"
 
 #vcom -work LIB_BENCH ./SRC/BENCH/substitution_layer_tb.vhd
 
-#vcom -work LIB_BENCH ./SRC/BENCH/diffusion_tb.vhd
+vcom -work LIB_BENCH ./SRC/BENCH/diffusion_tb.vhd
 
 #vcom -work LIB_BENCH ./SRC/BENCH/permutation_tb.vhd
 
@@ -85,7 +85,7 @@ echo "-----------------------"
 
 #vcom -work LIB_BENCH ./SRC/BENCH/permutation_final_tb.vhd
 
-vcom -work LIB_BENCH ./SRC/BENCH/ascon_top_level_tb.vhd
+#vcom -work LIB_BENCH ./SRC/BENCH/ascon_top_level_tb.vhd
 
 echo "-----------------------"
 
@@ -94,6 +94,14 @@ echo "compilation finished"
 echo "start simulation..."
 
 # ATTENTION un seul VSIM decommenté à la fois!
+
+#vsim LIB_BENCH.adder_const_tb_conf
+
+#vsim LIB_BENCH.sbox_tb_conf
+
+#vsim LIB_BENCH.sub_layer_generic_tb_conf
+
+vsim LIB_BENCH.diffusion_tb_conf
 
 #vsim LIB_BENCH.permutation_inter_tb_conf
 

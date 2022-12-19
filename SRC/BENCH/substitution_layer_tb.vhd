@@ -48,11 +48,11 @@ BEGIN
 END ARCHITECTURE sub_layer_generic_tb_arch;
 
 -- Architecture declaration
-CONFIGURATION sub_layer_generic_tb_arch_conf OF sub_layer_generic_tb IS
+CONFIGURATION sub_layer_generic_tb_conf OF sub_layer_generic_tb IS
 
 	FOR sub_layer_generic_tb_arch
 		FOR DUT : sub_layer_generic
 			USE ENTITY LIB_RTL.sub_layer_generic(sub_layer_generic_arch);
 		END FOR;
 	END FOR;
-END sub_layer_generic_tb_arch_conf;
+END sub_layer_generic_tb_conf;

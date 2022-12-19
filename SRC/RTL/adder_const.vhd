@@ -36,3 +36,11 @@ BEGIN
 
 	state_o(4) <= state_i(4);
 END adder_const_arch;
+
+-- Configuration declaration
+CONFIGURATION adder_const_conf OF adder_const IS
+
+	FOR adder_const_arch
+	END FOR;
+
+END CONFIGURATION adder_const_conf;
