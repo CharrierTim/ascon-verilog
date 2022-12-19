@@ -1,0 +1,5 @@
+#!/bin/bash
+
+source /etc/profile.d/modules.sh
+
+module load mentor/modelsim/2020.4
