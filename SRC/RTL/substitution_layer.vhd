@@ -24,8 +24,8 @@ ARCHITECTURE sub_layer_generic_arch OF sub_layer_generic IS
 
 	COMPONENT sbox
 		PORT (
-			round_i : IN bit5;
-			round_s : OUT bit5
+			data_i : IN bit5;
+			data_o : OUT bit5
 		);
 	END COMPONENT;
 
@@ -33,17 +33,17 @@ BEGIN
 	GEN : FOR i IN 0 TO 63 GENERATE
 		sbox_i : sbox
 		PORT MAP(
-			round_i(4) => state_i(0)(i),
-			round_i(3) => state_i(1)(i),
-			round_i(2) => state_i(2)(i),
-			round_i(1) => state_i(3)(i),
-			round_i(0) => state_i(4)(i),
+			data_i(4) => state_i(0)(i),
+			data_i(3) => state_i(1)(i),
+			data_i(2) => state_i(2)(i),
+			data_i(1) => state_i(3)(i),
+			data_i(0) => state_i(4)(i),
 
-			round_s(4) => state_o(0)(i),
-			round_s(3) => state_o(1)(i),
-			round_s(2) => state_o(2)(i),
-			round_s(1) => state_o(3)(i),
-			round_s(0) => state_o(4)(i)
+			data_o(4) => state_o(0)(i),
+			data_o(3) => state_o(1)(i),
+			data_o(2) => state_o(2)(i),
+			data_o(1) => state_o(3)(i),
+			data_o(0) => state_o(4)(i)
 		);
 
 	END GENERATE GEN;

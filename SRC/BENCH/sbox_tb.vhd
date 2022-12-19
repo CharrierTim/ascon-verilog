@@ -19,33 +19,34 @@ ARCHITECTURE sbox_tb_arch OF sbox_tb IS
 	-- Component declaration
 	COMPONENT sbox
 		PORT (
-			round_i : IN bit5;
-			round_s : OUT bit5
+			data_i : IN bit5;
+			data_o : OUT bit5
 		);
 	END COMPONENT sbox;
 
 	-- Signals declaration
-	SIGNAL round_i_s : bit5;
+	SIGNAL data_i_s : bit5;
 
-	SIGNAL round_o_s : bit5;
+	SIGNAL data_i_s : bit5;
 
 BEGIN
 	-- Device Under Test
 	DUT : sbox PORT MAP(
-		round_i => round_i_s,
-		round_s => round_o_s
+		data_i => data_i_s,
+		data_o => data_o_s
 	);
 
-	round_i_s <= b"11110";
+	data_i_s <= b"11110";
 
 END ARCHITECTURE sbox_tb_arch;
 
 -- Configuration declaration
-CONFIGURATION sbox_tb_arch_conf OF sbox_tb IS
+CONFIGURATION sbox_tb_conf OF sbox_tb IS
 
 	FOR sbox_tb_arch
 		FOR DUT : sbox
-			USE ENTITY LIB_RTL.sbox(sbox);
+			USE CONFIGURATION LIB_RTL.sbox_conf;
 		END FOR;
 	END FOR;
-END sbox_tb_arch_conf;
+	
+END sbox_tb_conf;

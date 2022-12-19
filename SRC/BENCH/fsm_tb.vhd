@@ -203,6 +203,7 @@ CONFIGURATION fsm_init_tb_conf OF fsm_init_tb IS
     FOR fsm_init_tb_arch
         FOR DUT : fsm_moore_init
             USE CONFIGURATION LIB_RTL.fsm_moore_init_conf;
+            
             FOR ALL : compteur_double_init
                 USE CONFIGURATION LIB_RTL.compteur_double_init_conf;
             END FOR;

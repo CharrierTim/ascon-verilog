@@ -48,11 +48,11 @@ BEGIN
 END ARCHITECTURE diffusion_tb_arch;
 
 -- Configuration declaration
-CONFIGURATION diffusion_tb_arch_conf OF diffusion_tb IS
+CONFIGURATION diffusion_tb_conf OF diffusion_tb IS
 
 	FOR diffusion_tb_arch
 		FOR DUT : diffusion
-			USE ENTITY LIB_RTL.diffusion(diffusion);
+			USE CONFIGURATION LIB_RTL.diffusion_conf;
 		END FOR;
 	END FOR;
-END diffusion_tb_arch_conf;
+END diffusion_tb_conf;

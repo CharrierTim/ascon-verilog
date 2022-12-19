@@ -12,9 +12,9 @@ USE LIB_RTL.ascon_pack.ALL;
 ENTITY sbox IS
 
 	PORT (
-		round_i : IN bit5;
+		data_i : IN bit5;
 
-		round_s : OUT bit5
+		data_o : OUT bit5
 	);
 
 END sbox;
@@ -24,6 +24,14 @@ ARCHITECTURE sbox_arch OF sbox IS
 
 BEGIN
 
-	round_s <= s_table(To_integer(unsigned(round_i)))(4 DOWNTO 0);
+	data_o <= s_table(To_integer(unsigned(data_i)))(4 DOWNTO 0);
 
 END sbox_arch;
+
+-- Configuration declaration
+CONFIGURATION sbox_conf OF sbox IS
+
+	FOR sbox_arch
+	END FOR;
+	
+END sbox_conf;

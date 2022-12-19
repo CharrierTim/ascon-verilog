@@ -34,3 +34,11 @@ BEGIN
 	state_o(4) <= (state_i(4)) XOR (state_i(4)(6 DOWNTO 0) & state_i(4)(63 DOWNTO 7)) XOR (state_i(4)(40 DOWNTO 0) & state_i(4)(63 DOWNTO 41));
 
 END diffusion_arch;
+
+-- Configuration declaration
+CONFIGURATION diffusion_conf OF diffusion IS
+
+	FOR diffusion_arch
+	END FOR;
+
+END diffusion_conf;

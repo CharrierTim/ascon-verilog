@@ -53,11 +53,12 @@ BEGIN
 END ARCHITECTURE adder_const_tb_arch;
 
 -- Configuration declaration of the testbench
-CONFIGURATION adder_const_tb_arch_conf OF adder_const_tb IS
+CONFIGURATION adder_const_tb_conf OF adder_const_tb IS
 
 	FOR adder_const_tb_arch
 		FOR DUT : adder_const
-			USE ENTITY LIB_RTL.adder_const(adder_const);
+			USE CONFIGURATION LIB_RTL.adder_const_conf;
 		END FOR;
 	END FOR;
-END adder_const_tb_arch_conf;
+	
+END adder_const_tb_conf;
