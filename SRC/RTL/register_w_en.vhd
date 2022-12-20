@@ -19,44 +19,44 @@
 -- 2022-08-25  1.0	rigaud	Created
 -------------------------------------------------------------------------------
 
-library IEEE;
-use IEEE.std_logic_1164.all;
-use IEEE.numeric_std.all;
+LIBRARY IEEE;
+USE IEEE.std_logic_1164.ALL;
+USE IEEE.numeric_std.ALL;
 
-library LIB_RTL;
-use LIB_RTL.ascon_pack.all;
+LIBRARY LIB_RTL;
+USE LIB_RTL.ascon_pack.ALL;
 
-entity register_w_en is
-  generic (
-    nb_bits_g : natural := 32);
-  port (
-    clock_i  : in  std_logic;
-    resetb_i : in  std_logic;
-    en_i     : in  std_logic;
-    data_i   : in  std_logic_vector(nb_bits_g-1 downto 0);
-    data_o   : out std_logic_vector(nb_bits_g-1 downto 0)
-    );
+ENTITY register_w_en IS
+  GENERIC (
+    nb_bits_g : NATURAL := 32);
+  PORT (
+    clock_i : IN STD_LOGIC;
+    resetb_i : IN STD_LOGIC;
+    en_i : IN STD_LOGIC;
+    data_i : IN STD_LOGIC_VECTOR(nb_bits_g - 1 DOWNTO 0);
+    data_o : OUT STD_LOGIC_VECTOR(nb_bits_g - 1 DOWNTO 0)
+  );
 
-end entity register_w_en;
+END ENTITY register_w_en;
 
-architecture register_w_en_arch of register_w_en is
+ARCHITECTURE register_w_en_arch OF register_w_en IS
 
-  signal state_s : std_logic_vector(nb_bits_g-1 downto 0);
-  
-begin  -- architecture register_w_en_arch
+  SIGNAL state_s : STD_LOGIC_VECTOR(nb_bits_g - 1 DOWNTO 0);
 
-  seq_0 : process (clock_i, resetb_i) is
-  begin	 -- process seq_0
-    if (resetb_i = '0') then		-- asynchronous reset (active low)
-      state_s <= (others => '0');
-    elsif (clock_i'event and clock_i = '1') then  -- rising clock edge
-      if (en_i = '1') then
-	state_s <= data_i;
-      else
-	state_s <= state_s;
-      end if;
-    end if;
-  end process seq_0;
+BEGIN -- architecture register_w_en_arch
+
+  seq_0 : PROCESS (clock_i, resetb_i) IS
+  BEGIN -- process seq_0
+    IF (resetb_i = '0') THEN -- asynchronous reset (active low)
+      state_s <= (OTHERS => '0');
+    ELSIF (clock_i'event AND clock_i = '1') THEN -- rising clock edge
+      IF (en_i = '1') THEN
+        state_s <= data_i;
+      ELSE
+        state_s <= state_s;
+      END IF;
+    END IF;
+  END PROCESS seq_0;
 
   data_o <= state_s;
-end architecture register_w_en_arch;
+END ARCHITECTURE register_w_en_arch;

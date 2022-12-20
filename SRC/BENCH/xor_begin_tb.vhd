@@ -61,20 +61,25 @@ BEGIN
 	-- Key generation
 	key_i_s <= (OTHERS => '1');
 
-	-- EN_XOR_KEY generation
-	en_xor_key_i_s <= '1', '0' after 20 ns;
+	-- PROCESS
+    PROCESS
+    BEGIN
+    -- Enable XOR data
+    en_xor_data_i_s <= '1';
+    wait for 10 ns;
+    en_xor_data_i_s <= '0';
 
-	-- EN_XOR_DATA generation
-	en_xor_data_i_s <= '0', '1' after 30 ns;
+    wait for 100 ns;
+    END PROCESS;
 
 END ARCHITECTURE xor_begin_tb_arch;
 
 -- Configuration declaration
-CONFIGURATION xor_begin_tb_arch_conf OF xor_begin_tb IS
+CONFIGURATION xor_begin_tb_conf OF xor_begin_tb IS
 
     FOR xor_begin_tb_arch
         FOR DUT : xor_begin
             USE ENTITY LIB_RTL.xor_begin(xor_begin_arch);
         END FOR;
     END FOR;
-END xor_begin_tb_arch_conf;
+END xor_begin_tb_conf;

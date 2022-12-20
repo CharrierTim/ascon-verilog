@@ -363,11 +363,13 @@ BEGIN
 
                 -- Initialisation finalisation state
             WHEN init_finalisation =>
-                -- Enable state register
+                --- Enable state register
                 en_reg_state_o <= '1';
+                -- Enable cipher register
+                en_cipher_o <= '1';
                 -- Enable round counter
                 en_round_o <= '1';
-                -- Enable XOR begin key & data
+                --- Enable begin XOR data & key
                 en_xor_data_b_o <= '1';
                 en_xor_key_b_o <= '1';
 
@@ -386,6 +388,8 @@ BEGIN
                 en_xor_key_e_o <= '1';
                 -- Enable tag output
                 en_tag_o <= '1';
+                -- End
+                end_o <= '1';
 
 
                 -- Default state

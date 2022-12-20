@@ -55,4 +55,5 @@ CONFIGURATION diffusion_tb_conf OF diffusion_tb IS
 			USE CONFIGURATION LIB_RTL.diffusion_conf;
 		END FOR;
 	END FOR;
+	
 END diffusion_tb_conf;

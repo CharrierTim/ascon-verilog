@@ -9,78 +9,226 @@ z2
 !i10f 100
 cModel Technology
 Z0 d/home/tim/intelFPGA_pro/PROJET_ASCON1
-Ediffusion_tb
-Z1 w1671489646
+Eascon_top_level_tb
+Z1 w1671464478
 Z2 DPx7 lib_rtl 10 ascon_pack 0 22 iBgU2_FDUjVgR`9[g`8z]1
 Z3 DPx4 ieee 11 numeric_std 0 22 aU^R8eGcicLcUFIaBQSL>3
 Z4 DPx3 std 6 textio 0 22 zE1`LPoLg^DX3Oz^4Fj1K3
 Z5 DPx4 ieee 14 std_logic_1164 0 22 cVAk:aDinOX8^VGI1ekP<3
-!i122 0
+!i122 2
 R0
-Z6 8./SRC/BENCH/diffusion_tb.vhd
-Z7 F./SRC/BENCH/diffusion_tb.vhd
+Z6 8./SRC/BENCH/ascon_top_level_tb.vhd
+Z7 F./SRC/BENCH/ascon_top_level_tb.vhd
 l0
-L13 1
-V^znz_D7eBZlWBVl0]OnXO1
-!s100 1VElm?PlU=YZ??LUniDB;3
-Z8 OV;C;2020.1;71
+Z8 L13 1
+V4Dbb`BFW0ozDjn>o9HYj<3
+!s100 k34Di1CKR3Ih^lLhi5@>T0
+Z9 OV;C;2020.1;71
 32
-Z9 !s110 1671489657
+Z10 !s110 1671575104
 !i10b 1
-Z10 !s108 1671489656.000000
-Z11 !s90 -reportprogress|300|-work|LIB_BENCH|./SRC/BENCH/diffusion_tb.vhd|
-!s107 ./SRC/BENCH/diffusion_tb.vhd|
+Z11 !s108 1671575104.000000
+Z12 !s90 -reportprogress|300|-work|LIB_BENCH|./SRC/BENCH/ascon_top_level_tb.vhd|
+!s107 ./SRC/BENCH/ascon_top_level_tb.vhd|
 !i113 1
-Z12 o-work LIB_BENCH
-Z13 tExplicit 1 CvgOpt 0
-Adiffusion_tb_arch
+Z13 o-work LIB_BENCH
+Z14 tExplicit 1 CvgOpt 0
+Aascon_top_level_tb_arch
 R2
 R3
 R4
 R5
-Z14 DEx4 work 12 diffusion_tb 0 22 ^znz_D7eBZlWBVl0]OnXO1
-!i122 0
-l34
-L17 32
-V<K2[HD18:Bd_K:DPKlJ0o3
-!s100 2C065^[LMPBDTaN1DaUCC2
-R8
-32
+Z15 DEx4 work 18 ascon_top_level_tb 0 22 4Dbb`BFW0ozDjn>o9HYj<3
+!i122 2
+l61
+L17 148
+V;@DO5aP5FDo3i6EkgP:3H3
+!s100 A@X[E53YJ7:ggfd0oiKF`0
 R9
-!i10b 1
+32
 R10
+!i10b 1
 R11
-Z15 !s107 ./SRC/BENCH/diffusion_tb.vhd|
-!i113 1
 R12
+Z16 !s107 ./SRC/BENCH/ascon_top_level_tb.vhd|
+!i113 1
 R13
-Cdiffusion_tb_conf
-ediffusion_tb
-adiffusion_tb_arch
-DEx7 lib_rtl 9 diffusion 0 22 AF9YQ<3]fz@GT8TKWPZa91
-DCx7 lib_rtl 14 diffusion_conf 0 22 QM:1Db9^dDMaH>NUeoLzl0
-DAx4 work 12 diffusion_tb 17 diffusion_tb_arch 22 <K2[HD18:Bd_K:DPKlJ0o3
+R14
+Cascon_top_level_tb_conf
+eascon_top_level_tb
+aascon_top_level_tb_arch
+DEx7 lib_rtl 15 ascon_top_level 0 22 VEo>5PPZ=8jl[HYTBD[3O1
+DCx7 lib_rtl 20 ascon_top_level_conf 0 22 A[H:]0XA@0haVoV2@>HBa0
+DAx4 work 18 ascon_top_level_tb 23 ascon_top_level_tb_arch 22 ;@DO5aP5FDo3i6EkgP:3H3
 R2
 R3
 R4
 R5
-R14
-!i122 0
+R15
+!i122 2
 R1
 R0
 R6
 R7
 l0
-L51 1
-V5mYeea2;SY;WZ5:Xh:^;01
-!s100 39GzM7d7eZ:>O2ToCbjZ62
-R8
-32
+L167 1
+V6zh9[:X?3LoJ:fh?=mU=]3
+!s100 AkaeH5<n7l?=^kKk1<cZ`3
 R9
-!i10b 0
+32
 R10
+!i10b 0
 R11
-R15
-!i113 1
 R12
+R16
+!i113 1
 R13
+R14
+Exor_begin_tb
+Z17 w1671575098
+R2
+R3
+R4
+R5
+!i122 0
+R0
+Z18 8./SRC/BENCH/xor_begin_tb.vhd
+Z19 F./SRC/BENCH/xor_begin_tb.vhd
+l0
+R8
+VP`Hh7l[2i8EjJWm9PVN`o0
+!s100 n8Faj2gXL8Q4j@O39`S`]0
+R9
+32
+R10
+!i10b 1
+R11
+Z20 !s90 -reportprogress|300|-work|LIB_BENCH|./SRC/BENCH/xor_begin_tb.vhd|
+Z21 !s107 ./SRC/BENCH/xor_begin_tb.vhd|
+!i113 1
+R13
+R14
+Axor_begin_tb_arch
+R2
+R3
+R4
+R5
+Z22 DEx4 work 12 xor_begin_tb 0 22 P`Hh7l[2i8EjJWm9PVN`o0
+!i122 0
+l39
+L17 59
+VK@EL8^NQ]J`2;Y=j7]egN3
+!s100 A:TXDbcc2jPG2E2VznfKR3
+R9
+32
+R10
+!i10b 1
+R11
+R20
+R21
+!i113 1
+R13
+R14
+Cxor_begin_tb_conf
+exor_begin_tb
+axor_begin_tb_arch
+DEx7 lib_rtl 9 xor_begin 0 22 6ooQn7?VmgQO@fi`BHV9B3
+DAx4 work 12 xor_begin_tb 17 xor_begin_tb_arch 22 K@EL8^NQ]J`2;Y=j7]egN3
+R2
+R3
+R4
+R5
+R22
+!i122 0
+R17
+R0
+R18
+R19
+l0
+L78 1
+VB4K`dKK4mXTAjNX1FWHe31
+!s100 b>RCofG_83]SRJ_fWFzRe3
+R9
+32
+R10
+!i10b 1
+R11
+R20
+R21
+!i113 1
+R13
+R14
+Exor_end_tb
+Z23 w1671573933
+R2
+R3
+R4
+R5
+!i122 1
+R0
+Z24 8./SRC/BENCH/xor_end_tb.vhd
+Z25 F./SRC/BENCH/xor_end_tb.vhd
+l0
+R8
+VXUUB1EIFonTGF8JY^MT^d1
+!s100 ?QCcYzJ>O:BPg9lnPNaLg2
+R9
+32
+R10
+!i10b 1
+R11
+Z26 !s90 -reportprogress|300|-work|LIB_BENCH|./SRC/BENCH/xor_end_tb.vhd|
+Z27 !s107 ./SRC/BENCH/xor_end_tb.vhd|
+!i113 1
+R13
+R14
+Axor_end_tb_arch
+R2
+R3
+R4
+R5
+Z28 DEx4 work 10 xor_end_tb 0 22 XUUB1EIFonTGF8JY^MT^d1
+!i122 1
+l37
+L17 48
+V>[5oX;m95a@JDh?4SG7D01
+!s100 LN;MVF?1zEFA^kVHYCl;83
+R9
+32
+R10
+!i10b 1
+R11
+R26
+R27
+!i113 1
+R13
+R14
+Cxor_end_tb_conf
+exor_end_tb
+axor_end_tb_arch
+DEx7 lib_rtl 7 xor_end 0 22 MSLVWBcC>:]0cT>8@g1LO3
+DAx4 work 10 xor_end_tb 15 xor_end_tb_arch 22 >[5oX;m95a@JDh?4SG7D01
+R2
+R3
+R4
+R5
+R28
+!i122 1
+R23
+R0
+R24
+R25
+l0
+L67 1
+V`1bX3l<RzU_?Xg=ODGl1d2
+!s100 ineHgZP29kPg;M5H5m_VI2
+R9
+32
+R10
+!i10b 1
+R11
+R26
+R27
+!i113 1
+R13
+R14
