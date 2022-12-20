@@ -64,11 +64,11 @@ BEGIN
 END ARCHITECTURE xor_end_tb_arch;
 
 -- Configuration declaration
-CONFIGURATION xor_end_tb_arch_conf OF xor_end_tb IS
+CONFIGURATION xor_end_tb_conf OF xor_end_tb IS
 
     FOR xor_end_tb_arch
         FOR DUT : xor_end
             USE ENTITY LIB_RTL.xor_end(xor_begin_end);
         END FOR;
     END FOR;
-END xor_end_tb_arch_conf;
+END xor_end_tb_conf;

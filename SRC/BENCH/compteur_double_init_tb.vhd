@@ -53,45 +53,44 @@ BEGIN
     clock_i_s <= NOT clock_i_s AFTER 10 ns;
 
     -- Testing round 12 and after round 6
-    process
-    begin 
+    PROCESS
+    BEGIN
 
         -- Reset
         resetb_i_s <= '0';
-        wait for 10 ns;
+        WAIT FOR 10 ns;
         resetb_i_s <= '1';
-        wait for 10 ns;
+        WAIT FOR 10 ns;
 
         -- Round 12
         en_i_s <= '1';
         init_a_i_s <= '1';
-        wait for 10 ns;
+        WAIT FOR 10 ns;
         init_a_i_s <= '0';
 
-        wait for 240 ns;
+        WAIT FOR 240 ns;
 
         -- Round 6 with reset
         resetb_i_s <= '0';
-        wait for 10 ns;
+        WAIT FOR 10 ns;
         resetb_i_s <= '1';
-        wait for 10 ns;
+        WAIT FOR 10 ns;
         init_b_i_s <= '1';
-        wait for 10 ns;
+        WAIT FOR 10 ns;
         init_b_i_s <= '0';
 
-        wait for 120 ns;
-        
-    end process;
+        WAIT FOR 120 ns;
 
-
+    END PROCESS;
 END ARCHITECTURE compteur_double_init_tb_arch;
 
 -- Configuration declaration
-CONFIGURATION compteur_double_init_tb_arch_conf OF compteur_double_init_tb IS
+CONFIGURATION compteur_double_init_tb_conf OF compteur_double_init_tb IS
 
     FOR compteur_double_init_tb_arch
         FOR DUT : compteur_double_init
             USE ENTITY LIB_RTL.compteur_double_init(compteur_double_init_arch);
         END FOR;
     END FOR;
-END compteur_double_init_tb_arch_conf;
+
+END compteur_double_init_tb_conf;
