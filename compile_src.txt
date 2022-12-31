@@ -75,9 +75,9 @@ echo "-----------------------"
 
 #vcom -work LIB_BENCH ./SRC/BENCH/permutation_tb.vhd
 
-vcom -work LIB_BENCH ./SRC/BENCH/xor_begin_tb.vhd
+#vcom -work LIB_BENCH ./SRC/BENCH/xor_begin_tb.vhd
 
-vcom -work LIB_BENCH ./SRC/BENCH/xor_end_tb.vhd
+#vcom -work LIB_BENCH ./SRC/BENCH/xor_end_tb.vhd
 
 #vcom -work LIB_BENCH ./SRC/BENCH/permutation_inter_tb.vhd
 
