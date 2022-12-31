@@ -59,7 +59,11 @@ END fsm;
 ARCHITECTURE fsm_moore_arch OF fsm IS
 
     -- States declaration
-    TYPE type_state IS (idle, conf_init, end_conf_init, init, end_init, idle_da, init_da, da, end_da, idle_plain_text, init_plain_text, plain_text, end_plain_text, idle_finalisation, init_finalisation, finalisation, end_finalisation);
+    TYPE type_state IS (idle, conf_init, end_conf_init, init, end_init,
+     idle_da, init_da, da, end_da,
+    idle_plain_text, init_plain_text, plain_text, end_plain_text,
+    idle_finalisation, init_finalisation, finalisation, end_finalisation
+    );
 
     -- Signals declaration
     SIGNAL current_state : type_state;
