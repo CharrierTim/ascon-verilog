@@ -26,7 +26,7 @@ ENTITY fsm IS
 
         -- FSM outputs --
         -----------------
-        data_valid_o : OUT STD_LOGIC;
+        cipher_valid_o : OUT STD_LOGIC;
         end_o : OUT STD_LOGIC;
 
         data_sel_o : OUT STD_LOGIC;
@@ -59,10 +59,11 @@ END fsm;
 ARCHITECTURE fsm_moore_arch OF fsm IS
 
     -- States declaration
-    TYPE type_state IS (idle, conf_init, end_conf_init, init, end_init,
-     idle_da, init_da, da, end_da,
-    idle_plain_text, init_plain_text, plain_text, end_plain_text,
-    idle_finalisation, init_finalisation, finalisation, end_finalisation
+    TYPE type_state IS (
+        idle, conf_init, end_conf_init, init, end_init,                         -- INIT PHASE
+        idle_da, init_da, da, end_da,                                           -- ASSOCIATED DATA PHASE
+        idle_plain_text, init_plain_text, plain_text, end_plain_text,           -- PLAIN TEXT PHASE
+        idle_finalisation, init_finalisation, finalisation, end_finalisation    -- FINALISATION PHASE
     );
 
     -- Signals declaration
@@ -239,7 +240,7 @@ BEGIN
         en_block_o <= '0';
         init_block_o <= '0';
 
-        data_valid_o <= '0';
+        cipher_valid_o <= '0';
 
         CASE CURRENT_STATE IS
 
@@ -336,8 +337,9 @@ BEGIN
                 en_xor_data_b_o <= '1';
                 -- Enable block counter
                 en_block_o <= '1';
-                -- Enbale cipher output
+                -- Enbale cipher output and valid
                 en_cipher_o <= '1';
+                cipher_valid_o <= '1';
 
                 -- Plain text state
             WHEN plain_text =>
@@ -369,13 +371,15 @@ BEGIN
             WHEN init_finalisation =>
                 --- Enable state register
                 en_reg_state_o <= '1';
-                -- Enable cipher register
+                -- Enable cipher register and valid output
                 en_cipher_o <= '1';
+                cipher_valid_o <= '1';
                 -- Enable round counter
                 en_round_o <= '1';
                 --- Enable begin XOR data & key
                 en_xor_data_b_o <= '1';
                 en_xor_key_b_o <= '1';
+
 
                 -- Finalisation state
             WHEN finalisation =>
