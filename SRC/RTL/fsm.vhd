@@ -154,9 +154,7 @@ BEGIN
 
                 -- Idle plain text state
             WHEN idle_plain_text =>
-                IF (block_i = "11") THEN
-                    next_state <= idle_finalisation;
-                ELSIF (data_valid_i = '1') THEN
+                IF (data_valid_i = '1') THEN
                     next_state <= init_plain_text;
                 ELSE
                     next_state <= idle_plain_text;
@@ -176,7 +174,11 @@ BEGIN
 
                 -- End of plain text state
             WHEN end_plain_text =>
+            IF (block_i = "11") THEN
+                    next_state <= idle_finalisation;
+            ELSE
                 next_state <= idle_plain_text;
+            END IF;
 
         ------------------------------------------------------------
         -- FINALISATION PHASE
@@ -369,6 +371,9 @@ BEGIN
 
                 -- Initialisation finalisation state
             WHEN init_finalisation =>
+                -- Enable begin XOR data & key
+                en_xor_data_b_o <= '1';
+                en_xor_key_b_o <= '1';
                 --- Enable state register
                 en_reg_state_o <= '1';
                 -- Enable cipher register and valid output
@@ -376,11 +381,7 @@ BEGIN
                 cipher_valid_o <= '1';
                 -- Enable round counter
                 en_round_o <= '1';
-                --- Enable begin XOR data & key
-                en_xor_data_b_o <= '1';
-                en_xor_key_b_o <= '1';
-
-
+                
                 -- Finalisation state
             WHEN finalisation =>
                 -- Enable state register

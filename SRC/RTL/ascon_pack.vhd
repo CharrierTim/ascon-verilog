@@ -58,7 +58,7 @@ PACKAGE ascon_pack IS
 
   CONSTANT P3_c : bit64 := x"20656e206c616e67"; -- P3 pour ASCON-128
 
-  CONSTANT P4_c : bit64 := x"6761676520564844"; -- P4 pour ASCON-128
+  CONSTANT P4_c : bit64 := x"6167652056484480"; -- P4 pour ASCON-128
 
   CONSTANT s_table : Sub_table := (x"04", x"0B", x"1F", x"14", x"1A", x"15", x"09", x"02", x"1B", x"05", x"08", x"12", x"1D", x"03", x"06", x"1C", x"1E", x"13", x"07", x"0E", x"00", x"0D", x"11", x"18", x"10", x"0C", x"01", x"19", x"16", x"0A", x"0F", x"17");
 

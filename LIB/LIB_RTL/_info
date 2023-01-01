@@ -11,7 +11,7 @@ cModel Technology
 Z0 d/home/tim/intelFPGA_pro/PROJET_ASCON1
 Eadder_const
 Z1 w1671482964
-Z2 DPx7 lib_rtl 10 ascon_pack 0 22 iBgU2_FDUjVgR`9[g`8z]1
+Z2 DPx7 lib_rtl 10 ascon_pack 0 22 >QSW03]2`lD_N>PNb_HGk2
 Z3 DPx4 ieee 11 numeric_std 0 22 aU^R8eGcicLcUFIaBQSL>3
 Z4 DPx3 std 6 textio 0 22 zE1`LPoLg^DX3Oz^4Fj1K3
 Z5 DPx4 ieee 14 std_logic_1164 0 22 cVAk:aDinOX8^VGI1ekP<3
@@ -25,9 +25,9 @@ VIOSak9dTV74bc==>8DPLY0
 !s100 j]7JTi1KI7650e6Vm3FCd1
 Z9 OV;C;2020.1;71
 32
-Z10 !s110 1672577393
+Z10 !s110 1672585950
 !i10b 1
-Z11 !s108 1672577393.000000
+Z11 !s108 1672585949.000000
 Z12 !s90 -reportprogress|300|-work|LIB_RTL|./SRC/RTL/adder_const.vhd|
 Z13 !s107 ./SRC/RTL/adder_const.vhd|
 !i113 1
@@ -87,17 +87,17 @@ R3
 R4
 R5
 !i122 0
-w1672572462
+w1672584638
 R0
 8./SRC/RTL/ascon_pack.vhd
 F./SRC/RTL/ascon_pack.vhd
 l0
 L26 1
-ViBgU2_FDUjVgR`9[g`8z]1
-!s100 mLcX:N94YhA<L?D8Ezj3]3
+V>QSW03]2`lD_N>PNb_HGk2
+!s100 i?79W:zMbaKinIbz7<ehh0
 R9
 32
-R10
+!s110 1672585949
 !i10b 1
 R11
 !s90 -reportprogress|300|-work|LIB_RTL|./SRC/RTL/ascon_pack.vhd|
@@ -121,10 +121,10 @@ V3N]UVilJbX@gJ_=cF^aTi3
 !s100 ;g[06Nf6IRXfV`^hnAl4Q2
 R9
 32
-Z21 !s110 1672577394
+R10
 !i10b 1
-Z22 !s108 1672577394.000000
-Z23 !s90 -reportprogress|300|-work|LIB_RTL|./SRC/RTL/ascon_top_level.vhd|
+Z21 !s108 1672585950.000000
+Z22 !s90 -reportprogress|300|-work|LIB_RTL|./SRC/RTL/ascon_top_level.vhd|
 !s107 ./SRC/RTL/ascon_top_level.vhd|
 !i113 1
 R14
@@ -134,7 +134,7 @@ R3
 R2
 R4
 R5
-Z24 DEx4 work 15 ascon_top_level 0 22 3N]UVilJbX@gJ_=cF^aTi3
+Z23 DEx4 work 15 ascon_top_level 0 22 3N]UVilJbX@gJ_=cF^aTi3
 !i122 18
 l170
 L33 238
@@ -142,29 +142,29 @@ Vl1o78TPX8M<PLh=RQbTej1
 !s100 :li68cJ`5<IOjL7dD;1h92
 R9
 32
-R21
+R10
 !i10b 1
+R21
 R22
-R23
-Z25 !s107 ./SRC/RTL/ascon_top_level.vhd|
+Z24 !s107 ./SRC/RTL/ascon_top_level.vhd|
 !i113 1
 R14
 R15
 Cascon_top_level_conf
 eascon_top_level
 aascon_top_level_arch
-Z26 DEx4 work 17 permutation_final 0 22 UzoXTf;fUON1ObH=>f[bO3
-Z27 DEx4 work 3 fsm 0 22 ijD0MDX5UgnzXSMi[9QSO0
+Z25 DEx4 work 17 permutation_final 0 22 UzoXTf;fUON1ObH=>f[bO3
+Z26 DEx4 work 3 fsm 0 22 ijD0MDX5UgnzXSMi[9QSO0
 DCx7 lib_rtl 22 permutation_final_conf 0 22 7:3JD4SkH6YNK5fU4cR1e3
-DCx7 lib_rtl 8 fsm_conf 0 22 J9kC;f]5odlJ>hbYmkZ6U0
-Z28 DEx4 work 20 compteur_simple_init 0 22 9XILS;Fi7KB92Aa7L6lGU1
-Z29 DEx4 work 20 compteur_double_init 0 22 k6P<]3HADk19Tk148=ndg3
+DCx7 lib_rtl 8 fsm_conf 0 22 h:FU^MC@5^?7>4h3ekE>A3
+Z27 DEx4 work 20 compteur_simple_init 0 22 9XILS;Fi7KB92Aa7L6lGU1
+Z28 DEx4 work 20 compteur_double_init 0 22 k6P<]3HADk19Tk148=ndg3
 DAx4 work 15 ascon_top_level 20 ascon_top_level_arch 22 l1o78TPX8M<PLh=RQbTej1
 R3
 R2
 R4
 R5
-R24
+R23
 !i122 18
 R17
 R0
@@ -176,24 +176,24 @@ V2_2zIjVPDFJz8RVEbCKR>0
 !s100 O_MeNDaSZJ_eh03@]ILX<3
 R9
 32
-R21
+R10
 !i10b 1
+R21
 R22
-R23
-R25
+R24
 !i113 1
 R14
 R15
 Ecompteur_double_init
-Z30 w1669208398
+Z29 w1669208398
 R2
 R3
 R4
 R5
 !i122 6
 R0
-Z31 8./SRC/RTL/compteur_double_init.vhd
-Z32 F./SRC/RTL/compteur_double_init.vhd
+Z30 8./SRC/RTL/compteur_double_init.vhd
+Z31 F./SRC/RTL/compteur_double_init.vhd
 l0
 L31 1
 Vk6P<]3HADk19Tk148=ndg3
@@ -202,9 +202,9 @@ R9
 32
 R10
 !i10b 1
-R11
-Z33 !s90 -reportprogress|300|-work|LIB_RTL|./SRC/RTL/compteur_double_init.vhd|
-Z34 !s107 ./SRC/RTL/compteur_double_init.vhd|
+R21
+Z32 !s90 -reportprogress|300|-work|LIB_RTL|./SRC/RTL/compteur_double_init.vhd|
+Z33 !s107 ./SRC/RTL/compteur_double_init.vhd|
 !i113 1
 R14
 R15
@@ -213,7 +213,7 @@ R2
 R3
 R4
 R5
-R29
+R28
 !i122 6
 l48
 L44 29
@@ -223,22 +223,22 @@ R9
 32
 R10
 !i10b 1
-R11
+R21
+R32
 R33
-R34
 !i113 1
 R14
 R15
 Ecompteur_simple_init
-Z35 w1670429283
+Z34 w1670429283
 R2
 R3
 R4
 R5
 !i122 5
 R0
-Z36 8./SRC/RTL/compteur_simple_init.vhd
-Z37 F./SRC/RTL/compteur_simple_init.vhd
+Z35 8./SRC/RTL/compteur_simple_init.vhd
+Z36 F./SRC/RTL/compteur_simple_init.vhd
 l0
 L9 1
 V9XILS;Fi7KB92Aa7L6lGU1
@@ -247,9 +247,9 @@ R9
 32
 R10
 !i10b 1
-R11
-Z38 !s90 -reportprogress|300|-work|LIB_RTL|./SRC/RTL/compteur_simple_init.vhd|
-Z39 !s107 ./SRC/RTL/compteur_simple_init.vhd|
+R21
+Z37 !s90 -reportprogress|300|-work|LIB_RTL|./SRC/RTL/compteur_simple_init.vhd|
+Z38 !s107 ./SRC/RTL/compteur_simple_init.vhd|
 !i113 1
 R14
 R15
@@ -258,7 +258,7 @@ R2
 R3
 R4
 R5
-R28
+R27
 !i122 5
 l25
 L21 25
@@ -268,22 +268,22 @@ R9
 32
 R10
 !i10b 1
-R11
+R21
+R37
 R38
-R39
 !i113 1
 R14
 R15
 Ediffusion
-Z40 w1671489617
+Z39 w1671489617
 R2
 R3
 R4
 R5
 !i122 4
 R0
-Z41 8./SRC/RTL/diffusion.vhd
-Z42 F./SRC/RTL/diffusion.vhd
+Z40 8./SRC/RTL/diffusion.vhd
+Z41 F./SRC/RTL/diffusion.vhd
 l0
 R8
 VAF9YQ<3]fz@GT8TKWPZa91
@@ -292,9 +292,9 @@ R9
 32
 R10
 !i10b 1
-R11
-Z43 !s90 -reportprogress|300|-work|LIB_RTL|./SRC/RTL/diffusion.vhd|
-Z44 !s107 ./SRC/RTL/diffusion.vhd|
+R21
+Z42 !s90 -reportprogress|300|-work|LIB_RTL|./SRC/RTL/diffusion.vhd|
+Z43 !s107 ./SRC/RTL/diffusion.vhd|
 !i113 1
 R14
 R15
@@ -303,7 +303,7 @@ R2
 R3
 R4
 R5
-Z45 DEx4 work 9 diffusion 0 22 AF9YQ<3]fz@GT8TKWPZa91
+Z44 DEx4 work 9 diffusion 0 22 AF9YQ<3]fz@GT8TKWPZa91
 !i122 4
 l25
 L23 14
@@ -313,9 +313,9 @@ R9
 32
 R10
 !i10b 1
-R11
+R21
+R42
 R43
-R44
 !i113 1
 R14
 R15
@@ -327,12 +327,12 @@ R2
 R3
 R4
 R5
-R45
+R44
 !i122 4
-R40
+R39
 R0
+R40
 R41
-R42
 l0
 L39 1
 VQM:1Db9^dDMaH>NUeoLzl0
@@ -341,33 +341,33 @@ R9
 32
 R10
 !i10b 0
-R11
+R21
+R42
 R43
-R44
 !i113 1
 R14
 R15
 Efsm
-Z46 w1672576436
+Z45 w1672579576
 R2
 R3
 R4
 R5
 !i122 17
 R0
-Z47 8./SRC/RTL/fsm.vhd
-Z48 F./SRC/RTL/fsm.vhd
+Z46 8./SRC/RTL/fsm.vhd
+Z47 F./SRC/RTL/fsm.vhd
 l0
 L14 1
 VijD0MDX5UgnzXSMi[9QSO0
 !s100 [H9<7>1gn=l[ea?RaLfUG3
 R9
 32
-R21
+R10
 !i10b 1
-R22
-Z49 !s90 -reportprogress|300|-work|LIB_RTL|./SRC/RTL/fsm.vhd|
-Z50 !s107 ./SRC/RTL/fsm.vhd|
+R21
+Z48 !s90 -reportprogress|300|-work|LIB_RTL|./SRC/RTL/fsm.vhd|
+Z49 !s107 ./SRC/RTL/fsm.vhd|
 !i113 1
 R14
 R15
@@ -376,71 +376,71 @@ R2
 R3
 R4
 R5
-R27
+R26
 !i122 17
 l73
-L59 354
-VMSaPi1KR5mZF5ohoam6?W3
-!s100 km^XCfL_Blj[VM>=k_KfW2
+L59 355
+Vl=BRCmG`zhXlnlXoF33Q?0
+!s100 VOnnn<WMU;iTD;D]N0?@Z0
 R9
 32
-R21
+R10
 !i10b 1
-R22
+R21
+R48
 R49
-R50
 !i113 1
 R14
 R15
 Cfsm_conf
 efsm
-Z51 afsm_moore_arch
-DAx4 work 3 fsm 14 fsm_moore_arch 22 MSaPi1KR5mZF5ohoam6?W3
+Z50 afsm_moore_arch
+DAx4 work 3 fsm 14 fsm_moore_arch 22 l=BRCmG`zhXlnlXoF33Q?0
 R2
 R3
 R4
 R5
-R27
+R26
 !i122 17
-R46
+R45
 R0
+R46
 R47
-R48
 l0
-L415 1
-VJ9kC;f]5odlJ>hbYmkZ6U0
-!s100 T6;<^OCKC=<<z@^X^TYZo0
+L416 1
+Vh:FU^MC@5^?7>4h3ekE>A3
+!s100 ]eP@7o=NdFKgM1SlCiR:A3
 R9
 32
-R21
+R10
 !i10b 0
-R22
+R21
+R48
 R49
-R50
 !i113 1
 R14
 R15
 Efsm_moore_init
-Z52 w1669654127
+Z51 w1669654127
 R2
 R3
 R4
 R5
 !i122 16
 R0
-Z53 8./SRC/RTL/fsm_init.vhd
-Z54 F./SRC/RTL/fsm_init.vhd
+Z52 8./SRC/RTL/fsm_init.vhd
+Z53 F./SRC/RTL/fsm_init.vhd
 l0
 L13 1
 V@LcalRohZN1UU7h1k>BHd3
 !s100 NB@:<7IE1Ijb]6FR2XmI80
 R9
 32
-R21
+R10
 !i10b 1
-R22
-Z55 !s90 -reportprogress|300|-work|LIB_RTL|./SRC/RTL/fsm_init.vhd|
-Z56 !s107 ./SRC/RTL/fsm_init.vhd|
+R21
+Z54 !s90 -reportprogress|300|-work|LIB_RTL|./SRC/RTL/fsm_init.vhd|
+Z55 !s107 ./SRC/RTL/fsm_init.vhd|
 !i113 1
 R14
 R15
@@ -449,7 +449,7 @@ R2
 R3
 R4
 R5
-Z57 DEx4 work 14 fsm_moore_init 0 22 @LcalRohZN1UU7h1k>BHd3
+Z56 DEx4 work 14 fsm_moore_init 0 22 @LcalRohZN1UU7h1k>BHd3
 !i122 16
 l67
 L58 144
@@ -457,63 +457,63 @@ VH@A^>j]bfZO]T<>T=Ylfe1
 !s100 E`fMMZG5_7NmCL4i8bT]90
 R9
 32
-R21
+R10
 !i10b 1
-R22
+R21
+R54
 R55
-R56
 !i113 1
 R14
 R15
 Cfsm_moore_init_conf
 efsm_moore_init
-R51
+R50
 DAx4 work 14 fsm_moore_init 14 fsm_moore_arch 22 H@A^>j]bfZO]T<>T=Ylfe1
 R2
 R3
 R4
 R5
-R57
+R56
 !i122 16
-R52
+R51
 R0
+R52
 R53
-R54
 l0
 L204 1
 V?7n_FKN[k?fA7`>cAAEz@3
 !s100 :LYlbgncl;D3J<Abo6GTO3
 R9
 32
-R21
+R10
 !i10b 0
-R22
+R21
+R54
 R55
-R56
 !i113 1
 R14
 R15
 Emux_state
-Z58 w1669106149
+Z57 w1669106149
 R2
 R3
 R4
 R5
 !i122 7
 R0
-Z59 8./SRC/RTL/mux_state.vhd
-Z60 F./SRC/RTL/mux_state.vhd
+Z58 8./SRC/RTL/mux_state.vhd
+Z59 F./SRC/RTL/mux_state.vhd
 l0
-Z61 L29 1
+Z60 L29 1
 VWoEZkW[]^j8n1N395llYB3
 !s100 AJogfTAY_e:;?ejONRiB^0
 R9
 32
 R10
 !i10b 1
-R11
-Z62 !s90 -reportprogress|300|-work|LIB_RTL|./SRC/RTL/mux_state.vhd|
-Z63 !s107 ./SRC/RTL/mux_state.vhd|
+R21
+Z61 !s90 -reportprogress|300|-work|LIB_RTL|./SRC/RTL/mux_state.vhd|
+Z62 !s107 ./SRC/RTL/mux_state.vhd|
 !i113 1
 R14
 R15
@@ -522,7 +522,7 @@ R2
 R3
 R4
 R5
-Z64 DEx4 work 9 mux_state 0 22 WoEZkW[]^j8n1N395llYB3
+Z63 DEx4 work 9 mux_state 0 22 WoEZkW[]^j8n1N395llYB3
 !i122 7
 l41
 L39 8
@@ -532,33 +532,33 @@ R9
 32
 R10
 !i10b 1
-R11
+R21
+R61
 R62
-R63
 !i113 1
 R14
 R15
 Epermutation
-Z65 w1669640903
+Z64 w1669640903
 R2
 R3
 R4
 R5
 !i122 11
 R0
-Z66 8./SRC/RTL/permutation.vhd
-Z67 F./SRC/RTL/permutation.vhd
+Z65 8./SRC/RTL/permutation.vhd
+Z66 F./SRC/RTL/permutation.vhd
 l0
 R8
 V4a[m`U>AbzajmN9MVH7c51
 !s100 TelfQQm:N^4W8;SJOW^g00
 R9
 32
-R21
+R10
 !i10b 1
-R11
-Z68 !s90 -reportprogress|300|-work|LIB_RTL|./SRC/RTL/permutation.vhd|
-Z69 !s107 ./SRC/RTL/permutation.vhd|
+R21
+Z67 !s90 -reportprogress|300|-work|LIB_RTL|./SRC/RTL/permutation.vhd|
+Z68 !s107 ./SRC/RTL/permutation.vhd|
 !i113 1
 R14
 R15
@@ -567,7 +567,7 @@ R2
 R3
 R4
 R5
-Z70 DEx4 work 11 permutation 0 22 4a[m`U>AbzajmN9MVH7c51
+Z69 DEx4 work 11 permutation 0 22 4a[m`U>AbzajmN9MVH7c51
 !i122 11
 l78
 L28 93
@@ -575,68 +575,68 @@ V9a1KF<b84<LM6X8aVFoIX1
 !s100 f?Tz?FmzB<E`_COF1lNEb0
 R9
 32
-R21
+R10
 !i10b 1
-R11
+R21
+R67
 R68
-R69
 !i113 1
 R14
 R15
 Cpermutation_conf
 epermutation
 apermutation_arch
-Z71 DEx4 work 14 state_register 0 22 k>6_CK=blWoa[DHB<clJ:2
-R45
-Z72 DEx4 work 17 sub_layer_generic 0 22 a@IioRMB[Lc3:2WC?=W;M1
+Z70 DEx4 work 14 state_register 0 22 k>6_CK=blWoa[DHB<clJ:2
+R44
+Z71 DEx4 work 17 sub_layer_generic 0 22 a@IioRMB[Lc3:2WC?=W;M1
 R16
-R64
+R63
 DAx4 work 11 permutation 16 permutation_arch 22 9a1KF<b84<LM6X8aVFoIX1
 R2
 R3
 R4
 R5
-R70
+R69
 !i122 11
-R65
+R64
 R0
+R65
 R66
-R67
 l0
 L123 1
 V6B87IWTfO7P5zICMi[a2S1
 !s100 =hQZS6Sni]Hg8hTP]I2[F0
 R9
 32
-R21
+R10
 !i10b 1
-R11
+R21
+R67
 R68
-R69
 !i113 1
 R14
 R15
 Epermutation_final
-Z73 w1672575872
+Z72 w1672575872
 R2
 R3
 R4
 R5
 !i122 15
 R0
-Z74 8./SRC/RTL/permutation_final.vhd
-Z75 F./SRC/RTL/permutation_final.vhd
+Z73 8./SRC/RTL/permutation_final.vhd
+Z74 F./SRC/RTL/permutation_final.vhd
 l0
 R20
 VUzoXTf;fUON1ObH=>f[bO3
 !s100 FL32[0Xidmz[_eA:L`f5I2
 R9
 32
-R21
+R10
 !i10b 1
-R22
-Z76 !s90 -reportprogress|300|-work|LIB_RTL|./SRC/RTL/permutation_final.vhd|
-Z77 !s107 ./SRC/RTL/permutation_final.vhd|
+R21
+Z75 !s90 -reportprogress|300|-work|LIB_RTL|./SRC/RTL/permutation_final.vhd|
+Z76 !s107 ./SRC/RTL/permutation_final.vhd|
 !i113 1
 R14
 R15
@@ -645,7 +645,7 @@ R2
 R3
 R4
 R5
-R26
+R25
 !i122 15
 l136
 L48 185
@@ -653,71 +653,71 @@ VlLL>a>6c5EdWJzgiKI79V2
 !s100 Lf6fPh8;H:E[>>P7AY1Tg2
 R9
 32
-R21
+R10
 !i10b 1
-R22
+R21
+R75
 R76
-R77
 !i113 1
 R14
 R15
 Cpermutation_final_conf
 epermutation_final
 apermutation_final_arch
-Z78 DEx4 work 13 register_w_en 0 22 VObSb@7[CVP6A>B01OAFE3
-Z79 DEx4 work 19 state_register_w_en 0 22 Z[R@h?_dgnPP=8NU7:8nN3
-Z80 DEx4 work 7 xor_end 0 22 MSLVWBcC>:]0cT>8@g1LO3
-Z81 DEx7 lib_rtl 9 diffusion 0 22 AF9YQ<3]fz@GT8TKWPZa91
-R72
+Z77 DEx4 work 13 register_w_en 0 22 VObSb@7[CVP6A>B01OAFE3
+Z78 DEx4 work 19 state_register_w_en 0 22 Z[R@h?_dgnPP=8NU7:8nN3
+Z79 DEx4 work 7 xor_end 0 22 MSLVWBcC>:]0cT>8@g1LO3
+Z80 DEx7 lib_rtl 9 diffusion 0 22 AF9YQ<3]fz@GT8TKWPZa91
+R71
 R16
-Z82 DEx4 work 9 xor_begin 0 22 6ooQn7?VmgQO@fi`BHV9B3
-R64
+Z81 DEx4 work 9 xor_begin 0 22 6ooQn7?VmgQO@fi`BHV9B3
+R63
 DAx4 work 17 permutation_final 22 permutation_final_arch 22 lLL>a>6c5EdWJzgiKI79V2
 R2
 R3
 R4
 R5
-R26
+R25
 !i122 15
-R73
+R72
 R0
+R73
 R74
-R75
 l0
 L235 1
 V7:3JD4SkH6YNK5fU4cR1e3
 !s100 n^?@MEdGQRRVa:NO?f6b10
 R9
 32
-R21
+R10
 !i10b 1
-R22
+R21
+R75
 R76
-R77
 !i113 1
 R14
 R15
 Epermutation_inter
-Z83 w1669642296
+Z82 w1669642296
 R2
 R3
 R4
 R5
 !i122 14
 R0
-Z84 8./SRC/RTL/permutation_inter.vhd
-Z85 F./SRC/RTL/permutation_inter.vhd
+Z83 8./SRC/RTL/permutation_inter.vhd
+Z84 F./SRC/RTL/permutation_inter.vhd
 l0
 R8
 VKKOk^TY3HfX1Q8b9_J];z2
 !s100 _`0RhOY5?^fIcFXJj1b^H3
 R9
 32
-R21
+R10
 !i10b 1
-R22
-Z86 !s90 -reportprogress|300|-work|LIB_RTL|./SRC/RTL/permutation_inter.vhd|
-Z87 !s107 ./SRC/RTL/permutation_inter.vhd|
+R21
+Z85 !s90 -reportprogress|300|-work|LIB_RTL|./SRC/RTL/permutation_inter.vhd|
+Z86 !s107 ./SRC/RTL/permutation_inter.vhd|
 !i113 1
 R14
 R15
@@ -726,7 +726,7 @@ R2
 R3
 R4
 R5
-Z88 DEx4 work 17 permutation_inter 0 22 KKOk^TY3HfX1Q8b9_J];z2
+Z87 DEx4 work 17 permutation_inter 0 22 KKOk^TY3HfX1Q8b9_J];z2
 !i122 14
 l109
 L38 133
@@ -734,70 +734,70 @@ VL:[c:cTfK[V4jPj?=9ijH2
 !s100 9a^_Bn7FEgNSzM:Z>KSCV2
 R9
 32
-R21
+R10
 !i10b 1
-R22
+R21
+R85
 R86
-R87
 !i113 1
 R14
 R15
 Cpermutation_inter_conf
 epermutation_inter
 apermutation_inter_arch
-R71
+R70
+R79
 R80
-R81
-R72
+R71
 R16
-R82
-R64
+R81
+R63
 DAx4 work 17 permutation_inter 22 permutation_inter_arch 22 L:[c:cTfK[V4jPj?=9ijH2
 R2
 R3
 R4
 R5
-R88
+R87
 !i122 14
-R83
+R82
 R0
+R83
 R84
-R85
 l0
 L173 1
 VVPlLN7:I_mAVZobCRAePP1
 !s100 bZCzc4To_LdCG_DAYVjjB2
 R9
 32
-R21
+R10
 !i10b 1
-R22
+R21
+R85
 R86
-R87
 !i113 1
 R14
 R15
 Eregister_w_en
-Z89 w1671573826
+Z88 w1671573826
 R2
 R3
 R4
 R5
 !i122 10
 R0
-Z90 8./SRC/RTL/register_w_en.vhd
-Z91 F./SRC/RTL/register_w_en.vhd
+Z89 8./SRC/RTL/register_w_en.vhd
+Z90 F./SRC/RTL/register_w_en.vhd
 l0
-R61
+R60
 VVObSb@7[CVP6A>B01OAFE3
 !s100 OiRj<XdTGVaPgD^mZLi8k2
 R9
 32
 R10
 !i10b 1
-R11
-Z92 !s90 -reportprogress|300|-work|LIB_RTL|./SRC/RTL/register_w_en.vhd|
-Z93 !s107 ./SRC/RTL/register_w_en.vhd|
+R21
+Z91 !s90 -reportprogress|300|-work|LIB_RTL|./SRC/RTL/register_w_en.vhd|
+Z92 !s107 ./SRC/RTL/register_w_en.vhd|
 !i113 1
 R14
 R15
@@ -806,7 +806,7 @@ R2
 R3
 R4
 R5
-R78
+R77
 !i122 10
 l46
 L42 21
@@ -816,22 +816,22 @@ R9
 32
 R10
 !i10b 1
-R11
+R21
+R91
 R92
-R93
 !i113 1
 R14
 R15
 Esbox
-Z94 w1671486864
+Z93 w1671486864
 R2
 R3
 R4
 R5
 !i122 2
 R0
-Z95 8./SRC/RTL/sbox.vhd
-Z96 F./SRC/RTL/sbox.vhd
+Z94 8./SRC/RTL/sbox.vhd
+Z95 F./SRC/RTL/sbox.vhd
 l0
 R8
 V_:?DTASL3Z@]:QdJd[UST3
@@ -840,9 +840,9 @@ R9
 32
 R10
 !i10b 1
-R11
-Z97 !s90 -reportprogress|300|-work|LIB_RTL|./SRC/RTL/sbox.vhd|
-Z98 !s107 ./SRC/RTL/sbox.vhd|
+R21
+Z96 !s90 -reportprogress|300|-work|LIB_RTL|./SRC/RTL/sbox.vhd|
+Z97 !s107 ./SRC/RTL/sbox.vhd|
 !i113 1
 R14
 R15
@@ -851,7 +851,7 @@ R2
 R3
 R4
 R5
-Z99 DEx4 work 4 sbox 0 22 _:?DTASL3Z@]:QdJd[UST3
+Z98 DEx4 work 4 sbox 0 22 _:?DTASL3Z@]:QdJd[UST3
 !i122 2
 l25
 L23 7
@@ -861,9 +861,9 @@ R9
 32
 R10
 !i10b 1
-R11
+R21
+R96
 R97
-R98
 !i113 1
 R14
 R15
@@ -875,12 +875,12 @@ R2
 R3
 R4
 R5
-R99
+R98
 !i122 2
-R94
+R93
 R0
+R94
 R95
-R96
 l0
 L32 1
 VWdN[P^lm<PJ08OJj_`6:F3
@@ -889,33 +889,33 @@ R9
 32
 R10
 !i10b 0
-R11
+R21
+R96
 R97
-R98
 !i113 1
 R14
 R15
 Estate_register
-R58
+R57
 R2
 R3
 R4
 R5
 !i122 8
 R0
-Z100 8./SRC/RTL/state_register.vhd
-Z101 F./SRC/RTL/state_register.vhd
+Z99 8./SRC/RTL/state_register.vhd
+Z100 F./SRC/RTL/state_register.vhd
 l0
-R61
+R60
 Vk>6_CK=blWoa[DHB<clJ:2
 !s100 ]cYRCE0cz<^kB4@S<3b:D3
 R9
 32
 R10
 !i10b 1
-R11
-Z102 !s90 -reportprogress|300|-work|LIB_RTL|./SRC/RTL/state_register.vhd|
-Z103 !s107 ./SRC/RTL/state_register.vhd|
+R21
+Z101 !s90 -reportprogress|300|-work|LIB_RTL|./SRC/RTL/state_register.vhd|
+Z102 !s107 ./SRC/RTL/state_register.vhd|
 !i113 1
 R14
 R15
@@ -924,7 +924,7 @@ R2
 R3
 R4
 R5
-R71
+R70
 !i122 8
 l43
 L39 19
@@ -934,33 +934,33 @@ R9
 32
 R10
 !i10b 1
-R11
+R21
+R101
 R102
-R103
 !i113 1
 R14
 R15
 Estate_register_w_en
-Z104 w1670437826
+Z103 w1670437826
 R2
 R3
 R4
 R5
 !i122 9
 R0
-Z105 8./SRC/RTL/state_register_w_en.vhd
-Z106 F./SRC/RTL/state_register_w_en.vhd
+Z104 8./SRC/RTL/state_register_w_en.vhd
+Z105 F./SRC/RTL/state_register_w_en.vhd
 l0
-R61
+R60
 VZ[R@h?_dgnPP=8NU7:8nN3
 !s100 4fc25gbCE]WHWajHNdcX20
 R9
 32
 R10
 !i10b 1
-R11
-Z107 !s90 -reportprogress|300|-work|LIB_RTL|./SRC/RTL/state_register_w_en.vhd|
-Z108 !s107 ./SRC/RTL/state_register_w_en.vhd|
+R21
+Z106 !s90 -reportprogress|300|-work|LIB_RTL|./SRC/RTL/state_register_w_en.vhd|
+Z107 !s107 ./SRC/RTL/state_register_w_en.vhd|
 !i113 1
 R14
 R15
@@ -969,7 +969,7 @@ R2
 R3
 R4
 R5
-R79
+R78
 !i122 9
 l44
 L40 21
@@ -979,22 +979,22 @@ R9
 32
 R10
 !i10b 1
-R11
+R21
+R106
 R107
-R108
 !i113 1
 R14
 R15
 Esub_layer_generic
-Z109 w1671487667
+Z108 w1671487667
 R2
 R3
 R4
 R5
 !i122 3
 R0
-Z110 8./SRC/RTL/substitution_layer.vhd
-Z111 F./SRC/RTL/substitution_layer.vhd
+Z109 8./SRC/RTL/substitution_layer.vhd
+Z110 F./SRC/RTL/substitution_layer.vhd
 l0
 R8
 Va@IioRMB[Lc3:2WC?=W;M1
@@ -1003,9 +1003,9 @@ R9
 32
 R10
 !i10b 1
-R11
-Z112 !s90 -reportprogress|300|-work|LIB_RTL|./SRC/RTL/substitution_layer.vhd|
-Z113 !s107 ./SRC/RTL/substitution_layer.vhd|
+R21
+Z111 !s90 -reportprogress|300|-work|LIB_RTL|./SRC/RTL/substitution_layer.vhd|
+Z112 !s107 ./SRC/RTL/substitution_layer.vhd|
 !i113 1
 R14
 R15
@@ -1014,7 +1014,7 @@ R2
 R3
 R4
 R5
-R72
+R71
 !i122 3
 l32
 L23 29
@@ -1024,27 +1024,27 @@ R9
 32
 R10
 !i10b 1
-R11
+R21
+R111
 R112
-R113
 !i113 1
 R14
 R15
 Csub_layer_generic_conf
 esub_layer_generic
 asub_layer_generic_arch
-R99
+R98
 DAx4 work 17 sub_layer_generic 22 sub_layer_generic_arch 22 ?YFdHf>2z1LN]V=CcbhMj0
 R2
 R3
 R4
 R5
-R72
+R71
 !i122 3
-R109
+R108
 R0
+R109
 R110
-R111
 l0
 L54 1
 Vc@:XcSG9>2=]U2caLlJlI2
@@ -1053,33 +1053,33 @@ R9
 32
 R10
 !i10b 1
-R11
+R21
+R111
 R112
-R113
 !i113 1
 R14
 R15
 Exor_begin
-Z114 w1670439677
+Z113 w1672579612
 R2
 R3
 R4
 R5
 !i122 12
 R0
-Z115 8./SRC/RTL/xor_begin.vhd
-Z116 F./SRC/RTL/xor_begin.vhd
+Z114 8./SRC/RTL/xor_begin.vhd
+Z115 F./SRC/RTL/xor_begin.vhd
 l0
 R8
 V6ooQn7?VmgQO@fi`BHV9B3
 !s100 :ThHR6gE:7S=^SBC0L78@1
 R9
 32
-R21
+R10
 !i10b 1
-R22
-Z117 !s90 -reportprogress|300|-work|LIB_RTL|./SRC/RTL/xor_begin.vhd|
-Z118 !s107 ./SRC/RTL/xor_begin.vhd|
+R21
+Z116 !s90 -reportprogress|300|-work|LIB_RTL|./SRC/RTL/xor_begin.vhd|
+Z117 !s107 ./SRC/RTL/xor_begin.vhd|
 !i113 1
 R14
 R15
@@ -1088,7 +1088,7 @@ R2
 R3
 R4
 R5
-R82
+R81
 !i122 12
 l31
 L26 22
@@ -1096,35 +1096,35 @@ VdNYNIL5a4iP1]?iGeB<[K0
 !s100 fcKFJ<BG7gfGJ3kGQ?VeB3
 R9
 32
-R21
+R10
 !i10b 1
-R22
+R21
+R116
 R117
-R118
 !i113 1
 R14
 R15
 Exor_end
-Z119 w1669577387
+Z118 w1669577387
 R2
 R3
 R4
 R5
 !i122 13
 R0
-Z120 8./SRC/RTL/xor_end.vhd
-Z121 F./SRC/RTL/xor_end.vhd
+Z119 8./SRC/RTL/xor_end.vhd
+Z120 F./SRC/RTL/xor_end.vhd
 l0
 R8
 VMSLVWBcC>:]0cT>8@g1LO3
 !s100 fVMAe]7z3kmF@`Hb[VegT2
 R9
 32
-R21
+R10
 !i10b 1
-R22
-Z122 !s90 -reportprogress|300|-work|LIB_RTL|./SRC/RTL/xor_end.vhd|
-Z123 !s107 ./SRC/RTL/xor_end.vhd|
+R21
+Z121 !s90 -reportprogress|300|-work|LIB_RTL|./SRC/RTL/xor_end.vhd|
+Z122 !s107 ./SRC/RTL/xor_end.vhd|
 !i113 1
 R14
 R15
@@ -1133,7 +1133,7 @@ R2
 R3
 R4
 R5
-R80
+R79
 !i122 13
 l31
 L25 25
@@ -1141,11 +1141,11 @@ VJaBmFn:zWJiWlE:7Oh<eS2
 !s100 ]5Q@K<4IQNba@Ajdo28FS2
 R9
 32
-R21
+R10
 !i10b 1
-R22
+R21
+R121
 R122
-R123
 !i113 1
 R14
 R15
