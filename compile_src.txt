@@ -123,6 +123,7 @@ echo "start simulation..."
 
 vsim LIB_BENCH.ascon_top_level_tb_conf
 
+
 # Execution du script and run 2300 ns
 
 restart

@@ -118,7 +118,7 @@ BEGIN
         WAIT FOR 600 ns;
 
         ------------------
-        -- Plaintext
+        -- Plaintext and finalisation
         ------------------
 
         -- Phase 1
