@@ -24,7 +24,6 @@ ENTITY ascon_top_level IS
         cipher_o : OUT bit64;
         cipher_valid_o : OUT STD_LOGIC;
         tag_o : OUT bit128;
-        tag_valid_o : OUT STD_LOGIC;
 
         end_o : OUT STD_LOGIC
     );
@@ -86,7 +85,7 @@ ARCHITECTURE ascon_top_level_arch OF ascon_top_level IS
             key_i : IN bit128;
 
             state_o : OUT type_state;
-            data_o : OUT bit64;
+            cipher_o : OUT bit64;
             tag_o : OUT bit128
         );
     END COMPONENT permutation_final;
@@ -105,7 +104,7 @@ ARCHITECTURE ascon_top_level_arch OF ascon_top_level IS
             data_valid_i : IN STD_LOGIC;
 
             -- FSM outputs
-            data_valid_o : OUT STD_LOGIC;
+            cipher_valid_o : OUT STD_LOGIC;
             end_o : OUT STD_LOGIC;
 
             data_sel_o : OUT STD_LOGIC;
@@ -137,7 +136,7 @@ ARCHITECTURE ascon_top_level_arch OF ascon_top_level IS
     SIGNAL round_i_s : bit4;
     SIGNAL block_i_s : STD_LOGIC_VECTOR(1 DOWNTO 0);
 
-    SIGNAL data_valid_o_s : STD_LOGIC;
+    SIGNAL cipher_valid_o_s : STD_LOGIC;
     SIGNAL end_o_s : STD_LOGIC;
 
     SIGNAL data_sel_o_s : STD_LOGIC;
@@ -163,14 +162,10 @@ ARCHITECTURE ascon_top_level_arch OF ascon_top_level IS
     SIGNAL state_o_s : type_state;
 
     SIGNAL data_i_s : bit64;
-    SIGNAL data_o_s : bit64;
 
     SIGNAL tag_o_s : bit128;
 
     SIGNAL cipher_o_s : bit64;
-
-    SIGNAL cipher_valid_o_s : STD_LOGIC;
-    SIGNAL tag_valid_o_s : STD_LOGIC;
 
 BEGIN
     -- Compteur double init
@@ -205,7 +200,7 @@ BEGIN
 
         data_valid_i => data_valid_i,
 
-        data_valid_o => data_valid_o_s,
+        cipher_valid_o => cipher_valid_o_s,
         end_o => end_o_s,
 
         data_sel_o => data_sel_o_s,
@@ -255,16 +250,23 @@ BEGIN
         key_i => key_i,
 
         state_o => state_o_s,
-        data_o => data_o_s,
+        cipher_o => cipher_o_s,
         tag_o => tag_o_s
     );
 
+    -- Input & Output
     state_i_s(0) <= IV_c;
     state_i_s(1) <= key_i(127 DOWNTO 64);
     state_i_s(2) <= key_i(63 DOWNTO 0);
     state_i_s(3) <= nonce_i(127 DOWNTO 64);
     state_i_s(4) <= nonce_i(63 DOWNTO 0);
 
+    cipher_valid_o <= cipher_valid_o_s;
+
+    cipher_o <= cipher_o_s;
+    tag_o <= tag_o_s;
+    end_o <= end_o_s;
+    
 END ascon_top_level_arch;
 
 -- Configuration of the entity

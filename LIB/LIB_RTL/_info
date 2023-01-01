@@ -25,9 +25,9 @@ VIOSak9dTV74bc==>8DPLY0
 !s100 j]7JTi1KI7650e6Vm3FCd1
 Z9 OV;C;2020.1;71
 32
-Z10 !s110 1672503358
+Z10 !s110 1672577393
 !i10b 1
-Z11 !s108 1672503358.000000
+Z11 !s108 1672577393.000000
 Z12 !s90 -reportprogress|300|-work|LIB_RTL|./SRC/RTL/adder_const.vhd|
 Z13 !s107 ./SRC/RTL/adder_const.vhd|
 !i113 1
@@ -87,7 +87,7 @@ R3
 R4
 R5
 !i122 0
-w1671455401
+w1672572462
 R0
 8./SRC/RTL/ascon_pack.vhd
 F./SRC/RTL/ascon_pack.vhd
@@ -106,7 +106,7 @@ R11
 R14
 R15
 Eascon_top_level
-Z17 w1670502518
+Z17 w1672577389
 R3
 R2
 R4
@@ -117,13 +117,13 @@ Z18 8./SRC/RTL/ascon_top_level.vhd
 Z19 F./SRC/RTL/ascon_top_level.vhd
 l0
 Z20 L11 1
-VVEo>5PPZ=8jl[HYTBD[3O1
-!s100 @al^=6d0TWM:m>nneDmg[1
+V3N]UVilJbX@gJ_=cF^aTi3
+!s100 ;g[06Nf6IRXfV`^hnAl4Q2
 R9
 32
-Z21 !s110 1672503359
+Z21 !s110 1672577394
 !i10b 1
-Z22 !s108 1672503359.000000
+Z22 !s108 1672577394.000000
 Z23 !s90 -reportprogress|300|-work|LIB_RTL|./SRC/RTL/ascon_top_level.vhd|
 !s107 ./SRC/RTL/ascon_top_level.vhd|
 !i113 1
@@ -134,12 +134,12 @@ R3
 R2
 R4
 R5
-Z24 DEx4 work 15 ascon_top_level 0 22 VEo>5PPZ=8jl[HYTBD[3O1
+Z24 DEx4 work 15 ascon_top_level 0 22 3N]UVilJbX@gJ_=cF^aTi3
 !i122 18
-l175
-L34 235
-VLH67c:oF4i<`GzJh`:c_30
-!s100 XOFfC5ACzRc`n>UhMlEZ[1
+l170
+L33 238
+Vl1o78TPX8M<PLh=RQbTej1
+!s100 :li68cJ`5<IOjL7dD;1h92
 R9
 32
 R21
@@ -153,13 +153,13 @@ R15
 Cascon_top_level_conf
 eascon_top_level
 aascon_top_level_arch
-Z26 DEx4 work 17 permutation_final 0 22 @6YCYbd[_;;zmOYOKzEkP0
-Z27 DEx4 work 3 fsm 0 22 iCCgD4a@V1>2m@lJ2<dQS0
-DCx7 lib_rtl 22 permutation_final_conf 0 22 LK@L@a>fXPP6j6hBl5k=;1
-DCx7 lib_rtl 8 fsm_conf 0 22 C];7W@mYmR3]id^RIaiA40
+Z26 DEx4 work 17 permutation_final 0 22 UzoXTf;fUON1ObH=>f[bO3
+Z27 DEx4 work 3 fsm 0 22 ijD0MDX5UgnzXSMi[9QSO0
+DCx7 lib_rtl 22 permutation_final_conf 0 22 7:3JD4SkH6YNK5fU4cR1e3
+DCx7 lib_rtl 8 fsm_conf 0 22 J9kC;f]5odlJ>hbYmkZ6U0
 Z28 DEx4 work 20 compteur_simple_init 0 22 9XILS;Fi7KB92Aa7L6lGU1
 Z29 DEx4 work 20 compteur_double_init 0 22 k6P<]3HADk19Tk148=ndg3
-DAx4 work 15 ascon_top_level 20 ascon_top_level_arch 22 LH67c:oF4i<`GzJh`:c_30
+DAx4 work 15 ascon_top_level 20 ascon_top_level_arch 22 l1o78TPX8M<PLh=RQbTej1
 R3
 R2
 R4
@@ -171,9 +171,9 @@ R0
 R18
 R19
 l0
-L271 1
-VA[H:]0XA@0haVoV2@>HBa0
-!s100 fZ;Z^J[S9<]ln^SmRe_Io0
+L273 1
+V2_2zIjVPDFJz8RVEbCKR>0
+!s100 O_MeNDaSZJ_eh03@]ILX<3
 R9
 32
 R21
@@ -348,7 +348,7 @@ R44
 R14
 R15
 Efsm
-Z46 w1672503346
+Z46 w1672576436
 R2
 R3
 R4
@@ -359,8 +359,8 @@ Z47 8./SRC/RTL/fsm.vhd
 Z48 F./SRC/RTL/fsm.vhd
 l0
 L14 1
-ViCCgD4a@V1>2m@lJ2<dQS0
-!s100 I2oiiF?]@ec2XOgYoF07l2
+VijD0MDX5UgnzXSMi[9QSO0
+!s100 [H9<7>1gn=l[ea?RaLfUG3
 R9
 32
 R21
@@ -378,10 +378,10 @@ R4
 R5
 R27
 !i122 17
-l72
-L59 350
-V<c]EzD]QaEZkJUJ6^QLAe1
-!s100 SY>0UJ92;[2ZNfB[R4?Io3
+l73
+L59 354
+VMSaPi1KR5mZF5ohoam6?W3
+!s100 km^XCfL_Blj[VM>=k_KfW2
 R9
 32
 R21
@@ -395,7 +395,7 @@ R15
 Cfsm_conf
 efsm
 Z51 afsm_moore_arch
-DAx4 work 3 fsm 14 fsm_moore_arch 22 <c]EzD]QaEZkJUJ6^QLAe1
+DAx4 work 3 fsm 14 fsm_moore_arch 22 MSaPi1KR5mZF5ohoam6?W3
 R2
 R3
 R4
@@ -407,9 +407,9 @@ R0
 R47
 R48
 l0
-L411 1
-VC];7W@mYmR3]id^RIaiA40
-!s100 :Q_3CJG:J779gnUULU8aY3
+L415 1
+VJ9kC;f]5odlJ>hbYmkZ6U0
+!s100 T6;<^OCKC=<<z@^X^TYZo0
 R9
 32
 R21
@@ -556,7 +556,7 @@ R9
 32
 R21
 !i10b 1
-R22
+R11
 Z68 !s90 -reportprogress|300|-work|LIB_RTL|./SRC/RTL/permutation.vhd|
 Z69 !s107 ./SRC/RTL/permutation.vhd|
 !i113 1
@@ -577,7 +577,7 @@ R9
 32
 R21
 !i10b 1
-R22
+R11
 R68
 R69
 !i113 1
@@ -610,14 +610,14 @@ R9
 32
 R21
 !i10b 1
-R22
+R11
 R68
 R69
 !i113 1
 R14
 R15
 Epermutation_final
-Z73 w1670573568
+Z73 w1672575872
 R2
 R3
 R4
@@ -628,8 +628,8 @@ Z74 8./SRC/RTL/permutation_final.vhd
 Z75 F./SRC/RTL/permutation_final.vhd
 l0
 R20
-V@6YCYbd[_;;zmOYOKzEkP0
-!s100 79Rk1KPeDUegmo8YU?z=@3
+VUzoXTf;fUON1ObH=>f[bO3
+!s100 FL32[0Xidmz[_eA:L`f5I2
 R9
 32
 R21
@@ -647,10 +647,10 @@ R4
 R5
 R26
 !i122 15
-l134
-L48 180
-VMIhUB`o=ZT552V_>n8=9:1
-!s100 YkE]lem5=fU@j1f7oF9Li0
+l136
+L48 185
+VlLL>a>6c5EdWJzgiKI79V2
+!s100 Lf6fPh8;H:E[>>P7AY1Tg2
 R9
 32
 R21
@@ -672,7 +672,7 @@ R72
 R16
 Z82 DEx4 work 9 xor_begin 0 22 6ooQn7?VmgQO@fi`BHV9B3
 R64
-DAx4 work 17 permutation_final 22 permutation_final_arch 22 MIhUB`o=ZT552V_>n8=9:1
+DAx4 work 17 permutation_final 22 permutation_final_arch 22 lLL>a>6c5EdWJzgiKI79V2
 R2
 R3
 R4
@@ -684,9 +684,9 @@ R0
 R74
 R75
 l0
-L230 1
-VLK@L@a>fXPP6j6hBl5k=;1
-!s100 5RCjVG^9`mjVi:IL7JZk:0
+L235 1
+V7:3JD4SkH6YNK5fU4cR1e3
+!s100 n^?@MEdGQRRVa:NO?f6b10
 R9
 32
 R21
@@ -793,7 +793,7 @@ VVObSb@7[CVP6A>B01OAFE3
 !s100 OiRj<XdTGVaPgD^mZLi8k2
 R9
 32
-R21
+R10
 !i10b 1
 R11
 Z92 !s90 -reportprogress|300|-work|LIB_RTL|./SRC/RTL/register_w_en.vhd|
@@ -814,7 +814,7 @@ VF;YbP2_E_ZK[5Mk:05kMA0
 !s100 V]X@6JC:QDdMJ7cLQ[B4O0
 R9
 32
-R21
+R10
 !i10b 1
 R11
 R92

@@ -30,7 +30,7 @@ ARCHITECTURE fsm_init_tb_arch OF fsm_init_tb IS
             data_valid_i : IN STD_LOGIC;
 
             -- FSM outputs
-            data_valid_o : OUT STD_LOGIC;
+            cipher_valid_o : OUT STD_LOGIC;
             end_o : OUT STD_LOGIC;
 
             data_sel_o : OUT STD_LOGIC;
@@ -108,7 +108,7 @@ ARCHITECTURE fsm_init_tb_arch OF fsm_init_tb IS
     SIGNAL clock_i_s, reset_i_s, start_i_s, data_valid_i_s : STD_LOGIC := '0';
 
     -- Output of the FSM
-    SIGNAL data_valid_o_s, end_o_s : STD_LOGIC := '0';
+    SIGNAL cipher_valid_o_s, end_o_s : STD_LOGIC := '0';
     SIGNAL data_sel_o_s : STD_LOGIC := '0';
     SIGNAL en_xor_data_b_o_s, en_xor_key_b_o_s : STD_LOGIC; -- XOR BEGIN
     SIGNAL en_xor_key_e_o_s, en_xor_lsb_e_o_s : STD_LOGIC; -- XOR END
@@ -131,7 +131,7 @@ BEGIN
         data_valid_i => data_valid_i_s,
 
         -- FSM outputs
-        data_valid_o => data_valid_o_s,
+        cipher_valid_o => cipher_valid_o_s,
         end_o => end_o_s,
         data_sel_o => data_sel_o_s,
         en_xor_data_b_o => en_xor_data_b_o_s,

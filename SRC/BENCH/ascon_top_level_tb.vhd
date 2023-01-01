@@ -33,7 +33,6 @@ ARCHITECTURE ascon_top_level_tb_arch OF ascon_top_level_tb IS
             cipher_o : OUT bit64;
             cipher_valid_o : OUT STD_LOGIC;
             tag_o : OUT bit128;
-            tag_valid_o : OUT STD_LOGIC;
 
             end_o : OUT STD_LOGIC
         );
@@ -54,7 +53,6 @@ ARCHITECTURE ascon_top_level_tb_arch OF ascon_top_level_tb IS
     SIGNAL cipher_o_s : bit64 := (OTHERS => '0');
     SIGNAL cipher_valid_o_s : STD_LOGIC := '0';
     SIGNAL tag_o_s : bit128 := (OTHERS => '0');
-    SIGNAL tag_valid_o_s : STD_LOGIC := '0';
 
     SIGNAL end_o_s : STD_LOGIC := '0';
 
@@ -76,7 +74,6 @@ BEGIN
         cipher_o => cipher_o_s,
         cipher_valid_o => cipher_valid_o_s,
         tag_o => tag_o_s,
-        tag_valid_o => tag_valid_o_s,
 
         end_o => end_o_s
     );

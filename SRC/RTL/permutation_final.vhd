@@ -40,7 +40,7 @@ ENTITY permutation_final IS
         key_i : IN bit128;
 
         state_o : OUT type_state;
-        data_o : OUT bit64;
+        cipher_o : OUT bit64;
         tag_o : OUT bit128
     );
 END permutation_final;
@@ -129,6 +129,8 @@ ARCHITECTURE permutation_final_arch OF permutation_final IS
 
     SIGNAL mux_xor_begin_s, xor_begin_adder_s, adder_sub_s, sub_dif_s, dif_xor_s, xor_end_reg_s : type_state;
 
+    SIGNAL cipher_temp : bit64;
+
     SIGNAL tag_temp : bit128;
 
 BEGIN
@@ -200,9 +202,9 @@ BEGIN
         clock_i => clock_i,
         resetb_i => reset_i,
         en_i => en_cipher_reg_state_i, 
-        data_i => state_o_s(0),
+        data_i => cipher_temp,
 
-        data_o => data_o
+        data_o => cipher_o
     );
 
     tag_register_1 : register_w_en
@@ -218,8 +220,11 @@ BEGIN
         data_o => tag_o
     );
 
+    -- Cipher generation input
+    cipher_temp <= xor_begin_adder_s(0);
+
     -- Tag generation input 
-    tag_temp <= state_o_s(3) & state_o_s(4);
+    tag_temp <= xor_end_reg_s(3) & xor_end_reg_s(4);
 
     -- Output
     state_o <= state_o_s;
