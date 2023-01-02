@@ -83,7 +83,7 @@ echo "-----------------------"
 
 #vcom -work LIB_BENCH ./SRC/BENCH/fsm_init_tb.vhd
 
-#vcom -work LIB_BENCH ./SRC/BENCH/permutation_final_tb.vhd
+vcom -work LIB_BENCH ./SRC/BENCH/permutation_final_tb.vhd
 
 vcom -work LIB_BENCH ./SRC/BENCH/ascon_top_level_tb.vhd
 
@@ -124,12 +124,16 @@ echo "start simulation..."
 vsim LIB_BENCH.ascon_top_level_tb_conf
 
 
-# Execution du script and run 2300 ns
+echo "-----------------------"
 
+# Simulation sur 2300 ns et ajout d'un wave
+
+
+echo "restarting simulation"
 restart
 
+echo "adding wave"
 add wave -position insertpoint sim:/ascon_top_level_tb/*
 
+echo "run 2300 ns"
 run 2300
-
-

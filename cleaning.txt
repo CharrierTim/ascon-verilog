@@ -1,0 +1,13 @@
+#!/bin/bash
+
+echo "the project location is : ."
+echo "removing libs"
+vdel -lib ./LIB/LIB_RTL -all
+vdel -lib ./LIB/LIB_BENCH -all
+
+echo "creating library "
+
+vlib ./LIB/LIB_RTL
+vmap LIB_RTL ./LIB/LIB_RTL
+vlib ./LIB/LIB_BENCH
+vmap LIB_BENCH ./LIB/LIB_BENCH

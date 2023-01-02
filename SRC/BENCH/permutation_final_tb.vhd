@@ -40,21 +40,23 @@ ARCHITECTURE permutation_final_tb_arch OF permutation_final_tb IS
             -- Input for register
             en_cipher_reg_state_i : IN STD_LOGIC;
             en_tag_reg_state_i : IN STD_LOGIC;
+            en_state_reg_state_i : IN STD_LOGIC;
+
             state_i : IN type_state;
             round_i : IN bit4;
             data_i : IN bit64;
             key_i : IN bit128;
 
             state_o : OUT type_state;
-            data_o : OUT bit64;
+            cipher_o : OUT bit64;
             tag_o : OUT bit128
         );
     END COMPONENT;
 
     -- Signal declaration
     SIGNAL clock_i_s : STD_LOGIC := '0';
-    SIGNAL reset_i_s : STD_LOGIC := '0';
-    SIGNAL select_i_s : STD_LOGIC := '0';
+    SIGNAL reset_i_s : STD_LOGIC := '1';
+    SIGNAL select_i_s : STD_LOGIC := '1';
 
     SIGNAL en_xor_key_begin_i_s : STD_LOGIC := '0';
     SIGNAL en_xor_data_i_s : STD_LOGIC := '0';
@@ -67,14 +69,15 @@ ARCHITECTURE permutation_final_tb_arch OF permutation_final_tb IS
 
     SIGNAL en_cipher_reg_state_i_s : STD_LOGIC := '0';
     SIGNAL en_tag_reg_state_i_s : STD_LOGIC := '0';
+    SIGNAL en_state_reg_state_i_s : STD_LOGIC := '1';
 
     SIGNAL state_i_s : type_state;
-    SIGNAL round_i_s : bit4 := (OTHERS => '0');
+    SIGNAL round_i_s : bit4 := "0110";
     SIGNAL data_i_s : bit64 := (OTHERS => '0');
     SIGNAL key_i_s : bit128 := (OTHERS => '0');
 
     SIGNAL state_o_s : type_state;
-    SIGNAL data_o_s : bit64;
+    SIGNAL cipher_o_s : bit64;
     SIGNAL tag_o_s : bit128;
 
 BEGIN
@@ -96,6 +99,7 @@ BEGIN
 
         en_cipher_reg_state_i => en_cipher_reg_state_i_s,
         en_tag_reg_state_i => en_tag_reg_state_i_s,
+        en_state_reg_state_i => en_state_reg_state_i_s,
 
         state_i => state_i_s,
         round_i => round_i_s,
@@ -103,7 +107,7 @@ BEGIN
         key_i => key_i_s,
 
         state_o => state_o_s,
-        data_o => data_o_s,
+        cipher_o => cipher_o_s,
         tag_o => tag_o_s
     );
 
@@ -111,47 +115,57 @@ BEGIN
     clock_i_s <= NOT clock_i_s AFTER 10 ns;
 
     -- state_i generation
-    state_i_s(0) <= IV_c;
-    state_i_s(1) <= KEY_c(127 DOWNTO 64); -- Ref key MSB
-    state_i_s(2) <= KEY_c(63 DOWNTO 0); -- Ref key LSB
-    state_i_s(3) <= NONCE_c(127 DOWNTO 64); -- Bit 0 to 63 of NONCE_c
-    state_i_s(4) <= NONCE_c(63 DOWNTO 0); -- Bit 64 to 127 of NONCE_c
+    state_i_s(0) <= x"d68f68ec5b986286";
+    state_i_s(1) <= x"f4178093a43dcef3";
+    state_i_s(2) <= x"74e5a39c4a51f0ca";
+    state_i_s(3) <= x"22e60da1aa08f42b";
+    state_i_s(4) <= x"805b193d0454ced4";
 
-    -- Key_i generation
+    -- Key_i 
     key_i_s <= KEY_c;
-
-    data_i_s <= ASSOCIATED_DATA_64_c;
 
     PROCESS
     BEGIN
         --------------------------------------------------------------------------------------------
-        -- INITIALIZATION
+        -- Round 6 of plaintext 1
         --------------------------------------------------------------------------------------------
-
-        -- Reset generation
+        
+        -- Reset
         reset_i_s <= '0';
-        round_i_s <= (OTHERS => '0');
-        select_i_s <= '1';
-        WAIT FOR 20 ns;
-
+        WAIT FOR 155 ns;
         reset_i_s <= '1';
-        select_i_s <= '0';
-        en_xor_key_end_i_s <= '0';
+
+        -- Data_i
+        data_i_s <= P1_c;
+
+        -- Enable XOR begin data
+        en_xor_data_i_s <= '1';
+        -- Enable cipher register
+        en_cipher_reg_state_i_s <= '1';
+        WAIT FOR 20 ns;
+        en_xor_data_i_s <= '0';
+        en_cipher_reg_state_i_s <= '0';
         WAIT FOR 20 ns;
 
-        -- For loop to increment round_i by 1 every 20 ns up to 12
-        FOR i IN 0 TO 11 LOOP
+        -- For loop to increment round_i by 1 every 20 ns from 6 up to 12
+        FOR i IN 6 TO 11 LOOP
             round_i_s <= STD_LOGIC_VECTOR(to_unsigned(i, 4));
             WAIT FOR 20 ns;
-            -- Change MUX select
-            select_i_s <= '1';
-            -- enable xor_end key
-            IF (i = 10)
+
+            IF (i = 9)
                 THEN
-                en_xor_key_end_i_s <= '1';
+                data_i_s <= P2_c;
+                -- enable XOR data begin & cipher register
+            ELSIF (i = 10)
+                THEN
+                en_xor_data_i_s <= '1';
+                en_cipher_reg_state_i_s <= '1';
             END IF;
         END LOOP;
-        
+
+        en_xor_data_i_s <= '0';
+        en_cipher_reg_state_i_s <= '0';
+
     END PROCESS;
 END ARCHITECTURE permutation_final_tb_arch;
 
