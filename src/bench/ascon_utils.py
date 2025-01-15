@@ -8,6 +8,13 @@ It contains the Python model used to verify all the Ascon modules.
 
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    import cocotb
+
+from cocotb_utils import ERRORS
+
 # ======================================================================================
 # Constants used in the Ascon modules Testbenches.
 # ======================================================================================
@@ -64,6 +71,26 @@ S_TABLE = [
 # ======================================================================================
 
 
+def to_unsigned(value: int, bitwidth: int = 64) -> int:
+    """
+    Convert a signed integer to an unsigned integer.
+
+    Parameters
+    ----------
+    value : int
+        The signed integer value.
+    bitwidth : int, optional
+        The bit width of the integer, default is 64.
+
+    Returns
+    -------
+    int
+        The unsigned integer value.
+
+    """
+    return value & (1 << bitwidth) - 1
+
+
 class AdderConstModel:
     """
     Model for the AdderConst module.
@@ -73,8 +100,9 @@ class AdderConstModel:
 
     def __init__(
         self,
-        i_state: list[int],
         *,
+        i_state: list[int] | None = None,
+        i_round: int = 0,
         constant_array_t: list[int] | None = None,
     ) -> None:
         """
@@ -82,14 +110,18 @@ class AdderConstModel:
 
         Parameters
         ----------
-        i_state : list[int]
+        i_state : list[int], optional
             Initial state of the inputs.
+            Default is [0, 0, 0, 0, 0].
+        i_round : int, optional
+            The round number.
         constant_array_t : list[int], optional
             Array of constants used in the computation.
             If not provided, a default array is used.
 
         """
-        self.i_state = i_state
+        self.i_state = i_state or [0] * 5
+        self.i_round = i_round
         self.constant_array_t = constant_array_t or [
             0xF0,
             0xE1,
@@ -104,16 +136,11 @@ class AdderConstModel:
             0x5A,
             0x4B,
         ]
-        self.o_state = [0] * len(i_state)
+        self.o_state = [0] * len(self.i_state)
 
-    def compute(self, i_round: int) -> list[int]:
+    def compute(self) -> list[int]:
         """
         Compute the output state based on the current input state and round.
-
-        Parameters
-        ----------
-        i_round : int
-            The current round of computation.
 
         Returns
         -------
@@ -124,35 +151,66 @@ class AdderConstModel:
         self.o_state[0] = self.i_state[0]
         self.o_state[1] = self.i_state[1]
         self.o_state[2] = (self.i_state[2] & 0xFFFFFFFFFFFFFF00) | (
-            self.i_state[2] ^ (self.constant_array_t[i_round] & 0xFF)
+            self.i_state[2] ^ (self.constant_array_t[self.i_round] & 0xFF)
         )
         self.o_state[3] = self.i_state[3]
         self.o_state[4] = self.i_state[4]
         return self.o_state
 
-    def update_state(self, new_state: list[int]) -> None:
+    def update_inputs(
+        self,
+        new_state: list[int] | None = None,
+        new_round: int | None = None,
+    ) -> None:
         """
         Update the input state of the model.
 
         Parameters
         ----------
-        new_state : list[int]
+        new_state : list[int], optional
             The new state to be set.
+        new_round : int, optional
+            The new round to be set.
 
         """
-        self.i_state = new_state
+        if new_state is not None:
+            self.i_state = new_state
+        if new_round is not None:
+            self.i_round = new_round
 
-    def get_output(self) -> list[int]:
+    def assert_output(
+        self,
+        dut: cocotb.handle.HierarchyObject,
+    ) -> None:
         """
-        Get the current output state.
+        Assert the output of the DUT and log the input and output values.
 
-        Returns
-        -------
-        list[int]
-            The current output state.
+        Parameters
+        ----------
+        dut : cocotb.handle.HierarchyObject
+            The device under test (DUT).
 
         """
-        return self.o_state
+        # Compute the expected output
+        self.compute()
+
+        # Convert the output to a list of integers
+        round_str = f"{self.i_round:02X}"
+        input_str = " ".join([f"{to_unsigned(x):016X}" for x in self.i_state])
+        output_str = " ".join([f"{to_unsigned(x):016X}" for x in self.o_state])
+        output_dut_str = " ".join(
+            [f"{to_unsigned(x.value.integer):016X}" for x in dut.o_state],
+        )
+
+        # Log the input and output values
+        dut._log.info(f"Round:      {round_str}")
+        dut._log.info(f"Input:      {input_str}")
+        dut._log.info(f"Expected:   {output_str}")
+        dut._log.info(f"DUT Output: {output_dut_str}")
+        dut._log.info("")
+
+        # Assert the output
+        assert output_str == output_dut_str, ERRORS["FAILED_COMPUTATION"]
 
 
 class SboxModel:
@@ -206,6 +264,7 @@ class SubLayerModel:
     def __init__(
         self,
         num_sboxes: int = 64,
+        i_state: list[int] | None = None,
     ) -> None:
         """
         Initialize the model.
@@ -214,21 +273,19 @@ class SubLayerModel:
         ----------
         num_sboxes : int
             The number of S-Boxes in the Substitution Layer.
+        i_state : list[int], optional
+            The initial state of the inputs.
+            Default is [0, 0, 0, 0, 0].
 
         """
         self.num_sboxes = num_sboxes
         self.sbox_model = SboxModel()
-        self.i_state = [0] * 5
+        self.i_state = i_state or [0] * 5
         self.o_state = [0] * 5
 
-    def compute(self, i_state: list[int]) -> list[int]:
+    def compute(self) -> list[int]:
         """
         Compute the output state based on the input state.
-
-        Parameters
-        ----------
-        i_state : list[int]
-            The input state array.
 
         Returns
         -------
@@ -236,16 +293,14 @@ class SubLayerModel:
             The computed output state array.
 
         """
-        # Set
-        self.i_state = i_state
         for i in range(self.num_sboxes):
-            # Get one byte from each word of the input state
+            # Get one bit from each word of the input state
             input_bits = [
-                (i_state[4] >> i) & 1,
-                (i_state[3] >> i) & 1,
-                (i_state[2] >> i) & 1,
-                (i_state[1] >> i) & 1,
-                (i_state[0] >> i) & 1,
+                (self.i_state[4] >> i) & 1,
+                (self.i_state[3] >> i) & 1,
+                (self.i_state[2] >> i) & 1,
+                (self.i_state[1] >> i) & 1,
+                (self.i_state[0] >> i) & 1,
             ]
 
             # Create an integer from the bits
@@ -268,6 +323,54 @@ class SubLayerModel:
             self.o_state[0] |= ((sbox_output >> 4) & 1) << i
 
         return self.o_state
+
+    def update_inputs(
+        self,
+        new_state: list[int] | None = None,
+    ) -> None:
+        """
+        Update the input state of the model.
+
+        Parameters
+        ----------
+        new_state : list[int], optional
+            The new state to be set.
+
+        """
+        if new_state is not None:
+            self.i_state = new_state
+
+    def assert_output(
+        self,
+        dut: cocotb.handle.HierarchyObject,
+    ) -> None:
+        """
+        Assert the output of the DUT and log the input and output values.
+
+        Parameters
+        ----------
+        dut : cocotb.handle.HierarchyObject
+            The device under test (DUT).
+
+        """
+        # Compute the expected output
+        self.compute()
+
+        # Convert the output to a list of integers
+        input_str = " ".join([f"{to_unsigned(x):016X}" for x in self.i_state])
+        output_str = " ".join([f"{to_unsigned(x):016X}" for x in self.o_state])
+        output_dut_str = " ".join(
+            [f"{to_unsigned(x.value.integer):016X}" for x in dut.o_state],
+        )
+
+        # Log the input and output values
+        dut._log.info(f"Input:      {input_str}")
+        dut._log.info(f"Expected:   {output_str}")
+        dut._log.info(f"DUT Output: {output_dut_str}")
+        dut._log.info("")
+
+        # Assert the output
+        assert output_str == output_dut_str, ERRORS["FAILED_COMPUTATION"]
 
 
 class DiffusionLayerModel:
@@ -363,3 +466,181 @@ class DiffusionLayerModel:
 
         """
         self.input_state = new_state
+
+    def assert_output(
+        self,
+        dut: cocotb.handle.HierarchyObject,
+    ) -> None:
+        """
+        Assert the output of the DUT and log the input and output values.
+
+        Parameters
+        ----------
+        dut : cocotb.handle.HierarchyObject
+            The device under test (DUT).
+
+        """
+        # Compute the expected output
+        self.compute()
+
+        # Convert the output to a list of integers
+        self.input_state = [int(x) for x in self.input_state]
+        input_str = " ".join([f"{to_unsigned(x):016X}" for x in self.input_state])
+        output_str = " ".join([f"{to_unsigned(x):016X}" for x in self.output_state])
+        output_dut_str = " ".join(
+            [f"{to_unsigned(x.value.integer):016X}" for x in dut.o_state],
+        )
+
+        # Log the input and output values
+        dut._log.info(f"Input:      {input_str}")
+        dut._log.info(f"Expected:   {output_str}")
+        dut._log.info(f"DUT Output: {output_dut_str}")
+        dut._log.info("")
+
+        # Assert the output
+        assert output_str == output_dut_str, ERRORS["FAILED_COMPUTATION"]
+
+
+class XorBeginModel:
+    """
+    Model for the XorBegin module.
+
+    This class defines the model used to verify the XorBegin module.
+    """
+
+    def __init__(
+        self,
+        *,
+        i_state: list[int] | None = None,
+        i_data: int = 0,
+        i_key: int = 0,
+        i_enable_xor_key: bool = False,
+        i_enable_xor_data: bool = False,
+    ) -> None:
+        """
+        Initialize the model.
+
+        Parameters
+        ----------
+        i_state : list[int], optional
+            The initial state of the inputs.
+            Default is [0, 0, 0, 0, 0].
+        i_data : int, optional
+            The input data to XOR.
+        i_key : int, optional
+            The input key to XOR.
+        i_enable_xor_key : bool, optional
+            Enable XOR with Key, active high.
+        i_enable_xor_data : bool, optional
+            Enable XOR with Data, active high.
+
+        """
+        self.i_state: list[int] = i_state or [0] * 5
+        self.i_data = i_data
+        self.i_key = i_key
+        self.i_enable_xor_key = i_enable_xor_key
+        self.i_enable_xor_data = i_enable_xor_data
+        self.o_state = [0] * 5
+
+    def compute(self) -> list[int]:
+        """
+        Compute the output state based on the current input state.
+
+        Returns
+        -------
+        list[int]
+            The computed output state.
+
+        """
+        key_state_combined = (
+            (self.i_key ^ ((self.i_state[1] << 64) | self.i_state[2]))
+            if self.i_enable_xor_key
+            else ((self.i_state[1] << 64) | self.i_state[2])
+        )
+
+        self.o_state[0] = (
+            self.i_state[0] ^ self.i_data if self.i_enable_xor_data else self.i_state[0]
+        )
+        self.o_state[1] = (key_state_combined >> 64) & 0xFFFFFFFFFFFFFFFF
+        self.o_state[2] = key_state_combined & 0xFFFFFFFFFFFFFFFF
+        self.o_state[3] = self.i_state[3]
+        self.o_state[4] = self.i_state[4]
+
+        return self.o_state
+
+    def update_inputs(
+        self,
+        new_state: list[int] | None = None,
+        new_data: int | None = None,
+        new_key: int | None = None,
+        new_enable_xor_key: bool | None = None,
+        new_enable_xor_data: bool | None = None,
+    ) -> None:
+        """
+        Update the input state, data, key, and enable signals of the model.
+
+        Parameters
+        ----------
+        new_state : list[int], optional
+            The new state to be set.
+        new_data : int, optional
+            The new data to be set.
+        new_key : int, optional
+            The new key to be set.
+        new_enable_xor_key : bool, optional
+            The new XOR Key enable signal to be set.
+        new_enable_xor_data : bool, optional
+            The new XOR Data enable signal to be set.
+
+        """
+        if new_state is not None:
+            self.i_state = new_state
+        if new_data is not None:
+            self.i_data = new_data
+        if new_key is not None:
+            self.i_key = new_key
+        if new_enable_xor_key is not None:
+            self.i_enable_xor_key = new_enable_xor_key
+        if new_enable_xor_data is not None:
+            self.i_enable_xor_data = new_enable_xor_data
+
+    def assert_output(
+        self,
+        dut: cocotb.handle.HierarchyObject,
+    ) -> None:
+        """
+        Assert the output of the DUT and log the input and output values.
+
+        Parameters
+        ----------
+        dut : cocotb.handle.HierarchyObject
+            The device under test (DUT).
+
+        """
+        # Compute the expected output
+        self.compute()
+
+        # Convert the output to a list of integers
+        enable_str = (
+            f"XOR Key={int(self.i_enable_xor_key)}, "
+            f"XOR Data={int(self.i_enable_xor_data)}"
+        )
+        data_str = f"{self.i_data:016X}"
+        key_str = f"{self.i_key:032X}"
+        input_str = " ".join([f"{to_unsigned(x):016X}" for x in self.i_state])
+        output_str = " ".join([f"{to_unsigned(x):016X}" for x in self.o_state])
+        output_dut_str = " ".join(
+            [f"{to_unsigned(x.value.integer):016X}" for x in dut.o_state],
+        )
+
+        # Log the input and output values
+        dut._log.info(f"Enables:    {enable_str}")
+        dut._log.info(f"Data:       {data_str}")
+        dut._log.info(f"Key:        {key_str}")
+        dut._log.info(f"Input:      {input_str}")
+        dut._log.info(f"Expected:   {output_str}")
+        dut._log.info(f"DUT Output: {output_dut_str}")
+        dut._log.info("")
+
+        # Assert the output
+        assert output_str == output_dut_str, ERRORS["FAILED_COMPUTATION"]
