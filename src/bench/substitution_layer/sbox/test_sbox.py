@@ -8,7 +8,6 @@ output of the Python implementation with the VHDL implementation.
 """
 
 import os
-import random
 import sys
 from pathlib import Path
 

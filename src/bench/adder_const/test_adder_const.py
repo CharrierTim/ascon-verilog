@@ -25,6 +25,7 @@ from ascon_utils import (
 )
 from cocotb_utils import (
     ERRORS,
+    assert_output,
     init_hierarchy,
 )
 
@@ -33,40 +34,6 @@ INIT_INPUTS = {
     "i_state": init_hierarchy(dims=(5,), bitwidth=64, use_random=False),
     "i_round": 0,
 }
-
-
-def assert_output(
-    dut: cocotb.handle.HierarchyObject,
-    input_state: list[int],
-    expected_output: list[int],
-) -> None:
-    """
-    Assert the output of the DUT and log the input and output values.
-
-    Parameters
-    ----------
-    dut : cocotb.handle.HierarchyObject
-        The device under test (DUT).
-    input_state : list[int]
-        The input state values.
-    expected_output : list[int]
-        The expected output values.
-    dut_output : list[cocotb.binary.BinaryValue]
-        The DUT output values.
-
-    """
-    input_str = " ".join([f"{x & 0xFFFFFFFFFFFFFFFF:016X}" for x in input_state])
-    output_str = " ".join([f"{x & 0xFFFFFFFFFFFFFFFF:016X}" for x in expected_output])
-    output_dut_str = " ".join(
-        [f"{x.value.integer & 0xFFFFFFFFFFFFFFFF:016X}" for x in dut.o_state]
-    )
-
-    dut._log.info(f"Input:      {input_str}")
-    dut._log.info(f"Expected:   {output_str}")
-    dut._log.info(f"DUT Output: {output_dut_str}")
-    dut._log.info("")
-
-    assert output_str == output_dut_str, ERRORS["FAILED_COMPUTATION"]
 
 
 @cocotb.test()
@@ -97,7 +64,11 @@ async def reset_dut_test(dut: cocotb.handle.HierarchyObject) -> None:
         adder_output = adder_model.compute(i_round=INIT_INPUTS["i_round"])
 
         # Log Input and output values as hex
-        assert_output(dut, INIT_INPUTS["i_state"], adder_output)
+        assert_output(
+            dut=dut,
+            input_state=INIT_INPUTS["i_state"],
+            expected_output=adder_output,
+        )
 
     except Exception as e:
         raise RuntimeError(ERRORS["FAILED_RESET"].format(e=e)) from e
@@ -123,7 +94,7 @@ async def adder_const_test(dut: cocotb.handle.HierarchyObject) -> None:
         adder_output = adder_model.compute(i_round=0)
 
         # Assert and log the output
-        assert_output(dut, INPUT_STATE, adder_output)
+        assert_output(dut=dut, input_state=INPUT_STATE, expected_output=adder_output)
 
         dut._log.info("Starting random tests...")
 
@@ -145,7 +116,11 @@ async def adder_const_test(dut: cocotb.handle.HierarchyObject) -> None:
             adder_output = adder_model.compute(i_round=random_round)
 
             # Assert and log the output
-            assert_output(dut, random_state, adder_output)
+            assert_output(
+                dut=dut,
+                input_state=random_state,
+                expected_output=adder_output,
+            )
 
     except Exception as e:
         raise RuntimeError(ERRORS["FAILED_SIMULATION"].format(e=e)) from e
