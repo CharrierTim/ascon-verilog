@@ -268,3 +268,96 @@ class SubLayerModel:
             self.o_state[0] |= ((sbox_output >> 4) & 1) << i
 
         return self.o_state
+
+
+class DiffusionLayerModel:
+    """
+    Model for the Diffusion Layer module.
+
+    This class defines the model used to verify the Diffusion Layer module.
+    """
+
+    def __init__(self, input_state: list[int]) -> None:
+        """
+        Initialize the model.
+
+        Parameters
+        ----------
+        input_state : list[int]
+            The input state array.
+
+        """
+        self.input_state = input_state
+        self.output_state = [0] * 5
+
+    def rotate_right(self, bit_array: list[int], num_bits: int) -> list[int]:
+        """
+        Rotate the bit array to the right by the specified number of bits.
+
+        Parameters
+        ----------
+        bit_array : list[int]
+            The input bit array.
+        num_bits : int
+            The number of bits to rotate the array.
+
+        Returns
+        -------
+        list[int]
+            The rotated bit array.
+
+        """
+        return (
+            bit_array[len(bit_array) - num_bits :]
+            + bit_array[: len(bit_array) - num_bits]
+        )
+
+    def compute(self) -> list[int]:
+        """
+        Compute the output state based on the input state.
+
+        Returns
+        -------
+        list[int]
+            The computed output state.
+
+        """
+        self.output_state[0] = (
+            self.input_state[0]
+            ^ self.rotate_right(self.input_state[0], 19)
+            ^ self.rotate_right(self.input_state[0], 28)
+        )
+        self.output_state[1] = (
+            self.input_state[1]
+            ^ self.rotate_right(self.input_state[1], 61)
+            ^ self.rotate_right(self.input_state[1], 39)
+        )
+        self.output_state[2] = (
+            self.input_state[2]
+            ^ self.rotate_right(self.input_state[2], 1)
+            ^ self.rotate_right(self.input_state[2], 6)
+        )
+        self.output_state[3] = (
+            self.input_state[3]
+            ^ self.rotate_right(self.input_state[3], 10)
+            ^ self.rotate_right(self.input_state[3], 17)
+        )
+        self.output_state[4] = (
+            self.input_state[4]
+            ^ self.rotate_right(self.input_state[4], 7)
+            ^ self.rotate_right(self.input_state[4], 41)
+        )
+
+        return self.output_state
+
+    def update_state(self, new_state: list[int]) -> None:
+        """
+        Update the input state of the model.
+
+        Parameters
+        ----------
+        new_state : list[int]
+            The new state to be set.
+
+        """
+        self.input_state = new_state
