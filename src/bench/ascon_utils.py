@@ -644,3 +644,147 @@ class XorBeginModel:
 
         # Assert the output
         assert output_str == output_dut_str, ERRORS["FAILED_COMPUTATION"]
+
+
+# input  t_state_array         i_state,           //! Input State Array
+# input  logic         [127:0] i_key,             //! Input Key to XOR
+# input  logic                 i_enable_xor_key,  //! Enable XOR with Key, active high
+# input  logic                 i_enable_xor_lsb,  //! Enable XOR with LSB, active high
+# output t_state_array         o_state            //! Output State Array
+
+
+class XorEndModel:
+    """
+    Model for the XorBegin module.
+
+    This class defines the model used to verify the XorBegin module.
+    """
+
+    def __init__(
+        self,
+        *,
+        i_state: list[int] | None = None,
+        i_key: int = 0,
+        i_enable_xor_key: bool = False,
+        i_enable_xor_lsb: bool = False,
+    ) -> None:
+        """
+        Initialize the model.
+
+        Parameters
+        ----------
+        i_state : list[int], optional
+            The initial state of the inputs.
+            Default is [0, 0, 0, 0, 0].
+        i_key : int, optional
+            The input key to XOR.
+        i_enable_xor_key : bool, optional
+            Enable XOR with Key, active high.
+        i_enable_xor_lsb : bool, optional
+            Enable XOR with LSB, active high.
+
+        """
+        self.i_state: list[int] = i_state or [0] * 5
+        self.i_key = i_key
+        self.i_enable_xor_key = i_enable_xor_key
+        self.i_enable_xor_lsb = i_enable_xor_lsb
+        self.o_state = [0] * 5
+
+    def compute(self) -> list[int]:
+        """
+        Compute the output state based on the current input state.
+
+        Returns
+        -------
+        list[int]
+            The computed output state.
+
+        """
+        self.o_state[0] = self.i_state[0]
+        self.o_state[1] = self.i_state[1]
+        self.o_state[2] = self.i_state[2]
+
+        state_part_3 = self.i_state[3]
+        state_part_4 = (self.i_state[4] >> 1) | ((self.i_state[4] & 1) << 63)
+        state_part_4 ^= self.i_enable_xor_lsb
+
+        self.o_state[3] = (
+            state_part_3 ^ (self.i_key >> 64) if self.i_enable_xor_key else state_part_3
+        )
+        self.o_state[4] = (
+            state_part_4 ^ (self.i_key & 0xFFFFFFFFFFFFFFFF)
+            if self.i_enable_xor_key
+            else state_part_4
+        )
+
+        return self.o_state
+
+    def update_inputs(
+        self,
+        new_state: list[int] | None = None,
+        new_key: int | None = None,
+        new_enable_xor_key: bool | None = None,
+        new_enable_xor_lsb: bool | None = None,
+    ) -> None:
+        """
+        Update the input state, data, key, and enable signals of the model.
+
+        Parameters
+        ----------
+        new_state : list[int], optional
+            The new state to be set.
+        new_key : int, optional
+            The new key to be set.
+        new_enable_xor_key : bool, optional
+            The new XOR Key enable signal to be set.
+        new_enable_xor_lsb : bool, optional
+            The new XOR Data enable signal to be set.
+
+        """
+        if new_state is not None:
+            self.i_state = new_state
+        if new_key is not None:
+            self.i_key = new_key
+        if new_enable_xor_key is not None:
+            self.i_enable_xor_key = new_enable_xor_key
+        if new_enable_xor_lsb is not None:
+            self.i_enable_xor_lsb = new_enable_xor_lsb
+
+    def assert_output(
+        self,
+        dut: cocotb.handle.HierarchyObject,
+    ) -> None:
+        """
+        Assert the output of the DUT and log the input and output values.
+
+        Parameters
+        ----------
+        dut : cocotb.handle.HierarchyObject
+            The device under test (DUT).
+
+        """
+        # Compute the expected output
+        self.compute()
+
+        # Convert the output to a list of integers
+        enable_str = (
+            f"XOR Key={int(self.i_enable_xor_key)}, "
+            f"XOR lsb={int(self.i_enable_xor_lsb)}"
+        )
+        key_str = f"{self.i_key:032X}"
+        input_str = " ".join([f"{to_unsigned(x):016X}" for x in self.i_state])
+        output_str = " ".join([f"{to_unsigned(x):016X}" for x in self.o_state])
+        output_dut_str = " ".join(
+            [f"{to_unsigned(x.value.integer):016X}" for x in dut.o_state],
+        )
+
+        # Log the input and output values
+        dut._log.info(f"Enables:    {enable_str}")
+        dut._log.info(f"Key:        {key_str}")
+        dut._log.info(f"Input:      {input_str}")
+        dut._log.info(f"Expected:   {output_str}")
+        dut._log.info(f"DUT Output: {output_dut_str}")
+        dut._log.info("")
+
+        # Assert the output
+        assert output_str == output_dut_str, ERRORS["FAILED_COMPUTATION"]
