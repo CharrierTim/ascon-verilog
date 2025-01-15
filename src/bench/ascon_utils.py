@@ -254,7 +254,7 @@ class SboxModel:
         return self.s_table[i_data]
 
 
-class SubLayerModel:
+class SubstitutionLayerModel:
     """
     Model for the Substitution Layer module.
 

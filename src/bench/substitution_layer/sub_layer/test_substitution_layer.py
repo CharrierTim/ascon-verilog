@@ -19,7 +19,7 @@ from cocotb.triggers import Timer
 sys.path.insert(0, str((Path(__file__).parent.parent.parent).resolve()))
 
 from ascon_utils import (
-    SubLayerModel,
+    SubstitutionLayerModel,
 )
 from cocotb_utils import (
     ERRORS,
@@ -71,7 +71,7 @@ async def reset_dut_test(dut: cocotb.handle.HierarchyObject) -> None:
         log_generics(dut=dut, generics=generics)
 
         # Define the model
-        sub_layer_model = SubLayerModel(
+        substitution_layer_model = SubstitutionLayerModel(
             num_sboxes=generics["NUM_SBOXES"],
             i_state=INPUTS["i_state"],
         )
@@ -83,21 +83,21 @@ async def reset_dut_test(dut: cocotb.handle.HierarchyObject) -> None:
         await Timer(10, units="ns")
 
         # Assert the output
-        sub_layer_model.assert_output(dut=dut)
+        substitution_layer_model.assert_output(dut=dut)
 
     except Exception as e:
         raise RuntimeError(ERRORS["FAILED_RESET"].format(e=e)) from e
 
 
 @cocotb.test()
-async def sub_layer_test(dut: cocotb.handle.HierarchyObject) -> None:
+async def substitution_layer_test(dut: cocotb.handle.HierarchyObject) -> None:
     """Test the DUT's behavior during normal computation."""
     try:
         # Get the generic parameters
         generics = get_generics(dut=dut)
 
         # Define the model
-        sub_layer_model = SubLayerModel(
+        substitution_layer_model = SubstitutionLayerModel(
             num_sboxes=generics["NUM_SBOXES"],
             i_state=INPUTS["i_state"],
         )
@@ -120,16 +120,16 @@ async def sub_layer_test(dut: cocotb.handle.HierarchyObject) -> None:
         await Timer(10, units="ns")
 
         # Update the model
-        sub_layer_model.update_inputs(new_state=input_state)
+        substitution_layer_model.update_inputs(new_state=input_state)
 
         # Assert the output
-        sub_layer_model.assert_output(dut=dut)
+        substitution_layer_model.assert_output(dut=dut)
 
     except Exception as e:
         raise RuntimeError(ERRORS["FAILED_SIMULATION"].format(e=e)) from e
 
 
-def test_sub_layer() -> None:
+def test_substitution_layer() -> None:
     """Function Invoked by the test runner to execute the tests."""
     # Define the simulator to use
     default_simulator = "verilator"
@@ -144,7 +144,7 @@ def test_sub_layer() -> None:
     sources = [
         f"{rtl_path}/ascon_pkg.v",
         f"{rtl_path}/substitution_layer/sbox.v",
-        f"{rtl_path}/substitution_layer/sub_layer.v",
+        f"{rtl_path}/substitution_layer/substitution_layer.v",
     ]
 
     parameters = {
@@ -152,7 +152,7 @@ def test_sub_layer() -> None:
     }
 
     # Top-level HDL entity
-    entity = "sub_layer"
+    entity = "substitution_layer"
 
     try:
         # Get simulator name from environment
@@ -188,4 +188,4 @@ def test_sub_layer() -> None:
 
 
 if __name__ == "__main__":
-    test_sub_layer()
+    test_substitution_layer()
