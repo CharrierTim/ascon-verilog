@@ -75,7 +75,7 @@ async def reset_dut_test(dut: cocotb.handle.HierarchyObject) -> None:
 
 
 @cocotb.test()
-async def adder_const_test(dut: cocotb.handle.HierarchyObject) -> None:
+async def add_layer_test(dut: cocotb.handle.HierarchyObject) -> None:
     """Test the DUT's behavior during normal computation."""
     try:
         # Define the model
@@ -126,7 +126,7 @@ async def adder_const_test(dut: cocotb.handle.HierarchyObject) -> None:
         raise RuntimeError(ERRORS["FAILED_SIMULATION"].format(e=e)) from e
 
 
-def test_adder_const() -> None:
+def test_add_layer() -> None:
     """Function Invoked by the test runner to execute the tests."""
     # Define the simulator to use
     default_simulator = "verilator"
@@ -140,11 +140,11 @@ def test_adder_const() -> None:
     # Define the sources
     sources = [
         f"{rtl_path}/ascon_pkg.v",
-        f"{rtl_path}/adder_const/adder_const.v",
+        f"{rtl_path}/add_layer/add_layer.v",
     ]
 
     # Top-level HDL entity
-    entity = "adder_const"
+    entity = "add_layer"
 
     try:
         # Get simulator name from environment
@@ -179,4 +179,4 @@ def test_adder_const() -> None:
 
 
 if __name__ == "__main__":
-    test_adder_const()
+    test_add_layer()
