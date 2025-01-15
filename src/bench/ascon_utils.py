@@ -290,26 +290,28 @@ class DiffusionLayerModel:
         self.input_state = input_state
         self.output_state = [0] * 5
 
-    def rotate_right(self, bit_array: list[int], num_bits: int) -> list[int]:
+    @staticmethod
+    def rotate_right(value: int, num_bits: int, bit_width: int = 64) -> int:
         """
-        Rotate the bit array to the right by the specified number of bits.
+        Rotate the integer value to the right by the specified number of bits.
 
         Parameters
         ----------
-        bit_array : list[int]
-            The input bit array.
+        value : int
+            The integer value to rotate.
         num_bits : int
-            The number of bits to rotate the array.
+            The number of bits to rotate.
+        bit_width : int, optional
+            The bit width of the integer, default is 64.
 
         Returns
         -------
-        list[int]
-            The rotated bit array.
+        int
+            The rotated integer value.
 
         """
-        return (
-            bit_array[len(bit_array) - num_bits :]
-            + bit_array[: len(bit_array) - num_bits]
+        return (value >> num_bits) | (
+            (value << (bit_width - num_bits)) & ((1 << bit_width) - 1)
         )
 
     def compute(self) -> list[int]:
