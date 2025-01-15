@@ -16,8 +16,8 @@ module sub_layer #(
   generate
     for (i = 0; i < NUM_SBOXES; i = i + 1) begin : g_sbox
       sbox sbox_i (
-          .i_data({i_state[4][i], i_state[3][i], i_state[2][i], i_state[1][i], i_state[0][i]}),
-          .o_data({o_state[4][i], o_state[3][i], o_state[2][i], o_state[1][i], o_state[0][i]})
+          .i_data({i_state[0][i], i_state[1][i], i_state[2][i], i_state[3][i], i_state[4][i]}),
+          .o_data({o_state[0][i], o_state[1][i], o_state[2][i], o_state[3][i], o_state[4][i]})
       );
     end
   endgenerate
