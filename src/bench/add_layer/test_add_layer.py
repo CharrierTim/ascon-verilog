@@ -25,7 +25,6 @@ from ascon_utils import (
 )
 from cocotb_utils import (
     ERRORS,
-    assert_output,
     init_hierarchy,
 )
 
@@ -51,7 +50,10 @@ async def reset_dut_test(dut: cocotb.handle.HierarchyObject) -> None:
     """
     try:
         # Define the model
-        adder_model = AdderConstModel(INIT_INPUTS["i_state"])
+        adder_model = AdderConstModel(
+            i_state=INIT_INPUTS["i_state"],
+            i_round=INIT_INPUTS["i_round"],
+        )
 
         # Initialize the DUT
         for key, value in INIT_INPUTS.items():
@@ -60,15 +62,8 @@ async def reset_dut_test(dut: cocotb.handle.HierarchyObject) -> None:
         # Wait for few ns (combinatorial logic only in the DUT)
         await Timer(10, units="ns")
 
-        # Check the output
-        adder_output = adder_model.compute(i_round=INIT_INPUTS["i_round"])
-
-        # Log Input and output values as hex
-        assert_output(
-            dut=dut,
-            input_state=INIT_INPUTS["i_state"],
-            expected_output=adder_output,
-        )
+        # Assert the output
+        adder_model.assert_output(dut=dut)
 
     except Exception as e:
         raise RuntimeError(ERRORS["FAILED_RESET"].format(e=e)) from e
@@ -79,22 +74,22 @@ async def add_layer_test(dut: cocotb.handle.HierarchyObject) -> None:
     """Test the DUT's behavior during normal computation."""
     try:
         # Define the model
-        adder_model = AdderConstModel(INIT_INPUTS["i_state"])
+        adder_model = AdderConstModel(
+            i_state=INPUT_STATE,
+            i_round=INIT_INPUTS["i_round"],
+        )
 
         await reset_dut_test(dut)
 
         # Set specific inputs defined by INPUT_STATE = [IV, P1, P2, P3, P4]
         dut.i_state.value = INPUT_STATE
+        dut.i_round.value = 0
 
         # Wait for few ns
         await Timer(10, units="ns")
 
-        # Check the output
-        adder_model.update_state(INPUT_STATE)
-        adder_output = adder_model.compute(i_round=0)
-
-        # Assert and log the output
-        assert_output(dut=dut, input_state=INPUT_STATE, expected_output=adder_output)
+        # Assert the output
+        adder_model.assert_output(dut=dut)
 
         dut._log.info("Starting random tests...")
 
@@ -112,15 +107,10 @@ async def add_layer_test(dut: cocotb.handle.HierarchyObject) -> None:
             await Timer(10, units="ns")
 
             # Check the output
-            adder_model.update_state(random_state)
-            adder_output = adder_model.compute(i_round=random_round)
+            adder_model.update_inputs(new_state=random_state, new_round=random_round)
 
-            # Assert and log the output
-            assert_output(
-                dut=dut,
-                input_state=random_state,
-                expected_output=adder_output,
-            )
+            # Assert the output
+            adder_model.assert_output(dut=dut)
 
     except Exception as e:
         raise RuntimeError(ERRORS["FAILED_SIMULATION"].format(e=e)) from e
@@ -156,7 +146,7 @@ def test_add_layer() -> None:
         # Build HDL sources
         runner.build(
             build_dir="sim_build",
-            clean=True,
+            clean=False,
             hdl_library=library,
             hdl_toplevel=entity,
             sources=sources,
