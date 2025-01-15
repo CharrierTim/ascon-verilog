@@ -5,7 +5,7 @@
 
 import ascon_pkg::*;
 
-module adder_const (
+module add_layer (
     input  logic         [3:0] i_round,  // Round number
     input  t_state_array       i_state,  // State input
     output t_state_array       o_state   // State output
