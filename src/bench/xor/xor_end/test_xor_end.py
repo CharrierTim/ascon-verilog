@@ -1,8 +1,8 @@
 """
-Testbench for the BatchNorm2d Layer.
+Testbench for the XOR Begin Layer.
 
-This module tests the BatchNorm2d layer function module by comparing the
-output of the Python implementation with the VHDL implementation.
+This module tests the XOR Begin Layer function module by comparing the
+output of the Python implementation with the verilog implementation.
 
 @author: Timothée Charrier
 """
@@ -19,38 +19,19 @@ from cocotb.triggers import Timer
 sys.path.insert(0, str((Path(__file__).parent.parent.parent).resolve()))
 
 from ascon_utils import (
-    SubLayerModel,
+    XorEndModel,
 )
 from cocotb_utils import (
     ERRORS,
-    assert_output,
     init_hierarchy,
-    log_generics,
 )
 
 INPUTS = {
     "i_state": init_hierarchy(dims=(5,), bitwidth=64, use_random=False),
+    "i_key": 0,
+    "i_enable_xor_key": 0,
+    "i_enable_xor_lsb": 0,
 }
-
-
-def get_generics(dut: cocotb.handle.HierarchyObject) -> dict:
-    """
-    Retrieve the generic parameters from the DUT.
-
-    Parameters
-    ----------
-    dut : object
-        The device under test (DUT).
-
-    Returns
-    -------
-    dict
-        A dictionary containing the generic parameters.
-
-    """
-    return {
-        "NUM_SBOXES": int(dut.NUM_SBOXES.value),
-    }
 
 
 @cocotb.test()
@@ -67,75 +48,111 @@ async def reset_dut_test(dut: cocotb.handle.HierarchyObject) -> None:
 
     """
     try:
-        # Get the generic parameters and Log them
-        generics = get_generics(dut=dut)
-        log_generics(dut=dut, generics=generics)
-
         # Define the model
-        sub_layer_model = SubLayerModel(num_sboxes=generics["NUM_SBOXES"])
+        xor_end_model = XorEndModel(
+            i_state=INPUTS["i_state"],
+            i_key=INPUTS["i_key"],
+            i_enable_xor_key=INPUTS["i_enable_xor_key"],
+            i_enable_xor_lsb=INPUTS["i_enable_xor_lsb"],
+        )
 
         # Initialize the DUT
-        dut.i_state.value = INPUTS["i_state"]
+        for key, value in INPUTS.items():
+            getattr(dut, key).value = value
 
         # Wait for few ns (combinatorial logic only in the DUT)
         await Timer(10, units="ns")
 
         # Verify the output
-        sub_layer_model_output = sub_layer_model.compute(i_state=INPUTS["i_state"])
-
-        # Assert the output
-        assert_output(
-            dut=dut,
-            input_state=INPUTS["i_state"],
-            expected_output=sub_layer_model_output,
-        )
+        xor_end_model.assert_output(dut=dut)
 
     except Exception as e:
         raise RuntimeError(ERRORS["FAILED_RESET"].format(e=e)) from e
 
 
 @cocotb.test()
-async def sub_layer_test(dut: cocotb.handle.HierarchyObject) -> None:
+async def xor_end_test(dut: cocotb.handle.HierarchyObject) -> None:
     """Test the DUT's behavior during normal computation."""
     try:
-        # Get the generic parameters
-        generics = get_generics(dut=dut)
-
         # Define the model
-        sub_layer_model = SubLayerModel(num_sboxes=generics["NUM_SBOXES"])
+        xor_end_model = XorEndModel(
+            i_state=INPUTS["i_state"],
+            i_key=INPUTS["i_key"],
+            i_enable_xor_key=INPUTS["i_enable_xor_key"],
+            i_enable_xor_lsb=INPUTS["i_enable_xor_lsb"],
+        )
 
         await reset_dut_test(dut)
 
         # Test with specific inputs
         input_state = [
-            0x80400C0600000000,
-            0x0001020304050607,
-            0x08090A0B0C0D0EFF,
-            0x0001020304050607,
-            0x08090A0B0C0D0E0F,
+            0xFFFFFFFFFFFFFFFF,
+            0xFFFFFFFFFFFFFFFF,
+            0xFFFFFFFFFFFFFFFF,
+            0xFFFFFFFFFFFFFFFF,
+            0xFFFFFFFFFFFFFFFF,
         ]
+
+        i_key = 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
 
         # Set specific inputs
         dut.i_state.value = input_state
+        dut.i_key.value = i_key
 
         # Wait for few ns
         await Timer(10, units="ns")
 
-        # Compute the expected output
-        sub_layer_model_output = sub_layer_model.compute(i_state=input_state)
-
-        # Assert the output
-        assert_output(
-            dut=dut,
-            input_state=input_state,
-            expected_output=sub_layer_model_output,
+        # Update the model and compute the expected output
+        xor_end_model.update_inputs(
+            new_state=input_state,
+            new_key=i_key,
+            new_enable_xor_key=0,
+            new_enable_xor_lsb=0,
         )
+
+        # Forwards the input data
+        xor_end_model.assert_output(dut=dut)
+
+        # Now enable the XOR with the key
+        dut.i_enable_xor_key.value = 1
+
+        # Wait for few ns
+        await Timer(10, units="ns")
+
+        # Update the model and compute the expected output
+        xor_end_model.update_inputs(
+            new_state=input_state,
+            new_key=i_key,
+            new_enable_xor_key=1,
+            new_enable_xor_lsb=0,
+        )
+
+        # Forwards the input data
+        xor_end_model.assert_output(dut=dut)
+
+        # Now enable the XOR with the data
+        dut.i_enable_xor_key.value = 0
+        dut.i_enable_xor_lsb.value = 1
+
+        # Wait for few ns
+        await Timer(10, units="ns")
+
+        # Update the model and compute the expected output
+        xor_end_model.update_inputs(
+            new_state=input_state,
+            new_key=i_key,
+            new_enable_xor_key=0,
+            new_enable_xor_lsb=1,
+        )
+
+        # Forwards the input data
+        xor_end_model.assert_output(dut=dut)
 
     except Exception as e:
         raise RuntimeError(ERRORS["FAILED_SIMULATION"].format(e=e)) from e
 
 
-def test_sub_layer() -> None:
+def test_xor_end() -> None:
     """Function Invoked by the test runner to execute the tests."""
     # Define the simulator to use
     default_simulator = "verilator"
@@ -149,16 +166,11 @@ def test_sub_layer() -> None:
     # Define the sources
     sources = [
         f"{rtl_path}/ascon_pkg.v",
-        f"{rtl_path}/substitution_layer/sbox.v",
-        f"{rtl_path}/substitution_layer/sub_layer.v",
+        f"{rtl_path}/xor/xor_end.v",
     ]
 
-    parameters = {
-        "NUM_SBOXES": 64,
-    }
-
     # Top-level HDL entity
-    entity = "sub_layer"
+    entity = "xor_end"
 
     try:
         # Get simulator name from environment
@@ -173,7 +185,6 @@ def test_sub_layer() -> None:
             clean=True,
             hdl_library=library,
             hdl_toplevel=entity,
-            parameters=parameters,
             sources=sources,
             verbose=True,
             waves=True,
@@ -194,4 +205,4 @@ def test_sub_layer() -> None:
 
 
 if __name__ == "__main__":
-    test_sub_layer()
+    test_xor_end()
