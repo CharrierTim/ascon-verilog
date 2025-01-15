@@ -23,8 +23,34 @@ from ascon_utils import (
 )
 from cocotb_utils import (
     ERRORS,
+    assert_output,
     init_hierarchy,
+    log_generics,
 )
+
+INPUTS = {
+    "i_state": init_hierarchy(dims=(5,), bitwidth=64, use_random=False),
+}
+
+
+def get_generics(dut: cocotb.handle.HierarchyObject) -> dict:
+    """
+    Retrieve the generic parameters from the DUT.
+
+    Parameters
+    ----------
+    dut : object
+        The device under test (DUT).
+
+    Returns
+    -------
+    dict
+        A dictionary containing the generic parameters.
+
+    """
+    return {
+        "NUM_SBOXES": int(dut.NUM_SBOXES.value),
+    }
 
 
 @cocotb.test()
@@ -41,14 +67,28 @@ async def reset_dut_test(dut: cocotb.handle.HierarchyObject) -> None:
 
     """
     try:
+        # Get the generic parameters and Log them
+        generics = get_generics(dut=dut)
+        log_generics(dut=dut, generics=generics)
+
         # Define the model
-        sub_layer_model = SubLayerModel()
+        sub_layer_model = SubLayerModel(num_sboxes=generics["NUM_SBOXES"])
 
         # Initialize the DUT
-        dut.i_state.value = init_hierarchy(dims=(5,), bitwidth=64, use_random=False)
+        dut.i_state.value = INPUTS["i_state"]
 
         # Wait for few ns (combinatorial logic only in the DUT)
         await Timer(10, units="ns")
+
+        # Verify the output
+        sub_layer_model_output = sub_layer_model.compute(i_state=INPUTS["i_state"])
+
+        # Assert the output
+        assert_output(
+            dut=dut,
+            input_state=INPUTS["i_state"],
+            expected_output=sub_layer_model_output,
+        )
 
     except Exception as e:
         raise RuntimeError(ERRORS["FAILED_RESET"].format(e=e)) from e
@@ -58,10 +98,38 @@ async def reset_dut_test(dut: cocotb.handle.HierarchyObject) -> None:
 async def sub_layer_test(dut: cocotb.handle.HierarchyObject) -> None:
     """Test the DUT's behavior during normal computation."""
     try:
+        # Get the generic parameters
+        generics = get_generics(dut=dut)
+
         # Define the model
-        sub_layer_model = SubLayerModel()
+        sub_layer_model = SubLayerModel(num_sboxes=generics["NUM_SBOXES"])
 
         await reset_dut_test(dut)
+
+        # Test with specific inputs
+        input_state = [
+            0x80400C0600000000,
+            0x0001020304050607,
+            0x08090A0B0C0D0EFF,
+            0x0001020304050607,
+            0x08090A0B0C0D0E0F,
+        ]
+
+        # Set specific inputs
+        dut.i_state.value = input_state
+
+        # Wait for few ns
+        await Timer(10, units="ns")
+
+        # Compute the expected output
+        sub_layer_model_output = sub_layer_model.compute(i_state=input_state)
+
+        # Assert the output
+        assert_output(
+            dut=dut,
+            input_state=input_state,
+            expected_output=sub_layer_model_output,
+        )
 
     except Exception as e:
         raise RuntimeError(ERRORS["FAILED_SIMULATION"].format(e=e)) from e
