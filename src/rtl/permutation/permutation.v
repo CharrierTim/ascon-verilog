@@ -90,23 +90,32 @@ module permutation (
   // Clocked process for registers
   always_ff @(posedge clock or posedge reset_n) begin
     if (reset_n) begin
-      state_reg_output  <= '{default:0};
-      o_cipher <= 0;
-      o_tag    <= 0;
+      state_reg_output <= '{default: 0};
+      o_cipher         <= 0;
+      o_tag            <= 0;
     end else begin
+      // System enable
       if (i_sys_enable) begin
+
+        // State output assignment
         if (i_enable_state_reg) begin
           state_reg_output <= state_xor_end_output;
         end
+
+        // Cipher output assignment
         if (i_enable_cipher_reg) begin
           o_cipher <= state_xor_begin_output[0];
         end
+
+        // Tag output assignment
         if (i_enable_tag_reg) begin
           o_tag <= {state_xor_end_output[3], state_xor_end_output[4]};
+
         end else begin
+          // Soft reset
           state_reg_output <= '{default: 0};
-          o_cipher <= 0;
-          o_tag <= 0;
+          o_cipher         <= 0;
+          o_tag            <= 0;
         end
       end
     end
