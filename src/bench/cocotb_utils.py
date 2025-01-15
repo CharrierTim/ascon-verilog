@@ -466,3 +466,37 @@ def log_generics(dut: cocotb.handle.HierarchyObject, generics: dict[str, int]) -
     """
     table = tabulate(generics.items(), headers=["Parameter", "Value"], tablefmt="grid")
     dut._log.info(f"Running with generics:\n{table}")
+
+
+def assert_output(
+    dut: cocotb.handle.HierarchyObject,
+    input_state: list[int],
+    expected_output: list[int],
+) -> None:
+    """
+    Assert the output of the DUT and log the input and output values.
+
+    Parameters
+    ----------
+    dut : cocotb.handle.HierarchyObject
+        The device under test (DUT).
+    input_state : list[int]
+        The input state values.
+    expected_output : list[int]
+        The expected output values.
+    dut_output : list[cocotb.binary.BinaryValue]
+        The DUT output values.
+
+    """
+    input_str = " ".join([f"{x & 0xFFFFFFFFFFFFFFFF:016X}" for x in input_state])
+    output_str = " ".join([f"{x & 0xFFFFFFFFFFFFFFFF:016X}" for x in expected_output])
+    output_dut_str = " ".join(
+        [f"{x.value.integer & 0xFFFFFFFFFFFFFFFF:016X}" for x in dut.o_state],
+    )
+
+    dut._log.info(f"Input:      {input_str}")
+    dut._log.info(f"Expected:   {output_str}")
+    dut._log.info(f"DUT Output: {output_dut_str}")
+    dut._log.info("")
+
+    assert output_str == output_dut_str, ERRORS["FAILED_COMPUTATION"]
