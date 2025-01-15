@@ -7,5 +7,9 @@
         "**/.venv": true,
         "**/MNIST": true,
         "**/sim_build": true
-    }
+    },
+    // Workspace settings
+    "[python]": {
+        "editor.defaultFormatter": "charliermarsh.ruff",
+    },
 }
