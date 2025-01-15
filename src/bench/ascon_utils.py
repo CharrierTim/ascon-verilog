@@ -206,19 +206,65 @@ class SubLayerModel:
     def __init__(
         self,
         num_sboxes: int = 64,
-        *,
-        s_table: list[int] = S_TABLE,
     ) -> None:
         """
         Initialize the model.
 
         Parameters
         ----------
-        num_sboxes : int, optional
-            The number of S-Boxes. Default is 64.
-        s_table : list[int], optional
-            The S-Box lookup table. If not provided, a default table is used.
+        num_sboxes : int
+            The number of S-Boxes in the Substitution Layer.
 
         """
         self.num_sboxes = num_sboxes
-        self.s_table = s_table or S_TABLE
+        self.sbox_model = SboxModel()
+        self.i_state = [0] * 5
+        self.o_state = [0] * 5
+
+    def compute(self, i_state: list[int]) -> list[int]:
+        """
+        Compute the output state based on the input state.
+
+        Parameters
+        ----------
+        i_state : list[int]
+            The input state array.
+
+        Returns
+        -------
+        list[int]
+            The computed output state array.
+
+        """
+        # Set
+        self.i_state = i_state
+        for i in range(self.num_sboxes):
+            # Get one byte from each word of the input state
+            input_bits = [
+                (i_state[4] >> i) & 1,
+                (i_state[3] >> i) & 1,
+                (i_state[2] >> i) & 1,
+                (i_state[1] >> i) & 1,
+                (i_state[0] >> i) & 1,
+            ]
+
+            # Create an integer from the bits
+            input_bits = (
+                (input_bits[4] << 4)
+                | (input_bits[3] << 3)
+                | (input_bits[2] << 2)
+                | (input_bits[1] << 1)
+                | input_bits[0]
+            )
+
+            # Compute the output bits
+            sbox_output = self.sbox_model.compute(i_data=input_bits)
+
+            # Perform the substitution
+            self.o_state[4] |= (sbox_output & 1) << i
+            self.o_state[3] |= ((sbox_output >> 1) & 1) << i
+            self.o_state[2] |= ((sbox_output >> 2) & 1) << i
+            self.o_state[1] |= ((sbox_output >> 3) & 1) << i
+            self.o_state[0] |= ((sbox_output >> 4) & 1) << i
+
+        return self.o_state
