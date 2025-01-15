@@ -25,7 +25,6 @@ from cocotb_utils import (
     ERRORS,
     assert_output,
     init_hierarchy,
-    log_generics,
 )
 
 INPUTS = {
@@ -78,11 +77,11 @@ async def diffusion_layer_test(dut: cocotb.handle.HierarchyObject) -> None:
 
         # Test with specific inputs
         input_state = [
-            0x80400C0600000000,
-            0x0001020304050607,
-            0x08090A0B0C0D0EFF,
-            0x0001020304050607,
-            0x08090A0B0C0D0E0F,
+            0x8849060F0C0D0EFF,
+            0x80410E05040506F7,
+            0xFFFFFFFFFFFFFF0F,
+            0x80400406000000F0,
+            0x0808080A08080808,
         ]
 
         # Set specific inputs
@@ -92,9 +91,8 @@ async def diffusion_layer_test(dut: cocotb.handle.HierarchyObject) -> None:
         await Timer(10, units="ns")
 
         # Compute the expected output
-        diffusion_layer_model_output = diffusion_layer_model.compute(
-            i_state=input_state,
-        )
+        diffusion_layer_model.update_state(new_state=input_state)
+        diffusion_layer_model_output = diffusion_layer_model.compute()
 
         # Assert the output
         assert_output(
@@ -102,6 +100,25 @@ async def diffusion_layer_test(dut: cocotb.handle.HierarchyObject) -> None:
             input_state=input_state,
             expected_output=diffusion_layer_model_output,
         )
+
+        # Try with random inputs
+        for _ in range(10):
+            # Set random inputs
+            dut.i_state.value = init_hierarchy(dims=(5,), bitwidth=64, use_random=True)
+
+            # Wait for few ns
+            await Timer(10, units="ns")
+
+            # Compute the expected output
+            diffusion_layer_model.update_state(new_state=dut.i_state.value)
+            diffusion_layer_model_output = diffusion_layer_model.compute()
+
+            # Assert the output
+            assert_output(
+                dut=dut,
+                input_state=dut.i_state.value,
+                expected_output=diffusion_layer_model_output,
+            )
 
     except Exception as e:
         raise RuntimeError(ERRORS["FAILED_SIMULATION"].format(e=e)) from e
@@ -129,7 +146,7 @@ def test_diffusion_layer() -> None:
 
     try:
         # Get simulator name from environment
-        simulator = os.environ.get("SIM", default_simulator)
+        simulator = os.environ.get("SIM", default=default_simulator)
 
         # Initialize the test runner
         runner = get_runner(simulator_name=simulator)
@@ -137,7 +154,7 @@ def test_diffusion_layer() -> None:
         # Build HDL sources
         runner.build(
             build_dir="sim_build",
-            clean=True,
+            clean=False,
             hdl_library=library,
             hdl_toplevel=entity,
             sources=sources,
