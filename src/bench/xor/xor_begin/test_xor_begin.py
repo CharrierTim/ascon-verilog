@@ -26,7 +26,7 @@ from cocotb_utils import (
     init_hierarchy,
 )
 
-INPUTS = {
+INIT_INPUTS = {
     "i_state": init_hierarchy(dims=(5,), bitwidth=64, use_random=False),
     "i_data": 0,
     "i_key": 0,
@@ -51,15 +51,11 @@ async def reset_dut_test(dut: cocotb.handle.HierarchyObject) -> None:
     try:
         # Define the model
         xor_begin_model = XorBeginModel(
-            i_state=INPUTS["i_state"],
-            i_data=INPUTS["i_data"],
-            i_key=INPUTS["i_key"],
-            i_enable_xor_key=INPUTS["i_enable_xor_key"],
-            i_enable_xor_data=INPUTS["i_enable_xor_data"],
+            inputs=INIT_INPUTS,
         )
 
         # Initialize the DUT
-        for key, value in INPUTS.items():
+        for key, value in INIT_INPUTS.items():
             getattr(dut, key).value = value
 
         # Wait for few ns (combinatorial logic only in the DUT)
@@ -78,83 +74,62 @@ async def xor_begin_test(dut: cocotb.handle.HierarchyObject) -> None:
     try:
         # Define the model
         xor_begin_model = XorBeginModel(
-            i_state=INPUTS["i_state"],
-            i_data=INPUTS["i_data"],
-            i_key=INPUTS["i_key"],
-            i_enable_xor_key=INPUTS["i_enable_xor_key"],
-            i_enable_xor_data=INPUTS["i_enable_xor_data"],
+            inputs=INIT_INPUTS,
         )
 
         await reset_dut_test(dut)
 
         # Test with specific inputs
-        input_state = [
-            0xFFFFFFFFFFFFFFFF,
-            0xFFFFFFFFFFFFFFFF,
-            0xFFFFFFFFFFFFFFFF,
-            0xFFFFFFFFFFFFFFFF,
-            0xFFFFFFFFFFFFFFFF,
-        ]
-
-        i_data = 0xFFFFFFFFFFFFFFFF
-        i_key = 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+        new_inputs = {
+            "i_state": [
+                0xFFFFFFFFFFFFFFFF,
+                0xFFFFFFFFFFFFFFFF,
+                0xFFFFFFFFFFFFFFFF,
+                0xFFFFFFFFFFFFFFFF,
+                0xFFFFFFFFFFFFFFFF,
+            ],
+            "i_data": 0xFFFFFFFFFFFFFFFF,
+            "i_key": 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,
+            "i_enable_xor_key": 0,
+            "i_enable_xor_data": 0,
+        }
 
         # Set specific inputs
-        dut.i_state.value = input_state
-        dut.i_data.value = i_data
-        dut.i_key.value = i_key
+        for key, value in new_inputs.items():
+            getattr(dut, key).value = value
 
         # Wait for few ns
         await Timer(10, units="ns")
 
-        # Update the model and compute the expected output
-        xor_begin_model.update_inputs(
-            new_state=input_state,
-            new_data=i_data,
-            new_key=i_key,
-            new_enable_xor_key=0,
-            new_enable_xor_data=0,
-        )
-
-        # Forwards the input data
-        xor_begin_model.assert_output(dut=dut)
+        # Update the model and assert the output
+        xor_begin_model.assert_output(dut=dut, inputs=new_inputs)
 
         # Now enable the XOR with the key
-        dut.i_enable_xor_key.value = 1
+        new_inputs["i_enable_xor_key"] = 1
+
+        # Set specific inputs
+        for key, value in new_inputs.items():
+            getattr(dut, key).value = value
 
         # Wait for few ns
         await Timer(10, units="ns")
 
-        # Update the model and compute the expected output
-        xor_begin_model.update_inputs(
-            new_state=input_state,
-            new_data=i_data,
-            new_key=i_key,
-            new_enable_xor_key=1,
-            new_enable_xor_data=0,
-        )
-
-        # Forwards the input data
-        xor_begin_model.assert_output(dut=dut)
+        # Update the model and assert the output
+        xor_begin_model.assert_output(dut=dut, inputs=new_inputs)
 
         # Now enable the XOR with the data
-        dut.i_enable_xor_key.value = 0
-        dut.i_enable_xor_data.value = 1
+        new_inputs["i_enable_xor_key"] = 0
+        new_inputs["i_enable_xor_data"] = 1
+
+        # Set specific inputs
+        for key, value in new_inputs.items():
+            getattr(dut, key).value = value
 
         # Wait for few ns
         await Timer(10, units="ns")
 
-        # Update the model and compute the expected output
-        xor_begin_model.update_inputs(
-            new_state=input_state,
-            new_data=i_data,
-            new_key=i_key,
-            new_enable_xor_key=0,
-            new_enable_xor_data=1,
-        )
-
-        # Forwards the input data
-        xor_begin_model.assert_output(dut=dut)
+        # Update the model and assert the output
+        xor_begin_model.assert_output(dut=dut, inputs=new_inputs)
 
     except Exception as e:
         raise RuntimeError(ERRORS["FAILED_SIMULATION"].format(e=e)) from e
