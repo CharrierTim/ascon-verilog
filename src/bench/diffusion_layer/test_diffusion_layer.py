@@ -145,8 +145,8 @@ def test_diffusion_layer() -> None:
 
     # Define the sources
     sources = [
-        f"{rtl_path}/ascon_pkg.v",
-        f"{rtl_path}/diffusion_layer/diffusion_layer.v",
+        f"{rtl_path}/ascon_pkg.sv",
+        f"{rtl_path}/diffusion_layer/diffusion_layer.sv",
     ]
 
     # Top-level HDL entity
@@ -162,7 +162,7 @@ def test_diffusion_layer() -> None:
         # Build HDL sources
         runner.build(
             build_dir="sim_build",
-            clean=False,
+            clean=True,
             hdl_library=library,
             hdl_toplevel=entity,
             sources=sources,
