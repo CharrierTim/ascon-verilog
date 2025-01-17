@@ -1,7 +1,7 @@
 """
-Testbench for the BatchNorm2d Layer.
+Testbench for the Diffusion Layer module.
 
-This module tests the BatchNorm2d layer function module by comparing the
+This module tests the Diffusion Layer module by comparing the
 output of the Python implementation with the VHDL implementation.
 
 @author: Timothée Charrier
@@ -26,7 +26,7 @@ from cocotb_utils import (
     init_hierarchy,
 )
 
-INPUTS = {
+INIT_INPUTS = {
     "i_state": init_hierarchy(dims=(5,), bitwidth=64, use_random=False),
 }
 
@@ -46,13 +46,17 @@ async def reset_dut_test(dut: cocotb.handle.HierarchyObject) -> None:
     """
     try:
         # Define the model
-        diffusion_layer_model = DiffusionLayerModel(INPUTS["i_state"])
+        diffusion_layer_model = DiffusionLayerModel(inputs=INIT_INPUTS)
+
+        # Set the inputs
+        for key, value in INIT_INPUTS.items():
+            dut.__getattr__(key).value = value
 
         # Wait for few ns (combinatorial logic only in the DUT)
         await Timer(10, units="ns")
 
         # Verify the output
-        diffusion_layer_model.assert_output(dut=dut)
+        diffusion_layer_model.assert_output(dut=dut, inputs=INIT_INPUTS)
 
     except Exception as e:
         raise RuntimeError(ERRORS["FAILED_RESET"].format(e=e)) from e
@@ -63,44 +67,66 @@ async def diffusion_layer_test(dut: cocotb.handle.HierarchyObject) -> None:
     """Test the DUT's behavior during normal computation."""
     try:
         # Define the model
-        diffusion_layer_model = DiffusionLayerModel(INPUTS["i_state"])
+        diffusion_layer_model = DiffusionLayerModel(inputs=INIT_INPUTS)
 
         await reset_dut_test(dut)
 
         # Test with specific inputs
-        input_state = [
-            0x8849060F0C0D0EFF,
-            0x80410E05040506F7,
-            0xFFFFFFFFFFFFFF0F,
-            0x80400406000000F0,
-            0x0808080A08080808,
-        ]
+        new_inputs = {
+            "i_state": [
+                0x8849060F0C0D0EFF,
+                0x80410E05040506F7,
+                0xFFFFFFFFFFFFFF0F,
+                0x80400406000000F0,
+                0x0808080A08080808,
+            ],
+        }
 
         # Set specific inputs
-        dut.i_state.value = input_state
+        for key, value in new_inputs.items():
+            dut.__getattr__(key).value = value
 
         # Wait for few ns
         await Timer(10, units="ns")
 
-        # Compute the expected output
-        diffusion_layer_model.update_state(new_state=dut.i_state.value)
+        # Update and Assert the output
+        diffusion_layer_model.assert_output(dut=dut, inputs=new_inputs)
 
-        # Assert the output
-        diffusion_layer_model.assert_output(dut=dut)
+        # Set specific inputs
+        new_inputs["i_state"] = [
+            0x8CBD402180B4D43D,
+            0x778B87B53BCCBF49,
+            0x3E7883FEF208E8C0,
+            0x0B48487C6AFB2C4D,
+            0x0F20CDA96AE53627,
+        ]
 
-        # Try with random inputs
-        for _ in range(10):
-            # Set random inputs
-            dut.i_state.value = init_hierarchy(dims=(5,), bitwidth=64, use_random=True)
+        for key, value in new_inputs.items():
+            dut.__getattr__(key).value = value
 
-            # Wait for few ns
-            await Timer(10, units="ns")
+        # Wait for few ns
+        await Timer(10, units="ns")
 
-            # Compute the expected output
-            diffusion_layer_model.update_state(new_state=dut.i_state.value)
+        # Update and Assert the output
+        diffusion_layer_model.assert_output(dut=dut, inputs=new_inputs)
 
-            # Assert the output
-            diffusion_layer_model.assert_output(dut=dut)
+        # Set specific inputs
+        new_inputs["i_state"] = [
+            0xBAF6B13AFEB21E28,
+            0xABA64F6758F07EB1,
+            0x59D013C5A157E2F3,
+            0xA4CDCEB4CF026350,
+            0xA982986B3A1FBA70,
+        ]
+
+        for key, value in new_inputs.items():
+            dut.__getattr__(key).value = value
+
+        # Wait for few ns
+        await Timer(10, units="ns")
+
+        # Update and Assert the output
+        diffusion_layer_model.assert_output(dut=dut, inputs=new_inputs)
 
     except Exception as e:
         raise RuntimeError(ERRORS["FAILED_SIMULATION"].format(e=e)) from e
@@ -136,7 +162,7 @@ def test_diffusion_layer() -> None:
         # Build HDL sources
         runner.build(
             build_dir="sim_build",
-            clean=True,
+            clean=False,
             hdl_library=library,
             hdl_toplevel=entity,
             sources=sources,

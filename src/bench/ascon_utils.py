@@ -380,53 +380,79 @@ class DiffusionLayerModel:
     This class defines the model used to verify the Diffusion Layer module.
     """
 
-    def __init__(self, i_state: list[int]) -> None:
+    def __init__(
+        self,
+        inputs: dict | None = None,
+    ) -> None:
         """
         Initialize the model.
 
         Parameters
         ----------
-        i_state : list[int]
-            The input state array.
+        inputs : dict, optional
+            The initial input dictionary
 
         """
-        self.i_state = i_state
-        self.o_state = [0] * 5
+        if inputs is None:
+            inputs = {
+                "i_state": [0] * 5,
+            }
+
+        # Inputs parameters
+        self.i_state: list[int] = inputs["i_state"]
+
+        # Output state
+        self.o_state: list[int] = [0] * 5
+
+    def update_inputs(self, inputs: dict) -> None:
+        """
+        Update the input state of the model.
+
+        Parameters
+        ----------
+        inputs : dict
+            The new input dictionary
+
+        """
+        # Update the inputs
+        self.i_state = inputs["i_state"]
 
     @staticmethod
-    def rotate_right(value: int, num_bits: int, bit_width: int = 64) -> int:
+    def rotate_right(value: int, num_bits: int) -> int:
         """
-        Rotate the integer value to the right by the specified number of bits.
+        Rotate the bits of a 64-bit integer to the right.
 
         Parameters
         ----------
         value : int
-            The integer value to rotate.
+            The input value.
         num_bits : int
             The number of bits to rotate.
-        bit_width : int, optional
-            The bit width of the integer, default is 64.
 
         Returns
         -------
         int
-            The rotated integer value.
+            The rotated value.
 
         """
-        return (value >> num_bits) | (
-            (value << (bit_width - num_bits)) & ((1 << bit_width) - 1)
-        )
+        return (value >> num_bits) | ((value & (1 << num_bits) - 1) << (64 - num_bits))
 
-    def compute(self) -> list[int]:
+    def compute(
+        self,
+        inputs: dict | None = None,
+    ) -> None:
         """
         Compute the output state based on the input state.
 
         Returns
         -------
-        list[int]
-            The computed output state.
+        Nothing, only updates the state array.
 
         """
+        # Update the inputs
+        if inputs is not None:
+            self.update_inputs(inputs)
+
         self.o_state[0] = (
             self.i_state[0]
             ^ self.rotate_right(self.i_state[0], 19)
@@ -453,23 +479,10 @@ class DiffusionLayerModel:
             ^ self.rotate_right(self.i_state[4], 41)
         )
 
-        return self.o_state
-
-    def update_state(self, new_state: list[int]) -> None:
-        """
-        Update the input state of the model.
-
-        Parameters
-        ----------
-        new_state : list[int]
-            The new state to be set.
-
-        """
-        self.i_state = new_state
-
     def assert_output(
         self,
         dut: cocotb.handle.HierarchyObject,
+        inputs: dict | None = None,
     ) -> None:
         """
         Assert the output of the DUT and log the input and output values.
@@ -478,10 +491,12 @@ class DiffusionLayerModel:
         ----------
         dut : cocotb.handle.HierarchyObject
             The device under test (DUT).
+        inputs : dict, optional
+            The input dictionary.
 
         """
         # Compute the expected output
-        self.compute()
+        self.compute(inputs=inputs)
 
         # Convert the output to a list of integers
         self.i_state = [int(x) for x in self.i_state]
