@@ -258,86 +258,89 @@ class SubstitutionLayerModel:
 
     def __init__(
         self,
-        num_sboxes: int = 64,
-        i_state: list[int] | None = None,
+        inputs: dict | None = None,
     ) -> None:
         """
         Initialize the model.
 
         Parameters
         ----------
-        num_sboxes : int
-            The number of S-Boxes in the Substitution Layer.
-        i_state : list[int], optional
-            The initial state of the inputs.
-            Default is [0, 0, 0, 0, 0].
+        inputs : dict, optional
+            The initial input dictionary
 
         """
-        self.num_sboxes = num_sboxes
-        self.sbox_model = SboxModel()
-        self.i_state = i_state or [0] * 5
-        self.o_state = [0] * 5
+        if inputs is None:
+            inputs = {
+                "i_state": [0] * 5,
+            }
 
-    def compute(self) -> list[int]:
+        # Inputs parameters
+        self.i_state: list[int] = inputs["i_state"]
+
+        # Output state
+        self.o_state: list[int] = [0] * 5
+
+    def compute(
+        self,
+        inputs: dict | None = None,
+    ) -> list[int]:
         """
         Compute the output state based on the input state.
 
+        Parameters
+        ----------
+        inputs : dict, optional
+            The input dictionary.
+
         Returns
         -------
-        list[int]
-            The computed output state array.
+        Nothing, only updates the state array.
 
         """
-        for i in range(self.num_sboxes):
-            # Get one bit from each word of the input state
-            input_bits = [
-                (self.i_state[4] >> i) & 1,
-                (self.i_state[3] >> i) & 1,
-                (self.i_state[2] >> i) & 1,
-                (self.i_state[1] >> i) & 1,
-                (self.i_state[0] >> i) & 1,
-            ]
+        # Update the inputs
+        if inputs is not None:
+            self.update_inputs(inputs)
 
-            # Create an integer from the bits
-            input_bits = (
-                (input_bits[4] << 4)
-                | (input_bits[3] << 3)
-                | (input_bits[2] << 2)
-                | (input_bits[1] << 1)
-                | input_bits[0]
-            )
+        # Create a copy of the input state
+        state = self.i_state.copy()
 
-            # Compute the output bits
-            sbox_output = self.sbox_model.compute(i_data=input_bits)
+        # Compute the output state
+        state[0] ^= state[4]
+        state[4] ^= state[3]
+        state[2] ^= state[1]
+        temp = [(state[i] ^ 0xFFFFFFFFFFFFFFFF) & state[(i + 1) % 5] for i in range(5)]
+        for i in range(5):
+            state[i] ^= temp[(i + 1) % 5]
+        state[1] ^= state[0]
+        state[0] ^= state[4]
+        state[3] ^= state[2]
+        state[2] ^= 0xFFFFFFFFFFFFFFFF
 
-            # Perform the substitution
-            self.o_state[4] |= (sbox_output & 1) << i
-            self.o_state[3] |= ((sbox_output >> 1) & 1) << i
-            self.o_state[2] |= ((sbox_output >> 2) & 1) << i
-            self.o_state[1] |= ((sbox_output >> 3) & 1) << i
-            self.o_state[0] |= ((sbox_output >> 4) & 1) << i
-
-        return self.o_state
+        self.o_state = state
 
     def update_inputs(
         self,
-        new_state: list[int] | None = None,
+        inputs: dict | None = None,
     ) -> None:
         """
         Update the input state of the model.
 
         Parameters
         ----------
-        new_state : list[int], optional
-            The new state to be set.
+        inputs : dict, optional
+            The new input dictionary
 
         """
-        if new_state is not None:
-            self.i_state = new_state
+        if inputs is None:
+            return
+
+        # Update the inputs
+        self.i_state = inputs["i_state"]
 
     def assert_output(
         self,
         dut: cocotb.handle.HierarchyObject,
+        inputs: dict | None = None,
     ) -> None:
         """
         Assert the output of the DUT and log the input and output values.
@@ -346,10 +349,12 @@ class SubstitutionLayerModel:
         ----------
         dut : cocotb.handle.HierarchyObject
             The device under test (DUT).
+        inputs : dict, optional
+            The input dictionary.
 
         """
         # Compute the expected output
-        self.compute()
+        self.compute(inputs=inputs)
 
         # Convert the output to a list of integers
         input_str = " ".join([f"{to_unsigned(x):016X}" for x in self.i_state])
