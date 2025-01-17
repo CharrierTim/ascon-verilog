@@ -2,9 +2,10 @@
 // By: Timothée Charrier
 
 `timescale 1ns / 1ps
-import ascon_pkg::S_TABLE;
 
-module sbox (
+module sbox
+  import ascon_pkg::S_TABLE;
+(
     input  logic unsigned [4:0] i_data,  //! Input Data to SBOX
     output logic          [4:0] o_data   //! Output Data from SBOX
 );

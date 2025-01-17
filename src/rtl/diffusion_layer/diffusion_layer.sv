@@ -2,10 +2,10 @@
 // By: Timothée Charrier
 
 `timescale 1ns / 1ps
-import ascon_pkg::t_state_array;
 
-
-module diffusion_layer (
+module diffusion_layer
+  import ascon_pkg::t_state_array;
+(
     input  t_state_array i_state,  //! Input State Array
     output t_state_array o_state   //! Output State Array
 );
