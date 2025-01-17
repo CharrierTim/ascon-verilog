@@ -20,7 +20,6 @@ from cocotb.triggers import Timer
 sys.path.insert(0, str((Path(__file__).parent.parent).resolve()))
 
 from ascon_utils import (
-    C_I_STATE,
     AddLayerModel,
 )
 from cocotb_utils import (
@@ -33,6 +32,18 @@ INIT_INPUTS = {
     "i_state": init_hierarchy(dims=(5,), bitwidth=64, use_random=False),
     "i_round": 0,
 }
+
+# Define the inputs
+IV = 0x80400C0600000000
+KEY = 0x000102030405060708090A0B0C0D0E0F
+NONCE = 0x000102030405060708090A0B0C0D0E0F
+STATE = [
+    IV,
+    (KEY >> 64) & 0xFFFFFFFFFFFFFFFF,  # Upper 64 bits of KEY
+    KEY & 0xFFFFFFFFFFFFFFFF,  # Lower 64 bits of KEY
+    (NONCE >> 64) & 0xFFFFFFFFFFFFFFFF,  # Upper 64 bits of NONCE
+    NONCE & 0xFFFFFFFFFFFFFFFF,  # Lower 64 bits of NONCE
+]
 
 
 @cocotb.test()
@@ -81,7 +92,7 @@ async def add_layer_test(dut: cocotb.handle.HierarchyObject) -> None:
 
         # Set specific inputs defined by i_state = [IV, P1, P2, P3, P4]
         new_inputs = {
-            "i_state": C_I_STATE,
+            "i_state": STATE,
             "i_round": 0,
         }
 
@@ -131,8 +142,8 @@ def test_add_layer() -> None:
 
     # Define the sources
     sources = [
-        f"{rtl_path}/ascon_pkg.v",
-        f"{rtl_path}/add_layer/add_layer.v",
+        f"{rtl_path}/ascon_pkg.sv",
+        f"{rtl_path}/add_layer/add_layer.sv",
     ]
 
     # Top-level HDL entity
@@ -148,7 +159,7 @@ def test_add_layer() -> None:
         # Build HDL sources
         runner.build(
             build_dir="sim_build",
-            clean=False,
+            clean=True,
             hdl_library=library,
             hdl_toplevel=entity,
             sources=sources,
