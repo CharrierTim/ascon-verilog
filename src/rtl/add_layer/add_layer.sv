@@ -2,10 +2,11 @@
 // By: Timothée Charrier
 
 `timescale 1ns / 1ps
-import ascon_pkg::t_state_array, ascon_pkg::ROUND_CONSTANTS;
 
 
-module add_layer (
+module add_layer
+  import ascon_pkg::t_state_array, ascon_pkg::ROUND_CONSTANTS;
+(
     input  logic         [3:0] i_round,  //! Input round number, used to select round constant
     input  t_state_array       i_state,  //! Input State Array
     output t_state_array       o_state   //! Output State Array
