@@ -160,9 +160,9 @@ def test_substitution_layer() -> None:
 
     # Define the sources
     sources = [
-        f"{rtl_path}/ascon_pkg.v",
-        f"{rtl_path}/substitution_layer/sbox.v",
-        f"{rtl_path}/substitution_layer/substitution_layer.v",
+        f"{rtl_path}/ascon_pkg.sv",
+        f"{rtl_path}/substitution_layer/sbox.sv",
+        f"{rtl_path}/substitution_layer/substitution_layer.sv",
     ]
 
     parameters = {
