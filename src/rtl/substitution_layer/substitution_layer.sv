@@ -2,9 +2,10 @@
 // By: Timothée Charrier
 
 `timescale 1ns / 1ps
-import ascon_pkg::t_state_array;
 
-module substitution_layer #(
+module substitution_layer
+  import ascon_pkg::t_state_array;
+#(
     parameter int NUM_SBOXES = 64  //! Number of SBOXES in the Substitution Layer
 ) (
     input  t_state_array i_state,  //! Input State Array
