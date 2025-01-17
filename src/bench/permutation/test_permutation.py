@@ -13,18 +13,35 @@ from pathlib import Path
 
 import cocotb
 from cocotb.runner import get_runner
-from cocotb.triggers import Timer
+from cocotb.triggers import RisingEdge
 
 # Add the directory containing the utils.py file to the Python path
 sys.path.insert(0, str((Path(__file__).parent.parent).resolve()))
 
 from ascon_utils import (
-    XorEndModel,
+    PermutationModel,
 )
 from cocotb_utils import (
     ERRORS,
     init_hierarchy,
+    initialize_dut,
 )
+
+INIT_INPUTS = {
+    "i_sys_enable": 0,
+    "i_mux_select": 0,
+    "i_enable_xor_key_begin": 0,
+    "i_enable_xor_data_begin": 0,
+    "i_enable_xor_key_end": 0,
+    "i_enable_xor_lsb_end": 0,
+    "i_enable_cipher_reg": 0,
+    "i_enable_tag_reg": 0,
+    "i_enable_state_reg": 0,
+    "i_state": init_hierarchy(dims=(5,), bitwidth=64, use_random=False),
+    "i_round": 0,
+    "i_data": 0x0000000000000000,
+    "i_key": 0x00000000000000000000000000000000,
+}
 
 
 @cocotb.test()
@@ -41,24 +58,16 @@ async def reset_dut_test(dut: cocotb.handle.HierarchyObject) -> None:
 
     """
     try:
-        _ = 1
         # Define the model
-        # permutation_model = XorEndModel(
-        #     i_state=INPUTS["i_state"],
-        #     i_key=INPUTS["i_key"],
-        #     i_enable_xor_key=INPUTS["i_enable_xor_key"],
-        #     i_enable_xor_lsb=INPUTS["i_enable_xor_lsb"],
-        # )
+        permutation_model = PermutationModel(
+            inputs=INIT_INPUTS,
+        )
 
-        # # Initialize the DUT
-        # for key, value in INPUTS.items():
-        #     getattr(dut, key).value = value
+        # Initialize the DUT
+        await initialize_dut(dut=dut, inputs=INIT_INPUTS, outputs={})
 
-        # # Wait for few ns (combinatorial logic only in the DUT)
-        # await Timer(10, units="ns")
-
-        # # Verify the output
-        # permutation_model.assert_output(dut=dut)
+        # Update and Assert the output
+        permutation_model.assert_output(dut=dut, inputs=INIT_INPUTS)
 
     except Exception as e:
         raise RuntimeError(ERRORS["FAILED_RESET"].format(e=e)) from e
@@ -68,16 +77,58 @@ async def reset_dut_test(dut: cocotb.handle.HierarchyObject) -> None:
 async def permutation_test(dut: cocotb.handle.HierarchyObject) -> None:
     """Test the DUT's behavior during normal computation."""
     try:
-        _ = 1
-        # # Define the model
-        # permutation_model = XorEndModel(
-        #     i_state=INPUTS["i_state"],
-        #     i_key=INPUTS["i_key"],
-        #     i_enable_xor_key=INPUTS["i_enable_xor_key"],
-        #     i_enable_xor_lsb=INPUTS["i_enable_xor_lsb"],
-        # )
+        permutation_model = PermutationModel(
+            inputs=INIT_INPUTS,
+        )
 
-        # await reset_dut_test(dut)
+        # Reset the DUT
+        await reset_dut_test(dut=dut)
+
+        # Define specific inputs
+        new_inputs = {
+            "i_mux_select": 0,
+            "i_enable_xor_key_begin": 0,
+            "i_enable_xor_data_begin": 0,
+            "i_enable_xor_key_end": 0,
+            "i_enable_xor_lsb_end": 0,
+            "i_enable_cipher_reg": 0,
+            "i_enable_tag_reg": 0,
+            "i_enable_state_reg": 1,
+            "i_state": [
+                0x4484A574CC1220E9,
+                0xB9D923E9D31C04E8,
+                0x7C40162196D79E1E,
+                0xC36DF040C62A25A2,
+                0xC77518AF6E08589F,
+            ],
+            "i_round": 0,
+            "i_data": 0x6167652056484480,
+            "i_key": 0x000102030405060708090A0B0C0D0E0F,
+        }
+
+        # Log the Key and Data
+        dut._log.info(f"Data:       {new_inputs['i_data']:016X}")
+        dut._log.info(f"Key:        {new_inputs['i_key']:016X}")
+
+        for i_round in range(13):
+            # Update the values
+            new_inputs["i_round"] = i_round
+
+            if i_round == 0:
+                new_inputs["i_mux_select"] = 0
+            else:
+                new_inputs["i_mux_select"] = 1
+
+            # Set specific inputs
+            for key, value in new_inputs.items():
+                dut.__getattr__(key).value = value
+
+            await RisingEdge(signal=dut.clock)
+
+            # Update and Assert the output
+            permutation_model.assert_output(dut=dut, inputs=new_inputs)
+
+        await RisingEdge(signal=dut.clock)
 
     except Exception as e:
         raise RuntimeError(ERRORS["FAILED_COMPUTATION"].format(e=e)) from e
@@ -96,14 +147,14 @@ def test_permutation() -> None:
 
     # Define the sources
     sources = [
-        f"{rtl_path}/ascon_pkg.v",
-        f"{rtl_path}/add_layer/add_layer.v",
-        f"{rtl_path}/substitution_layer/sbox.v",
-        f"{rtl_path}/substitution_layer/substitution_layer.v",
-        f"{rtl_path}/diffusion_layer/diffusion_layer.v",
-        f"{rtl_path}/xor/xor_begin.v",
-        f"{rtl_path}/xor/xor_end.v",
-        f"{rtl_path}/permutation/permutation.v",
+        f"{rtl_path}/ascon_pkg.sv",
+        f"{rtl_path}/add_layer/add_layer.sv",
+        f"{rtl_path}/substitution_layer/sbox.sv",
+        f"{rtl_path}/substitution_layer/substitution_layer.sv",
+        f"{rtl_path}/diffusion_layer/diffusion_layer.sv",
+        f"{rtl_path}/xor/xor_begin.sv",
+        f"{rtl_path}/xor/xor_end.sv",
+        f"{rtl_path}/permutation/permutation.sv",
     ]
 
     # Top-level HDL entity
@@ -118,12 +169,15 @@ def test_permutation() -> None:
 
         # Build HDL sources
         runner.build(
+            build_args=[
+                "-j",
+                "0",
+            ],
             build_dir="sim_build",
             clean=True,
             hdl_library=library,
             hdl_toplevel=entity,
             sources=sources,
-            verbose=True,
             waves=True,
         )
 
@@ -133,7 +187,6 @@ def test_permutation() -> None:
             hdl_toplevel=entity,
             hdl_toplevel_library=library,
             test_module=f"test_{entity}",
-            verbose=True,
             waves=True,
         )
 
