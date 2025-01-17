@@ -1,7 +1,7 @@
 """
-Testbench for the BatchNorm2d Layer.
+Testbench for the Addition Layer module.
 
-This module tests the BatchNorm2d layer function module by comparing the
+This module tests the Addition Layer module by comparing the
 output of the Python implementation with the VHDL implementation.
 
 @author: Timothée Charrier
@@ -20,8 +20,8 @@ from cocotb.triggers import Timer
 sys.path.insert(0, str((Path(__file__).parent.parent).resolve()))
 
 from ascon_utils import (
-    INPUT_STATE,
-    AdderConstModel,
+    C_I_STATE,
+    AddLayerModel,
 )
 from cocotb_utils import (
     ERRORS,
@@ -50,9 +50,8 @@ async def reset_dut_test(dut: cocotb.handle.HierarchyObject) -> None:
     """
     try:
         # Define the model
-        adder_model = AdderConstModel(
-            i_state=INIT_INPUTS["i_state"],
-            i_round=INIT_INPUTS["i_round"],
+        adder_model = AddLayerModel(
+            inputs=INIT_INPUTS,
         )
 
         # Initialize the DUT
@@ -74,43 +73,46 @@ async def add_layer_test(dut: cocotb.handle.HierarchyObject) -> None:
     """Test the DUT's behavior during normal computation."""
     try:
         # Define the model
-        adder_model = AdderConstModel(
-            i_state=INPUT_STATE,
-            i_round=INIT_INPUTS["i_round"],
+        adder_model = AddLayerModel(
+            inputs=INIT_INPUTS,
         )
 
         await reset_dut_test(dut)
 
-        # Set specific inputs defined by INPUT_STATE = [IV, P1, P2, P3, P4]
-        dut.i_state.value = INPUT_STATE
-        dut.i_round.value = 0
+        # Set specific inputs defined by i_state = [IV, P1, P2, P3, P4]
+        new_inputs = {
+            "i_state": C_I_STATE,
+            "i_round": 0,
+        }
+
+        for key, value in new_inputs.items():
+            getattr(dut, key).value = value
 
         # Wait for few ns
         await Timer(10, units="ns")
 
         # Assert the output
-        adder_model.assert_output(dut=dut)
+        adder_model.assert_output(dut=dut, inputs=new_inputs)
 
         dut._log.info("Starting random tests...")
 
         # Try with random inputs
         for _ in range(10):
             # Generate random inputs
-            random_state = init_hierarchy(dims=(5,), bitwidth=64, use_random=True)
-            random_round = random.randint(0, 10)
+            new_inputs = {
+                "i_state": init_hierarchy(dims=(5,), bitwidth=64, use_random=True),
+                "i_round": random.randint(0, 10),
+            }
 
             # Set the inputs
-            dut.i_state.value = random_state
-            dut.i_round.value = random_round
+            for key, value in new_inputs.items():
+                getattr(dut, key).value = value
 
             # Wait for few ns
             await Timer(10, units="ns")
 
-            # Check the output
-            adder_model.update_inputs(new_state=random_state, new_round=random_round)
-
-            # Assert the output
-            adder_model.assert_output(dut=dut)
+            # Update and Assert the output
+            adder_model.assert_output(dut=dut, inputs=new_inputs)
 
     except Exception as e:
         raise RuntimeError(ERRORS["FAILED_SIMULATION"].format(e=e)) from e

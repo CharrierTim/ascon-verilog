@@ -101,86 +101,79 @@ class AddLayerModel:
     def __init__(
         self,
         *,
-        i_state: list[int] | None = None,
-        i_round: int = 0,
-        constant_array_t: list[int] | None = None,
+        inputs: dict | None = None,
     ) -> None:
         """
         Initialize the model.
 
         Parameters
         ----------
-        i_state : list[int], optional
-            Initial state of the inputs.
-            Default is [0, 0, 0, 0, 0].
-        i_round : int, optional
-            The round number.
-        constant_array_t : list[int], optional
-            Array of constants used in the computation.
-            If not provided, a default array is used.
+        inputs : dict, optional
+            The initial input dictionary
+            Default is None.
 
         """
-        self.i_state = i_state or [0] * 5
-        self.i_round = i_round
-        self.constant_array_t = constant_array_t or [
-            0xF0,
-            0xE1,
-            0xD2,
-            0xC3,
-            0xB4,
-            0xA5,
-            0x96,
-            0x87,
-            0x78,
-            0x69,
-            0x5A,
-            0x4B,
-        ]
-        self.o_state = [0] * len(self.i_state)
+        if inputs is None:
+            inputs = {
+                "i_state": [0] * 5,
+                "i_round": 0,
+            }
 
-    def compute(self) -> list[int]:
+        # Inputs parameters
+        self.i_state: list[int] = inputs["i_state"]
+        self.i_round: int = inputs["i_round"]
+
+    def compute(
+        self,
+        inputs: dict | None = None,
+    ) -> list[int]:
         """
         Compute the output state based on the current input state and round.
 
+        Parameters
+        ----------
+        inputs : dict, optional
+            The input dictionary.
+
         Returns
         -------
-        list[int]
-            The computed output state.
+        Nothing, only updates the state array.
 
         """
-        self.o_state[0] = self.i_state[0]
-        self.o_state[1] = self.i_state[1]
-        self.o_state[2] = (self.i_state[2] & 0xFFFFFFFFFFFFFF00) | (
-            self.i_state[2] ^ (self.constant_array_t[self.i_round] & 0xFF)
-        )
-        self.o_state[3] = self.i_state[3]
-        self.o_state[4] = self.i_state[4]
-        return self.o_state
+        # Update the inputs
+        if inputs is not None:
+            self.update_inputs(inputs)
+
+        # Create a copy of the input state
+        self.o_state = self.i_state.copy()
+
+        # Add the round constant to the state
+        self.o_state[2] ^= 0xF0 - self.i_round * 0x10 + self.i_round * 0x1
 
     def update_inputs(
         self,
-        new_state: list[int] | None = None,
-        new_round: int | None = None,
+        inputs: dict | None = None,
     ) -> None:
         """
         Update the input state of the model.
 
         Parameters
         ----------
-        new_state : list[int], optional
-            The new state to be set.
-        new_round : int, optional
-            The new round to be set.
+        inputs : dict, optional
+            The new input dictionary
 
         """
-        if new_state is not None:
-            self.i_state = new_state
-        if new_round is not None:
-            self.i_round = new_round
+        if inputs is None:
+            return
+
+        # Update the inputs
+        self.i_state = inputs["i_state"]
+        self.i_round = inputs["i_round"]
 
     def assert_output(
         self,
         dut: cocotb.handle.HierarchyObject,
+        inputs: dict | None = None,
     ) -> None:
         """
         Assert the output of the DUT and log the input and output values.
@@ -189,10 +182,12 @@ class AddLayerModel:
         ----------
         dut : cocotb.handle.HierarchyObject
             The device under test (DUT).
+        inputs : dict, optional
+            The input dictionary.
 
         """
         # Compute the expected output
-        self.compute()
+        self.compute(inputs=inputs)
 
         # Convert the output to a list of integers
         round_str = f"{self.i_round:02X}"
@@ -521,6 +516,7 @@ class XorBeginModel:
         inputs : dict, optional
             The initial input dictionary
             Default is None.
+
         """
         if inputs is None:
             inputs = {
