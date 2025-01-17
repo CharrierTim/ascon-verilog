@@ -148,8 +148,8 @@ def test_xor_begin() -> None:
 
     # Define the sources
     sources = [
-        f"{rtl_path}/ascon_pkg.v",
-        f"{rtl_path}/xor/xor_begin.v",
+        f"{rtl_path}/ascon_pkg.sv",
+        f"{rtl_path}/xor/xor_begin.sv",
     ]
 
     # Top-level HDL entity
@@ -164,6 +164,7 @@ def test_xor_begin() -> None:
 
         # Build HDL sources
         runner.build(
+            build_args=["-j", "0"],
             build_dir="sim_build",
             clean=True,
             hdl_library=library,
