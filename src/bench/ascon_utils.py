@@ -15,61 +15,6 @@ if TYPE_CHECKING:
 
 from cocotb_utils import ERRORS
 
-# ======================================================================================
-# Constants used in the Ascon modules Testbenches.
-# ======================================================================================
-IV = 0x80400C0600000000
-KEY = 0x000102030405060708090A0B0C0D0E0F
-NONCE = 0x000102030405060708090A0B0C0D0E0F
-ASSOCIATED_DATA_32 = 0x32303232
-ASSOCIATED_DATA_64 = (ASSOCIATED_DATA_32 << 32) | 0x80000000
-P1 = 0x446576656C6F7070
-P2 = 0x657A204153434F4E
-P3 = 0x20656E206C616E67
-P4 = 0x6167652056484480
-C_I_STATE = [
-    IV,
-    (KEY >> 64) & 0xFFFFFFFFFFFFFFFF,  # Upper 64 bits of KEY
-    KEY & 0xFFFFFFFFFFFFFFFF,  # Lower 64 bits of KEY
-    (NONCE >> 64) & 0xFFFFFFFFFFFFFFFF,  # Upper 64 bits of NONCE
-    NONCE & 0xFFFFFFFFFFFFFFFF,  # Lower 64 bits of NONCE
-]
-S_TABLE = [
-    0x04,
-    0x0B,
-    0x1F,
-    0x14,
-    0x1A,
-    0x15,
-    0x09,
-    0x02,
-    0x1B,
-    0x05,
-    0x08,
-    0x12,
-    0x1D,
-    0x03,
-    0x06,
-    0x1C,
-    0x1E,
-    0x13,
-    0x07,
-    0x0E,
-    0x00,
-    0x0D,
-    0x11,
-    0x18,
-    0x10,
-    0x0C,
-    0x01,
-    0x19,
-    0x16,
-    0x0A,
-    0x0F,
-    0x17,
-]
-# ======================================================================================
-
 
 def to_unsigned(value: int, bitwidth: int = 64) -> int:
     """
@@ -229,7 +174,7 @@ class SboxModel:
             The S-Box lookup table.
 
         """
-        self.s_table = s_table or S_TABLE
+        self.s_table = s_table
 
     def compute(self, i_data: int) -> int:
         """
@@ -807,3 +752,166 @@ class XorEndModel:
 
         # Assert the output
         assert output_str == output_dut_str, ERRORS["FAILED_COMPUTATION"]
+
+
+class PermutationModel:
+    """
+    Model for the Permutation module.
+
+    This class defines the model used to verify the Permutation module.
+    """
+
+    def __init__(
+        self,
+        *,
+        inputs: dict | None = None,
+    ) -> None:
+        """
+        Initialize the model.
+
+        Parameters
+        ----------
+        inputs : dict, optional
+            The initial input dictionary
+            Default is None.
+
+        """
+        if inputs is None:
+            inputs = {
+                "i_state": [0] * 5,
+                "i_round": 0,
+                "i_data": 0,
+                "i_key": 0,
+            }
+
+        # Inputs parameters
+        self.i_state: list[int] = inputs["i_state"]
+        self.i_round: int = inputs["i_round"]
+        self.i_data: int = inputs["i_data"]
+        self.i_key: int = inputs["i_key"]
+
+        # Output state
+        self.o_state: list[int] = [0] * 5
+
+    def update_inputs(
+        self,
+        inputs: dict | None = None,
+    ) -> None:
+        """
+        Update the input state, data, key, and enable signals of the model.
+
+        Parameters
+        ----------
+        inputs : dict, optional
+            The new input dictionary
+
+        """
+        if inputs is None:
+            return
+
+        # Update the inputs
+        self.i_state = inputs["i_state"]
+        self.i_round = inputs["i_round"]
+        self.i_data = inputs["i_data"]
+        self.i_key = inputs["i_key"]
+
+        # Reset the output state
+        self.o_state = [0] * 5
+
+        # Get the rotation function from DiffusionLayerModel
+        self.rotate_right = DiffusionLayerModel.rotate_right
+
+    def compute(
+        self,
+        inputs: dict | None = None,
+    ) -> list[int]:
+        """
+        Compute the output state based on the current input state.
+
+        Parameters
+        ----------
+        inputs : dict, optional
+            The input dictionary.
+
+        Returns
+        -------
+        Nothing, only updates the state array.
+
+        """
+        # Update the inputs
+        if inputs is not None:
+            self.update_inputs(inputs)
+
+        # Create a copy of the input state
+        state = self.i_state.copy()
+
+        for r in range(self.i_round):
+            # Perform the Round Constants addition
+            state[2] ^= 0xF0 - r * 0x10 + r * 0x1
+
+            # Perform the Substitution Layer
+            state[0] ^= state[4]
+            state[4] ^= state[3]
+            state[2] ^= state[1]
+            temp = [
+                (state[i] ^ 0xFFFFFFFFFFFFFFFF) & state[(i + 1) % 5] for i in range(5)
+            ]
+            for i in range(5):
+                state[i] ^= temp[(i + 1) % 5]
+            state[1] ^= state[0]
+            state[0] ^= state[4]
+            state[3] ^= state[2]
+            state[2] ^= 0xFFFFFFFFFFFFFFFF
+
+            # Perform the Linear Diffusion Layer
+            state[0] ^= self.rotate_right(state[0], 19) ^ self.rotate_right(
+                state[0],
+                28,
+            )
+            state[1] ^= self.rotate_right(state[1], 61) ^ self.rotate_right(
+                state[1],
+                39,
+            )
+            state[2] ^= self.rotate_right(state[2], 1) ^ self.rotate_right(state[2], 6)
+            state[3] ^= self.rotate_right(state[3], 10) ^ self.rotate_right(
+                state[3],
+                17,
+            )
+            state[4] ^= self.rotate_right(state[4], 7) ^ self.rotate_right(state[4], 41)
+
+            # Set the output state
+            self.o_state = state
+
+    def assert_output(
+        self,
+        dut: cocotb.handle.HierarchyObject,
+        inputs: dict | None = None,
+    ) -> None:
+        """
+        Assert the output of the DUT and log the input and output values.
+
+        Parameters
+        ----------
+        dut : cocotb.handle.HierarchyObject
+            The device under test (DUT).
+        inputs : dict, optional
+            The input dictionary.
+
+        """
+        # Compute the expected output
+        self.compute(inputs=inputs)
+
+        # Convert the output to a list of integers
+        round_str = f"{self.i_round:02X}"
+        input_str = " ".join([f"{x:016X}" for x in self.i_state])
+        output_str = " ".join([f"{x:016X}" for x in self.o_state])
+        output_dut_str = " ".join([f"{int(x):016X}" for x in dut.o_state])
+
+        # Log the input and output values
+        dut._log.info(f"Round:      {round_str}")
+        dut._log.info(f"Input:      {input_str}")
+        dut._log.info(f"Expected:   {output_str}")
+        dut._log.info(f"DUT Output: {output_dut_str}")
+        dut._log.info("")
+
+        # Assert the output
