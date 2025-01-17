@@ -8,6 +8,7 @@ output of the Python implementation with the VHDL implementation.
 """
 
 import os
+import random
 import sys
 from pathlib import Path
 
@@ -27,7 +28,7 @@ from cocotb_utils import (
     log_generics,
 )
 
-INPUTS = {
+INIT_INPUTS = {
     "i_state": init_hierarchy(dims=(5,), bitwidth=64, use_random=False),
 }
 
@@ -72,18 +73,18 @@ async def reset_dut_test(dut: cocotb.handle.HierarchyObject) -> None:
 
         # Define the model
         substitution_layer_model = SubstitutionLayerModel(
-            num_sboxes=generics["NUM_SBOXES"],
-            i_state=INPUTS["i_state"],
+            inputs=INIT_INPUTS,
         )
 
         # Initialize the DUT
-        dut.i_state.value = INPUTS["i_state"]
+        for key, value in INIT_INPUTS.items():
+            dut.__getattr__(key).value = value
 
         # Wait for few ns (combinatorial logic only in the DUT)
         await Timer(10, units="ns")
 
         # Assert the output
-        substitution_layer_model.assert_output(dut=dut)
+        substitution_layer_model.assert_output(dut=dut, inputs=INIT_INPUTS)
 
     except Exception as e:
         raise RuntimeError(ERRORS["FAILED_RESET"].format(e=e)) from e
@@ -94,36 +95,54 @@ async def substitution_layer_test(dut: cocotb.handle.HierarchyObject) -> None:
     """Test the DUT's behavior during normal computation."""
     try:
         # Get the generic parameters
-        generics = get_generics(dut=dut)
+        _ = get_generics(dut=dut)
 
         # Define the model
         substitution_layer_model = SubstitutionLayerModel(
-            num_sboxes=generics["NUM_SBOXES"],
-            i_state=INPUTS["i_state"],
+            inputs=INIT_INPUTS,
         )
 
         await reset_dut_test(dut)
 
         # Test with specific inputs
-        input_state = [
-            0x80400C0600000000,
-            0x0001020304050607,
-            0x08090A0B0C0D0EFF,
-            0x0001020304050607,
-            0x08090A0B0C0D0E0F,
-        ]
+        new_inputs = {
+            "i_state": [
+                0x80400C0600000000,
+                0x0001020304050607,
+                0x08090A0B0C0D0EFF,
+                0x0001020304050607,
+                0x08090A0B0C0D0E0F,
+            ],
+        }
 
         # Set specific inputs
-        dut.i_state.value = input_state
+        for key, value in new_inputs.items():
+            dut.__getattr__(key).value = value
 
         # Wait for few ns
         await Timer(10, units="ns")
 
-        # Update the model
-        substitution_layer_model.update_inputs(new_state=input_state)
+        # Update the model and assert the output
+        substitution_layer_model.assert_output(dut=dut, inputs=new_inputs)
 
-        # Assert the output
-        substitution_layer_model.assert_output(dut=dut)
+        dut._log.info("Starting random tests...")
+
+        # Try with random inputs
+        for _ in range(10):
+            # Generate random inputs
+            new_inputs = {
+                "i_state": init_hierarchy(dims=(5,), bitwidth=64, use_random=True),
+            }
+
+            # Set the inputs
+            for key, value in new_inputs.items():
+                getattr(dut, key).value = value
+
+            # Wait for few ns
+            await Timer(10, units="ns")
+
+            # Update and Assert the output
+            substitution_layer_model.assert_output(dut=dut, inputs=new_inputs)
 
     except Exception as e:
         raise RuntimeError(ERRORS["FAILED_SIMULATION"].format(e=e)) from e
