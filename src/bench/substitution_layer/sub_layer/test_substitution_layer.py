@@ -1,14 +1,13 @@
 """
-Testbench for the BatchNorm2d Layer.
+Testbench for the Substitution Layer module.
 
-This module tests the BatchNorm2d layer function module by comparing the
+This module tests the Substitution Layer module by comparing the
 output of the Python implementation with the VHDL implementation.
 
 @author: Timothée Charrier
 """
 
 import os
-import random
 import sys
 from pathlib import Path
 
