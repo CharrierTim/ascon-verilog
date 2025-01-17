@@ -1,5 +1,9 @@
 `timescale 1ns / 1ps
 
+`ifndef ASCON_PKG_V
+`define ASCON_PKG_V
+
+
 package ascon_pkg;
 
   //
@@ -30,18 +34,6 @@ package ascon_pkg;
       8'h5A,
       8'h4B
   };
-
-  const logic [63:0] IV = 64'h80400C0600000000;
-  const logic [127:0] KEY = 128'h000102030405060708090A0B0C0D0E0F;
-  const logic [127:0] NONCE = 128'h000102030405060708090A0B0C0D0E0F;
-  const logic [31:0] ASSOCIATED_DATA_32 = 32'h32303232;
-
-  const logic [63:0] ASSOCIATED_DATA_64 = {ASSOCIATED_DATA_32, 32'h80000000};
-
-  const logic [63:0] P1 = 64'h446576656C6F7070;  // P1 for ASCON-128
-  const logic [63:0] P2 = 64'h657A204153434F4E;  // P2 for ASCON-128
-  const logic [63:0] P3 = 64'h20656E206C616E67;  // P3 for ASCON-128
-  const logic [63:0] P4 = 64'h6167652056484480;  // P4 for ASCON-128
 
   const
   substitution_table_t
@@ -81,3 +73,5 @@ package ascon_pkg;
   };
 
 endpackage : ascon_pkg
+
+`endif  // ASCON_PKG_V

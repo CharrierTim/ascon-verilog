@@ -2,9 +2,10 @@
 // By: Timothée Charrier
 
 `timescale 1ns / 1ps
-import ascon_pkg::t_state_array;
 
-module xor_begin (
+module xor_begin
+  import ascon_pkg::t_state_array;
+(
     input  t_state_array         i_state,            //! Input State Array
     input  logic         [ 63:0] i_data,             //! Input Data to XOR
     input  logic         [127:0] i_key,              //! Input Key to XOR

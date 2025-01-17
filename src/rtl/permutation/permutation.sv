@@ -2,9 +2,11 @@
 // By: Timothée Charrier
 
 `timescale 1ns / 1ps
-import ascon_pkg::*;
 
-module permutation (
+module permutation
+  import ascon_pkg::t_state_array;
+
+(
     input logic clock,         //! Clock signal
     input logic reset_n,       //! Reset signal, active low
     input logic i_sys_enable,  //! System enable signal, active high
@@ -88,8 +90,8 @@ module permutation (
   );
 
   // Clocked process for registers
-  always_ff @(posedge clock or posedge reset_n) begin
-    if (reset_n) begin
+  always_ff @(posedge clock or negedge reset_n) begin
+    if (reset_n == 1'b0) begin
       state_reg_output <= '{default: 0};
       o_cipher         <= 0;
       o_tag            <= 0;
