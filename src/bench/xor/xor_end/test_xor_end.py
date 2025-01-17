@@ -153,8 +153,8 @@ def test_xor_end() -> None:
 
     # Define the sources
     sources = [
-        f"{rtl_path}/ascon_pkg.v",
-        f"{rtl_path}/xor/xor_end.v",
+        f"{rtl_path}/ascon_pkg.sv",
+        f"{rtl_path}/xor/xor_end.sv",
     ]
 
     # Top-level HDL entity
@@ -170,7 +170,7 @@ def test_xor_end() -> None:
         # Build HDL sources
         runner.build(
             build_dir="sim_build",
-            clean=False,
+            clean=True,
             hdl_library=library,
             hdl_toplevel=entity,
             sources=sources,
