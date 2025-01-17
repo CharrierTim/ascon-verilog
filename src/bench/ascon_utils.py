@@ -27,7 +27,7 @@ P1 = 0x446576656C6F7070
 P2 = 0x657A204153434F4E
 P3 = 0x20656E206C616E67
 P4 = 0x6167652056484480
-INPUT_STATE = [
+C_I_STATE = [
     IV,
     (KEY >> 64) & 0xFFFFFFFFFFFFFFFF,  # Upper 64 bits of KEY
     KEY & 0xFFFFFFFFFFFFFFFF,  # Lower 64 bits of KEY
@@ -91,7 +91,7 @@ def to_unsigned(value: int, bitwidth: int = 64) -> int:
     return value & (1 << bitwidth) - 1
 
 
-class AdderConstModel:
+class AddLayerModel:
     """
     Model for the AdderConst module.
 
@@ -380,18 +380,18 @@ class DiffusionLayerModel:
     This class defines the model used to verify the Diffusion Layer module.
     """
 
-    def __init__(self, input_state: list[int]) -> None:
+    def __init__(self, i_state: list[int]) -> None:
         """
         Initialize the model.
 
         Parameters
         ----------
-        input_state : list[int]
+        i_state : list[int]
             The input state array.
 
         """
-        self.input_state = input_state
-        self.output_state = [0] * 5
+        self.i_state = i_state
+        self.o_state = [0] * 5
 
     @staticmethod
     def rotate_right(value: int, num_bits: int, bit_width: int = 64) -> int:
@@ -427,33 +427,33 @@ class DiffusionLayerModel:
             The computed output state.
 
         """
-        self.output_state[0] = (
-            self.input_state[0]
-            ^ self.rotate_right(self.input_state[0], 19)
-            ^ self.rotate_right(self.input_state[0], 28)
+        self.o_state[0] = (
+            self.i_state[0]
+            ^ self.rotate_right(self.i_state[0], 19)
+            ^ self.rotate_right(self.i_state[0], 28)
         )
-        self.output_state[1] = (
-            self.input_state[1]
-            ^ self.rotate_right(self.input_state[1], 61)
-            ^ self.rotate_right(self.input_state[1], 39)
+        self.o_state[1] = (
+            self.i_state[1]
+            ^ self.rotate_right(self.i_state[1], 61)
+            ^ self.rotate_right(self.i_state[1], 39)
         )
-        self.output_state[2] = (
-            self.input_state[2]
-            ^ self.rotate_right(self.input_state[2], 1)
-            ^ self.rotate_right(self.input_state[2], 6)
+        self.o_state[2] = (
+            self.i_state[2]
+            ^ self.rotate_right(self.i_state[2], 1)
+            ^ self.rotate_right(self.i_state[2], 6)
         )
-        self.output_state[3] = (
-            self.input_state[3]
-            ^ self.rotate_right(self.input_state[3], 10)
-            ^ self.rotate_right(self.input_state[3], 17)
+        self.o_state[3] = (
+            self.i_state[3]
+            ^ self.rotate_right(self.i_state[3], 10)
+            ^ self.rotate_right(self.i_state[3], 17)
         )
-        self.output_state[4] = (
-            self.input_state[4]
-            ^ self.rotate_right(self.input_state[4], 7)
-            ^ self.rotate_right(self.input_state[4], 41)
+        self.o_state[4] = (
+            self.i_state[4]
+            ^ self.rotate_right(self.i_state[4], 7)
+            ^ self.rotate_right(self.i_state[4], 41)
         )
 
-        return self.output_state
+        return self.o_state
 
     def update_state(self, new_state: list[int]) -> None:
         """
@@ -465,7 +465,7 @@ class DiffusionLayerModel:
             The new state to be set.
 
         """
-        self.input_state = new_state
+        self.i_state = new_state
 
     def assert_output(
         self,
@@ -484,9 +484,9 @@ class DiffusionLayerModel:
         self.compute()
 
         # Convert the output to a list of integers
-        self.input_state = [int(x) for x in self.input_state]
-        input_str = " ".join([f"{to_unsigned(x):016X}" for x in self.input_state])
-        output_str = " ".join([f"{to_unsigned(x):016X}" for x in self.output_state])
+        self.i_state = [int(x) for x in self.i_state]
+        input_str = " ".join([f"{to_unsigned(x):016X}" for x in self.i_state])
+        output_str = " ".join([f"{to_unsigned(x):016X}" for x in self.o_state])
         output_dut_str = " ".join(
             [f"{to_unsigned(x.value.integer):016X}" for x in dut.o_state],
         )
@@ -663,96 +663,103 @@ class XorEndModel:
     def __init__(
         self,
         *,
-        i_state: list[int] | None = None,
-        i_key: int = 0,
-        i_enable_xor_key: bool = False,
-        i_enable_xor_lsb: bool = False,
+        inputs: dict | None = None,
     ) -> None:
         """
         Initialize the model.
 
         Parameters
         ----------
-        i_state : list[int], optional
-            The initial state of the inputs.
-            Default is [0, 0, 0, 0, 0].
-        i_key : int, optional
-            The input key to XOR.
-        i_enable_xor_key : bool, optional
-            Enable XOR with Key, active high.
-        i_enable_xor_lsb : bool, optional
-            Enable XOR with LSB, active high.
+        inputs : dict, optional
+            The initial input dictionary
+            Default is None.
 
         """
-        self.i_state: list[int] = i_state or [0] * 5
-        self.i_key = i_key
-        self.i_enable_xor_key = i_enable_xor_key
-        self.i_enable_xor_lsb = i_enable_xor_lsb
-        self.o_state = [0] * 5
+        if inputs is None:
+            inputs = {
+                "i_state": [0] * 5,
+                "i_key": 0,
+                "i_enable_xor_key": 0,
+                "i_enable_xor_lsb": 0,
+            }
 
-    def compute(self) -> list[int]:
-        """
-        Compute the output state based on the current input state.
+        # Inputs parameters
+        self.i_state: list[int] = inputs["i_state"]
+        self.i_key: int = inputs["i_key"]
+        self.i_enable_xor_key: int = inputs["i_enable_xor_key"]
+        self.i_enable_xor_lsb: int = inputs["i_enable_xor_lsb"]
 
-        Returns
-        -------
-        list[int]
-            The computed output state.
-
-        """
-        self.o_state[0] = self.i_state[0]
-        self.o_state[1] = self.i_state[1]
-        self.o_state[2] = self.i_state[2]
-
-        state_part_3 = self.i_state[3]
-        state_part_4 = (self.i_state[4] >> 1) | ((self.i_state[4] & 1) << 63)
-        state_part_4 ^= self.i_enable_xor_lsb
-
-        self.o_state[3] = (
-            state_part_3 ^ (self.i_key >> 64) if self.i_enable_xor_key else state_part_3
-        )
-        self.o_state[4] = (
-            state_part_4 ^ (self.i_key & 0xFFFFFFFFFFFFFFFF)
-            if self.i_enable_xor_key
-            else state_part_4
-        )
-
-        return self.o_state
+        # Output state
+        self.state: list[int] = [0] * 5
 
     def update_inputs(
         self,
-        new_state: list[int] | None = None,
-        new_key: int | None = None,
-        new_enable_xor_key: bool | None = None,
-        new_enable_xor_lsb: bool | None = None,
+        inputs: dict | None = None,
     ) -> None:
         """
         Update the input state, data, key, and enable signals of the model.
 
         Parameters
         ----------
-        new_state : list[int], optional
-            The new state to be set.
-        new_key : int, optional
-            The new key to be set.
-        new_enable_xor_key : bool, optional
-            The new XOR Key enable signal to be set.
-        new_enable_xor_lsb : bool, optional
-            The new XOR Data enable signal to be set.
+        inputs : dict, optional
+            The new input dictionary
 
         """
-        if new_state is not None:
-            self.i_state = new_state
-        if new_key is not None:
-            self.i_key = new_key
-        if new_enable_xor_key is not None:
-            self.i_enable_xor_key = new_enable_xor_key
-        if new_enable_xor_lsb is not None:
-            self.i_enable_xor_lsb = new_enable_xor_lsb
+        if inputs is None:
+            return
+
+        # Update the inputs
+        self.i_state = inputs["i_state"]
+        self.i_key = inputs["i_key"]
+        self.i_enable_xor_key = inputs["i_enable_xor_key"]
+        self.i_enable_xor_lsb = inputs["i_enable_xor_lsb"]
+
+        # Reset the output state
+        self.state = [0] * 5
+
+    def compute(
+        self,
+        inputs: dict | None = None,
+    ) -> list[int]:
+        """
+        Compute the output state based on the current input state.
+
+        Parameters
+        ----------
+        inputs : dict, optional
+            The input dictionary.
+
+        Returns
+        -------
+        Nothing, only updates the state array.
+
+        """
+        # Update the inputs
+        if inputs is not None:
+            self.update_inputs(inputs)
+
+        # Compute the output state
+        self.state[0] = self.i_state[0]
+        self.state[1] = self.i_state[1]
+        self.state[2] = self.i_state[2]
+
+        state_part_3 = self.i_state[3]
+        state_part_4 = (self.i_state[4] >> 1) | ((self.i_state[4] & 1) << 63)
+        state_part_4 ^= self.i_enable_xor_lsb
+
+        self.state[3] = (
+            state_part_3 ^ (self.i_key >> 64) if self.i_enable_xor_key else state_part_3
+        )
+        self.state[4] = (
+            state_part_4 ^ (self.i_key & 0xFFFFFFFFFFFFFFFF)
+            if self.i_enable_xor_key
+            else state_part_4
+        )
 
     def assert_output(
         self,
         dut: cocotb.handle.HierarchyObject,
+        inputs: dict | None = None,
     ) -> None:
         """
         Assert the output of the DUT and log the input and output values.
@@ -761,19 +768,20 @@ class XorEndModel:
         ----------
         dut : cocotb.handle.HierarchyObject
             The device under test (DUT).
+        inputs : dict, optional
+            The input dictionary.
 
         """
         # Compute the expected output
-        self.compute()
+        self.compute(inputs=inputs)
 
         # Convert the output to a list of integers
         enable_str = (
-            f"XOR Key={int(self.i_enable_xor_key)}, "
-            f"XOR lsb={int(self.i_enable_xor_lsb)}"
+            f"XOR Key = {self.i_enable_xor_key}, XOR lsb = {self.i_enable_xor_lsb},"
         )
         key_str = f"{self.i_key:032X}"
         input_str = " ".join([f"{to_unsigned(x):016X}" for x in self.i_state])
-        output_str = " ".join([f"{to_unsigned(x):016X}" for x in self.o_state])
+        output_str = " ".join([f"{to_unsigned(x):016X}" for x in self.state])
         output_dut_str = " ".join(
             [f"{to_unsigned(x.value.integer):016X}" for x in dut.o_state],
         )
