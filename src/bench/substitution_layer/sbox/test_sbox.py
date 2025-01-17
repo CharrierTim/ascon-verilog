@@ -19,12 +19,46 @@ from cocotb.triggers import Timer
 sys.path.insert(0, str((Path(__file__).parent.parent.parent).resolve()))
 
 from ascon_utils import (
-    S_TABLE,
     SboxModel,
 )
 from cocotb_utils import (
     ERRORS,
 )
+
+S_TABLE = [
+    0x04,
+    0x0B,
+    0x1F,
+    0x14,
+    0x1A,
+    0x15,
+    0x09,
+    0x02,
+    0x1B,
+    0x05,
+    0x08,
+    0x12,
+    0x1D,
+    0x03,
+    0x06,
+    0x1C,
+    0x1E,
+    0x13,
+    0x07,
+    0x0E,
+    0x00,
+    0x0D,
+    0x11,
+    0x18,
+    0x10,
+    0x0C,
+    0x01,
+    0x19,
+    0x16,
+    0x0A,
+    0x0F,
+    0x17,
+]
 
 
 @cocotb.test()
@@ -42,7 +76,7 @@ async def reset_dut_test(dut: cocotb.handle.HierarchyObject) -> None:
     """
     try:
         # Define the model
-        sbox_model = SboxModel()
+        sbox_model = SboxModel(s_table=S_TABLE)
 
         # Initialize the DUT
         dut.i_data.value = 0
@@ -65,7 +99,7 @@ async def sbox_test(dut: cocotb.handle.HierarchyObject) -> None:
     """Test the DUT's behavior during normal computation."""
     try:
         # Define the model
-        sbox_model = SboxModel()
+        sbox_model = SboxModel(s_table=S_TABLE)
 
         # Initialize the DUT
         await reset_dut_test(dut)
@@ -110,8 +144,8 @@ def test_sbox() -> None:
 
     # Define the sources
     sources = [
-        f"{rtl_path}/ascon_pkg.v",
-        f"{rtl_path}/substitution_layer/sbox.v",
+        f"{rtl_path}/ascon_pkg.sv",
+        f"{rtl_path}/substitution_layer/sbox.sv",
     ]
 
     # Top-level HDL entity
