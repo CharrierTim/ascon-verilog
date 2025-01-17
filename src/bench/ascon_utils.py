@@ -511,47 +511,84 @@ class XorBeginModel:
     def __init__(
         self,
         *,
-        i_state: list[int] | None = None,
-        i_data: int = 0,
-        i_key: int = 0,
-        i_enable_xor_key: bool = False,
-        i_enable_xor_data: bool = False,
+        inputs: dict | None = None,
     ) -> None:
         """
         Initialize the model.
 
         Parameters
         ----------
-        i_state : list[int], optional
-            The initial state of the inputs.
-            Default is [0, 0, 0, 0, 0].
-        i_data : int, optional
-            The input data to XOR.
-        i_key : int, optional
-            The input key to XOR.
-        i_enable_xor_key : bool, optional
-            Enable XOR with Key, active high.
-        i_enable_xor_data : bool, optional
-            Enable XOR with Data, active high.
+        inputs : dict, optional
+            The initial input dictionary
+            Default is None.
+        """
+        if inputs is None:
+            inputs = {
+                "i_state": [0] * 5,
+                "i_data": 0,
+                "i_key": 0,
+                "i_enable_xor_key": False,
+                "i_enable_xor_data": False,
+            }
+
+        # Inputs parameters
+        self.i_state: list[int] = inputs["i_state"]
+        self.i_data: int = inputs["i_data"]
+        self.i_key: int = inputs["i_key"]
+        self.i_enable_xor_key: bool = inputs["i_enable_xor_key"]
+        self.i_enable_xor_data: bool = inputs["i_enable_xor_data"]
+
+        # Output state
+        self.o_state: list[int] = [0] * 5
+
+    def update_inputs(
+        self,
+        inputs: dict | None = None,
+    ) -> None:
+        """
+        Update the input state, data, key, and enable signals of the model.
+
+        Parameters
+        ----------
+        inputs : dict, optional
+            The new input dictionary
 
         """
-        self.i_state: list[int] = i_state or [0] * 5
-        self.i_data = i_data
-        self.i_key = i_key
-        self.i_enable_xor_key = i_enable_xor_key
-        self.i_enable_xor_data = i_enable_xor_data
+        if inputs is None:
+            return
+
+        # Update the inputs
+        self.i_state = inputs["i_state"]
+        self.i_data = inputs["i_data"]
+        self.i_key = inputs["i_key"]
+        self.i_enable_xor_key = inputs["i_enable_xor_key"]
+        self.i_enable_xor_data = inputs["i_enable_xor_data"]
+
+        # Reset the output state
         self.o_state = [0] * 5
 
-    def compute(self) -> list[int]:
+    def compute(
+        self,
+        inputs: dict | None = None,
+    ) -> list[int]:
         """
         Compute the output state based on the current input state.
 
+        Parameters
+        ----------
+        inputs : dict, optional
+            The input dictionary.
+
         Returns
         -------
-        list[int]
-            The computed output state.
+        Nothing, only updates the state array.
 
         """
+        # Update the inputs
+        if inputs is not None:
+            self.update_inputs(inputs)
+
+        # Compute the output state
         key_state_combined = (
             (self.i_key ^ ((self.i_state[1] << 64) | self.i_state[2]))
             if self.i_enable_xor_key
@@ -566,47 +603,10 @@ class XorBeginModel:
         self.o_state[3] = self.i_state[3]
         self.o_state[4] = self.i_state[4]
 
-        return self.o_state
-
-    def update_inputs(
-        self,
-        new_state: list[int] | None = None,
-        new_data: int | None = None,
-        new_key: int | None = None,
-        new_enable_xor_key: bool | None = None,
-        new_enable_xor_data: bool | None = None,
-    ) -> None:
-        """
-        Update the input state, data, key, and enable signals of the model.
-
-        Parameters
-        ----------
-        new_state : list[int], optional
-            The new state to be set.
-        new_data : int, optional
-            The new data to be set.
-        new_key : int, optional
-            The new key to be set.
-        new_enable_xor_key : bool, optional
-            The new XOR Key enable signal to be set.
-        new_enable_xor_data : bool, optional
-            The new XOR Data enable signal to be set.
-
-        """
-        if new_state is not None:
-            self.i_state = new_state
-        if new_data is not None:
-            self.i_data = new_data
-        if new_key is not None:
-            self.i_key = new_key
-        if new_enable_xor_key is not None:
-            self.i_enable_xor_key = new_enable_xor_key
-        if new_enable_xor_data is not None:
-            self.i_enable_xor_data = new_enable_xor_data
-
     def assert_output(
         self,
         dut: cocotb.handle.HierarchyObject,
+        inputs: dict | None = None,
     ) -> None:
         """
         Assert the output of the DUT and log the input and output values.
@@ -615,15 +615,17 @@ class XorBeginModel:
         ----------
         dut : cocotb.handle.HierarchyObject
             The device under test (DUT).
+        inputs : dict, optional
+            The input dictionary.
 
         """
         # Compute the expected output
-        self.compute()
+        self.compute(inputs=inputs)
 
         # Convert the output to a list of integers
         enable_str = (
-            f"XOR Key={int(self.i_enable_xor_key)}, "
-            f"XOR Data={int(self.i_enable_xor_data)}"
+            f"XOR Key = {int(self.i_enable_xor_key)}, "
+            f"XOR Data = {int(self.i_enable_xor_data)}"
         )
         data_str = f"{self.i_data:016X}"
         key_str = f"{self.i_key:032X}"
@@ -644,13 +646,6 @@ class XorBeginModel:
 
         # Assert the output
         assert output_str == output_dut_str, ERRORS["FAILED_COMPUTATION"]
-
-
-# input  t_state_array         i_state,           //! Input State Array
-# input  logic         [127:0] i_key,             //! Input Key to XOR
-# input  logic                 i_enable_xor_key,  //! Enable XOR with Key, active high
-# input  logic                 i_enable_xor_lsb,  //! Enable XOR with LSB, active high
-# output t_state_array         o_state            //! Output State Array
 
 
 class XorEndModel:
