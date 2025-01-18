@@ -67,6 +67,9 @@ ERRORS = {
     "INVALID_RESET_VALUE": (
         "Invalid reset value. Please ensure the reset value is either 0 or 1."
     ),
+    "INVALID_STATE": (
+        "Invalid signal. Please ensure the signal is correctly configured."
+    ),
 }
 
 # Define progress bar thresholds
