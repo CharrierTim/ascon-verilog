@@ -29,237 +29,298 @@ module ascon_fsm (
     output logic o_enable_tag_reg,     //! Enable tag register, active high
 
     // Round counter outputs
-    output logic o_enable_round_counter,  //! Enable round counter, active high
-    output logic o_count_round_start,     //! Count round start signal
+    output logic o_enable_round_counter,   //! Enable round counter, active high
+    output logic o_reset_round_counter_6,  //! Reset round counter, active high
+    output logic o_reset_round_counter_12, //! Reset round counter, active high
 
     // Block counter outputs
-    output logic o_enable_block_counter, //! Enable block counter, active high
-    output logic o_count_block_start     //! Count block start signal
+    output logic o_enable_block_counter,  //! Enable block counter, active high
+    output logic o_reset_block_counter    //! Count block start signal
 );
 
   // States declaration
-  typedef enum logic [4:0] {
-    idle,
-    start_initialization,
-    end_initialization,
-    init,
-    end_init,              // INIT PHASE
-    idle_da,
-    init_da,
-    da,
-    end_da,                // ASSOCIATED DATA PHASE
-    idle_plain_text,
-    init_plain_text,
-    plain_text,
-    end_plain_text,        // PLAIN TEXT PHASE
-    idle_finalisation,
-    init_finalisation,
-    finalisation,
-    end_finalisation       // FINALISATION PHASE
+  typedef enum logic unsigned [4:0] {
+    STATE_IDLE,                     // Idle state
+    STATE_CONFIGURATION,            // Configuration state
+    STATE_START_INITIALIZATION,     // Start Initialization phase
+    STATE_PROCESS_INITIALIZATION,   // Process Initialization phase
+    STATE_END_INITIALIZATION,       // End Initialization phase
+    STATE_IDLE_ASSOCIATED_DATA,     // Idle state for Associated Data phase
+    STATE_START_ASSOCIATED_DATA,    // Start Associated Data phase
+    STATE_PROCESS_ASSOCIATED_DATA,  // Process Associated Data phase
+    STATE_END_ASSOCIATED_DATA,      // End Associated Data phase
+    STATE_IDLE_PLAIN_TEXT,          // Idle state for Plain Text phase
+    STATE_START_PLAIN_TEXT,         // Start Plain Text phase
+    STATE_PROCESS_PLAIN_TEXT,       // Process Plain Text phase
+    STATE_END_PLAIN_TEXT,           // End Plain Text phase
+    STATE_IDLE_FINALIZATION,        // Idle state for Finalization phase
+    STATE_START_FINALIZATION,       // Start Finalization phase
+    STATE_PROCESS_FINALIZATION,     // Process Finalization phase
+    STATE_END_FINALIZATION          // End Finalization phase
   } type_state_e;
 
   // Signals declaration
   type_state_e current_state, next_state;
 
-  // Sequential process for state register behaviour
   always_ff @(posedge clock or negedge reset_n) begin
     if (!reset_n) begin
-      current_state <= idle;
+      current_state <= STATE_IDLE;
     end else begin
       if (i_sys_enable) begin
         current_state <= next_state;
       end else begin
-        current_state <= idle;
+        current_state <= STATE_IDLE;
       end
     end
   end
 
-  // Combinatorial process for state register behaviour
   always_comb begin
-    next_state = current_state;
-    case (current_state)
-      // Idle state waiting for start signal
-      idle: begin
+    // Set default value
+    next_state = STATE_IDLE;
+
+    // State machine logic
+    unique case (current_state)
+
+      STATE_IDLE: begin
         if (i_start) begin
-          next_state = start_initialization;
+          next_state = STATE_CONFIGURATION;
         end
       end
 
-      // INITIALIZATION PHASE
-      start_initialization: next_state = end_initialization;
+      STATE_CONFIGURATION: begin
+        next_state = STATE_START_INITIALIZATION;
+      end
 
-      end_initialization: next_state = init;
+      STATE_START_INITIALIZATION: begin
+        next_state = STATE_PROCESS_INITIALIZATION;
+      end
 
-      init: begin
+      STATE_PROCESS_INITIALIZATION: begin
         if (i_round_count == 4'hA) begin
-          next_state = end_init;
-        end
-      end
-      end_init: next_state = idle_da;
-
-      // ASSOCIATED DATA PHASE
-      idle_da: begin
-        if (i_data_valid) begin
-          next_state = init_da;
-        end
-      end
-      init_da: next_state = da;
-      da: begin
-        if (i_round_count == 4'hA) begin
-          next_state = end_da;
-        end
-      end
-      end_da:  next_state = idle_plain_text;
-
-      // PLAIN TEXT PHASE
-      idle_plain_text: begin
-        if (i_data_valid) begin
-          next_state = init_plain_text;
-        end
-      end
-      init_plain_text: next_state = plain_text;
-      plain_text: begin
-        if (i_round_count == 4'hA) begin
-          next_state = end_plain_text;
-        end
-      end
-      end_plain_text: begin
-        if (i_block_count == 2'b11) begin
-          next_state = idle_finalisation;
+          next_state = STATE_END_INITIALIZATION;
         end else begin
-          next_state = idle_plain_text;
+          next_state = STATE_PROCESS_INITIALIZATION;
         end
       end
 
-      // FINALISATION PHASE
-      idle_finalisation: begin
+      STATE_END_INITIALIZATION: begin
+        next_state = STATE_IDLE_ASSOCIATED_DATA;
+      end
+
+
+      STATE_IDLE_ASSOCIATED_DATA: begin
         if (i_data_valid) begin
-          next_state = init_finalisation;
+          next_state = STATE_START_ASSOCIATED_DATA;
+        end else begin
+          next_state = STATE_IDLE_ASSOCIATED_DATA;
         end
       end
-      init_finalisation: next_state = finalisation;
-      finalisation: begin
-        if (i_round_count == 4'hA) begin
-          next_state = end_finalisation;
-        end
-      end
-      end_finalisation:  next_state = idle;
 
-      default: next_state = idle;
+      STATE_START_ASSOCIATED_DATA: begin
+        next_state = STATE_PROCESS_ASSOCIATED_DATA;
+      end
+
+      STATE_PROCESS_ASSOCIATED_DATA: begin
+        if (i_round_count == 4'hA) begin
+          next_state = STATE_END_ASSOCIATED_DATA;
+        end else begin
+          next_state = STATE_PROCESS_ASSOCIATED_DATA;
+        end
+      end
+
+      STATE_END_ASSOCIATED_DATA: begin
+        next_state = STATE_IDLE_PLAIN_TEXT;
+      end
+
+
+      STATE_IDLE_PLAIN_TEXT: begin
+        if (i_data_valid) begin
+          next_state = STATE_START_PLAIN_TEXT;
+        end else begin
+          next_state = STATE_IDLE_PLAIN_TEXT;
+        end
+      end
+
+      STATE_START_PLAIN_TEXT: begin
+        next_state = STATE_PROCESS_PLAIN_TEXT;
+      end
+
+      STATE_PROCESS_PLAIN_TEXT: begin
+        if (i_round_count == 4'hA) begin
+          next_state = STATE_END_PLAIN_TEXT;
+        end else begin
+          next_state = STATE_PROCESS_PLAIN_TEXT;
+        end
+      end
+
+      STATE_END_PLAIN_TEXT: begin
+        if (i_block_count == 2'b11) begin
+          next_state = STATE_IDLE_FINALIZATION;
+        end else begin
+          next_state = STATE_IDLE_PLAIN_TEXT;
+        end
+      end
+
+      STATE_IDLE_FINALIZATION: begin
+        if (i_data_valid) begin
+          next_state = STATE_START_FINALIZATION;
+        end else begin
+          next_state = STATE_IDLE_FINALIZATION;
+        end
+      end
+
+      STATE_START_FINALIZATION: begin
+        next_state = STATE_PROCESS_FINALIZATION;
+      end
+
+      STATE_PROCESS_FINALIZATION: begin
+        if (i_round_count == 4'hA) begin
+          next_state = STATE_END_FINALIZATION;
+        end else begin
+          next_state = STATE_PROCESS_FINALIZATION;
+        end
+      end
+
+      STATE_END_FINALIZATION: begin
+        next_state = STATE_IDLE;
+      end
+
+      default: begin
+        next_state = STATE_IDLE;
+      end
     endcase
   end
 
   // Combinatorial process for output signals
   always_comb begin
     // Default values
-    o_done = 0;
-    o_mux_select = 1;
-    o_enable_xor_data_begin = 0;
-    o_enable_xor_key_begin = 0;
-    o_enable_xor_key_end = 0;
-    o_enable_xor_lsb_end = 0;
-    o_enable_state_reg = 0;
-    o_enable_cipher_reg = 0;
-    o_enable_tag_reg = 0;
-    o_enable_round_counter = 0;
-    o_count_round_start = 0;
-    o_enable_block_counter = 0;
-    o_count_block_start = 0;
-    o_valid_cipher = 0;
+    o_done                   = 0;
+    o_mux_select             = 1;
+    o_enable_xor_data_begin  = 0;
+    o_enable_xor_key_begin   = 0;
+    o_enable_xor_key_end     = 0;
+    o_enable_xor_lsb_end     = 0;
+    o_enable_state_reg       = 1;
+    o_enable_cipher_reg      = 0;
+    o_enable_tag_reg         = 0;
+    o_enable_round_counter   = 0;
+    o_reset_round_counter_6  = 0;
+    o_reset_round_counter_12 = 0;
+    o_enable_block_counter   = 0;
+    o_reset_block_counter    = 0;
+    o_valid_cipher           = 0;
 
-    case (current_state)
-      // INITIALIZATION PHASE
-      conf_init: begin
-        o_mux_select = 0;
-        o_enable_round_counter = 1;
-        o_count_round_start = 1;
+    unique case (current_state)
+
+      //
+      // IDLE state, basically reset all signals
+      //
+      STATE_IDLE: begin
+        o_enable_state_reg       = 0;
+        o_mux_select             = 0;
+        o_reset_round_counter_12 = 1;
       end
-      end_conf_init: begin
-        o_mux_select = 0;
-        o_enable_round_counter = 1;
-        o_enable_state_reg = 1;
-        o_count_round_start = 0;
+
+      //
+      // Initialization phase
+      //
+
+      STATE_CONFIGURATION: begin
+        o_enable_state_reg       = 0;
+        o_mux_select             = 0;
+        o_reset_round_counter_12 = 1;
       end
-      init: begin
-        o_enable_state_reg = 1;
+
+      STATE_START_INITIALIZATION: begin
+        o_mux_select           = 0;
         o_enable_round_counter = 1;
       end
-      end_init: begin
+
+      STATE_PROCESS_INITIALIZATION: begin
+        o_enable_round_counter = 1;
+      end
+
+      STATE_END_INITIALIZATION: begin
         o_enable_xor_key_end = 1;
-        o_enable_state_reg = 1;
-        o_enable_round_counter = 0;
       end
 
-      // ASSOCIATED DATA PHASE
-      idle_da: begin
-        o_enable_round_counter = 1;
-        o_count_block_start = 1;
-      end
-      init_da: begin
-        o_enable_state_reg = 1;
-        o_enable_round_counter = 1;
-        o_enable_xor_data_begin = 1;
-      end
-      da: begin
-        o_enable_state_reg = 1;
-        o_enable_round_counter = 1;
-      end
-      end_da: begin
-        o_enable_xor_lsb_end = 1;
-        o_enable_state_reg = 1;
-        o_enable_block_counter = 1;
-        // init_block_o = 1;
+      //
+      // Associated Data phase
+      //
+
+      STATE_IDLE_ASSOCIATED_DATA: begin
+        o_enable_state_reg      = 0;
+        o_reset_round_counter_6 = 1;
       end
 
-      // PLAIN TEXT PHASE
-      idle_plain_text: begin
-        o_enable_round_counter = 1;
-        o_count_block_start = 1;
-      end
-      init_plain_text: begin
-        o_enable_state_reg = 1;
-        o_enable_round_counter = 1;
+      STATE_START_ASSOCIATED_DATA: begin
+        o_enable_round_counter  = 1;
         o_enable_xor_data_begin = 1;
-        o_enable_block_counter = 1;
-        o_enable_cipher_reg = 1;
-        o_valid_cipher = 1;
-      end
-      plain_text: begin
-        o_enable_state_reg = 1;
-        o_enable_round_counter = 1;
-      end
-      end_plain_text: begin
-        o_enable_state_reg = 1;
-        o_enable_round_counter = 1;
-        o_count_block_start = 1;
       end
 
-      // FINALISATION PHASE
-      idle_finalisation: begin
+      STATE_PROCESS_ASSOCIATED_DATA: begin
         o_enable_round_counter = 1;
-        o_count_round_start = 1;
       end
-      init_finalisation: begin
+
+      STATE_END_ASSOCIATED_DATA: begin
+        o_enable_xor_lsb_end  = 1;
+        o_reset_block_counter = 1;
+      end
+
+      //
+      // Plain Text phase
+      //
+
+      STATE_IDLE_PLAIN_TEXT: begin
+        o_enable_state_reg      = 0;
+        o_reset_round_counter_6 = 1;
+      end
+
+      STATE_START_PLAIN_TEXT: begin
+        o_enable_round_counter  = 1;
         o_enable_xor_data_begin = 1;
-        o_enable_xor_key_begin = 1;
-        o_enable_state_reg = 1;
-        o_enable_cipher_reg = 1;
-        o_valid_cipher = 1;
+        o_enable_block_counter  = 1;
+        o_enable_cipher_reg     = 1;
+        o_valid_cipher          = 1;
+      end
+
+      STATE_PROCESS_PLAIN_TEXT: begin
         o_enable_round_counter = 1;
       end
-      finalisation: begin
-        o_enable_state_reg = 1;
+
+      STATE_END_PLAIN_TEXT: begin
         o_enable_round_counter = 1;
       end
-      end_finalisation: begin
-        o_enable_state_reg = 1;
+
+      //
+      // Finalization phase
+      //
+
+      STATE_IDLE_FINALIZATION: begin
+        o_enable_round_counter   = 1;
+        o_enable_state_reg       = 0;
+        o_reset_round_counter_12 = 1;
+      end
+
+      STATE_START_FINALIZATION: begin
+        o_enable_round_counter  = 1;
+        o_enable_xor_data_begin = 1;
+        o_enable_xor_key_begin  = 1;
+        o_enable_cipher_reg     = 1;
+        o_valid_cipher          = 1;
+      end
+
+      STATE_PROCESS_FINALIZATION: begin
+        o_enable_round_counter = 1;
+      end
+
+      STATE_END_FINALIZATION: begin
         o_enable_xor_key_end = 1;
-        o_enable_tag_reg = 1;
-        o_done = 1;
+        o_enable_tag_reg     = 1;
+        o_done               = 1;
       end
 
       default: begin
-        o_enable_state_reg = 0;
       end
     endcase
   end
