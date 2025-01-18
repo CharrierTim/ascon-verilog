@@ -42,11 +42,11 @@ module permutation
       state_substitution_layer_output,  //! Output of the substitution_layer module
       state_diffusion_output,  //! Output of the diffusion_layer module
       state_xor_end_output,  //! Output of the xor_end module
-      state_reg_output;  //! Output of the register
+      state_output_reg;  //! Output of the register
 
 
   // Combinational logic for mux_state
-  assign state_mux_output = (i_mux_select == 1'b0) ? i_state : state_reg_output;
+  assign state_mux_output = (i_mux_select == 1'b0) ? i_state : state_output_reg;
 
   // Instantiate xor_begin
   xor_begin xor_begin_1 (
@@ -91,44 +91,40 @@ module permutation
   // Clocked process for registers
   always_ff @(posedge clock or negedge reset_n) begin
     if (!reset_n) begin
-      state_reg_output <= '{default: 0};
-      o_cipher         <= 0;
-      o_tag            <= 0;
+      state_output_reg <= '{default: 0};
+      o_cipher_reg     <= 0;
+      o_tag_reg        <= 0;
     end else begin
 
       // System enable
       if (i_sys_enable) begin
         // State output assignment
         if (i_enable_state_reg) begin
-          state_reg_output <= state_xor_end_output;
-        end else begin
-          state_reg_output <= '{default: 0};
+          state_output_reg <= state_xor_end_output;
         end
 
         // Cipher output assignment
         if (i_enable_cipher_reg) begin
-          o_cipher <= state_xor_begin_output[0];
-        end else begin
-          o_cipher <= 0;
+          o_cipher_reg <= state_xor_begin_output[0];
         end
 
         // Tag output assignment
         if (i_enable_tag_reg) begin
-          o_tag <= {state_xor_end_output[3], state_xor_end_output[4]};
-        end else begin
-          o_tag <= 0;
+          o_tag_reg <= {state_xor_end_output[3], state_xor_end_output[4]};
         end
 
       end else begin
         // Soft reset
-        state_reg_output <= '{default: 0};
-        o_cipher         <= 0;
-        o_tag            <= 0;
+        state_output_reg <= '{default: 0};
+        o_cipher_reg     <= 0;
+        o_tag_reg        <= 0;
       end
     end
   end
 
   // Assign output
-  assign o_state = state_reg_output;
+  assign o_state = state_output_reg;
+  assign o_cipher = o_cipher_reg;
+  assign o_tag = o_tag_reg;
 
 endmodule
