@@ -6,75 +6,12 @@ Library for utility functions used in the testbenches.
 
 from __future__ import annotations
 
-import os
 import random
-import shutil
-import sys
-import time
 
 import cocotb
 from cocotb.clock import Clock
 from cocotb.triggers import ClockCycles, RisingEdge
 from tabulate import tabulate
-
-# Define error messages
-ERRORS = {
-    "MISSING_BITWIDTH": ("Bitwidth is missing or not specified."),
-    "MISSING_SIGNAL": (
-        "Failed to assert reset state. The DUT may not have the required signals."
-    ),
-    "MISSING_CLOCK": (
-        "Failed to start the clock. The DUT may not have a clock signal."
-    ),
-    "MISSING_RESET": ("Failed to reset the DUT. The DUT may not have a reset signal."),
-    "MISSING_SYS_ENABLE": (
-        "Failed to enable the DUT. The DUT may not have a system enable signal."
-    ),
-    "FAILED_INIT": (
-        "Failed to initialize the DUT. "
-        "Please check the initialization parameters and DUT configuration."
-    ),
-    "FAILED_RESET": (
-        "Failed to reset the DUT."
-        "Please ensure the reset signal is correctly configured."
-    ),
-    "FAILED_ENABLE": (
-        "Failed to enable the DUT."
-        "Please ensure the enable signal is correctly configured."
-    ),
-    "FAILED_CLOCK": (
-        "Failed to start the clock."
-        "Please check the clock configuration and DUT clock signal."
-    ),
-    "FAILED_SETUP": (
-        "Failed to setup the DUT."
-        "Please verify the setup parameters and DUT configuration."
-    ),
-    "FAILED_COMPILATION": (
-        "Failed to compile the design."
-        "Please check the design files and compilation settings."
-    ),
-    "FAILED_SIMULATION": (
-        "Failed to run the simulation."
-        "Please check the simulation environment and settings."
-    ),
-    "INVALID_BITWIDTH": (
-        "Invalid bitwidth. Please ensure the bitwidth is a positive integer."
-    ),
-    "INVALID_CONFIGURATION": (
-        "Invalid configuration. Please review the configuration parameters."
-    ),
-    "INVALID_RESET_VALUE": (
-        "Invalid reset value. Please ensure the reset value is either 0 or 1."
-    ),
-    "INVALID_STATE": (
-        "Invalid signal. Please ensure the signal is correctly configured."
-    ),
-}
-
-# Define progress bar thresholds
-PROGRESS_BAR_LOW = 33
-PROGRESS_BAR_HIGH = 66
 
 
 def random_signed_value(bitwidth: int) -> int:
@@ -98,7 +35,11 @@ def random_signed_value(bitwidth: int) -> int:
 
     """
     if not isinstance(bitwidth, int) or bitwidth <= 0:
-        raise ValueError(ERRORS["INVALID_BITWIDTH"])
+        error_message = (
+            f"Invalid bitwidth: {bitwidth}",
+            "Hint: bitwidth should be a positive integer.",
+        )
+        raise ValueError(error_message)
 
     max_val = (1 << (bitwidth - 1)) - 1
     min_val = -(1 << (bitwidth - 1))
@@ -170,8 +111,12 @@ async def setup_clock(
 
         dut._log.info(f"Clock started with period {period_ns} ns.")
 
-    except AttributeError:
-        raise RuntimeError(ERRORS["MISSING_CLOCK"]) from None
+    except Exception as e:
+        error_message = (
+            f"Failed in setup_clock with error: {e}",
+            "Hint: DUT might not have a clock signal.",
+        )
+        raise RuntimeError(error_message) from e
 
 
 async def reset_dut(
@@ -201,7 +146,10 @@ async def reset_dut(
 
     """
     if reset_high not in [0, 1]:
-        raise ValueError(ERRORS["INVALID_RESET_VALUE"])
+        error_message = (
+            f"Invalid reset_high value: {reset_high}",
+            "Hint: reset_high should be 0 or 1.",
+        )
 
     try:
         if reset_high == 0:
@@ -223,8 +171,12 @@ async def reset_dut(
                 f"DUT reset for {num_cycles} cycles with reset_high={reset_high}.",
             )
 
-    except AttributeError as e:
-        raise RuntimeError(ERRORS["MISSING_RESET"]) from e
+    except Exception as e:
+        error_message = (
+            f"Failed in reset_dut with error: {e}",
+            "Hint: DUT might not have reset_n or reset_h port.",
+        )
+        raise RuntimeError(error_message) from e
 
 
 async def sys_enable_dut(
@@ -252,8 +204,12 @@ async def sys_enable_dut(
 
         dut._log.info("DUT enabled.")
 
-    except AttributeError as e:
-        raise RuntimeError(ERRORS["MISSING_SYS_ENABLE"]) from e
+    except Exception as e:
+        error_message = (
+            f"Failed in sys_enable_dut with error: {e}",
+            "Hint: DUT might not have i_sys_enable port or clock signal.",
+        )
+        raise RuntimeError(error_message) from e
 
 
 async def initialize_dut(
@@ -315,7 +271,8 @@ async def initialize_dut(
         dut._log.info("DUT initialized successfully.")
 
     except Exception as e:
-        raise RuntimeError(ERRORS["FAILED_INIT"]).format(e=e) from e
+        error_message = f"Failed in initialize_dut with error: {e}"
+        raise RuntimeError(error_message) from e
 
 
 async def toggle_signal(
@@ -359,8 +316,12 @@ async def toggle_signal(
         if verbose:
             dut._log.info("Signal toggled successfully.")
 
-    except AttributeError as e:
-        raise RuntimeError(ERRORS["MISSING_SIGNAL"]) from e
+    except Exception as e:
+        error_message = (
+            f"Failed to toggle signal {key}.",
+            f"Error: {e}",
+        )
+        raise RuntimeError(error_message) from e
 
 
 def log_generics(dut: cocotb.handle.HierarchyObject, generics: dict[str, int]) -> None:
@@ -377,3 +338,34 @@ def log_generics(dut: cocotb.handle.HierarchyObject, generics: dict[str, int]) -
     """
     table = tabulate(generics.items(), headers=["Parameter", "Value"], tablefmt="grid")
     dut._log.info(f"Running with generics:\n{table}")
+
+
+def get_dut_state(dut: cocotb.handle.HierarchyObject) -> dict:
+    """
+    Get the state of the DUT at a given time.
+
+    Parameters
+    ----------
+    dut : cocotb.handle.HierarchyObject
+        The device under test (DUT).
+
+    Returns
+    -------
+    state : dict
+        The state of the DUT ports.
+
+    """
+    state = {}
+    for attr in dut._sub_handles:
+        if attr.startswith(("i_", "o_")):
+            try:
+                value = getattr(dut, attr).value
+                if isinstance(value, list):
+                    value = tuple(hex(x) for x in value)
+                else:
+                    value = hex(int(value))
+                state[attr] = value
+            except (TypeError, ValueError) as e:
+                error_message = f"Failed to get the value of {attr}.\nError: {e}"
+                raise RuntimeError(error_message) from e
+    return state
