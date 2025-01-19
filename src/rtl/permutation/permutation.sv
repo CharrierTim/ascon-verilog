@@ -44,6 +44,9 @@ module permutation
       state_xor_end_output,  //! Output of the xor_end module
       state_output_reg;  //! Output of the register
 
+  logic [ 63:0] o_cipher_reg;  //! Output of the cipher register
+  logic [127:0] o_tag_reg;  //! Output of the tag register
+
 
   // Combinational logic for mux_state
   assign state_mux_output = (i_mux_select == 1'b0) ? i_state : state_output_reg;
@@ -123,8 +126,8 @@ module permutation
   end
 
   // Assign output
-  assign o_state = state_output_reg;
+  assign o_state  = state_output_reg;
   assign o_cipher = o_cipher_reg;
-  assign o_tag = o_tag_reg;
+  assign o_tag    = o_tag_reg;
 
 endmodule
