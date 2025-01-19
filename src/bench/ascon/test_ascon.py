@@ -65,7 +65,16 @@ async def reset_dut_test(dut: cocotb.handle.HierarchyObject) -> None:
         # permutation_model.assert_output(dut=dut, inputs=INIT_INPUTS)
 
     except Exception as e:
-        raise RuntimeError(ERRORS["FAILED_RESET"].format(e=e)) from e
+        dut_state = get_dut_state(dut=dut)
+        formatted_dut_state: str = "\n".join(
+            [f"{key}: {value}" for key, value in dut_state.items()],
+        )
+        error_message: str = (
+            f"Failed in reset_dut_test with error: {e}\n"
+            f"DUT state at error:\n"
+            f"{formatted_dut_state}"
+        )
+        raise RuntimeError(error_message) from e
 
 
 @cocotb.test()
@@ -229,7 +238,8 @@ def test_permutation() -> None:
         )
 
     except Exception as e:
-        raise RuntimeError(ERRORS["FAILED_COMPILATION"].format(e=e)) from e
+        error_message = f"Failed in test_xor_end with error: {e}"
+        raise RuntimeError(error_message) from e
 
 
 if __name__ == "__main__":

@@ -14,15 +14,15 @@ from pathlib import Path
 import cocotb
 from cocotb.runner import get_runner
 from cocotb.triggers import Timer
+from sbox_model import (
+    SboxModel,
+)
 
 # Add the directory containing the utils.py file to the Python path
 sys.path.insert(0, str((Path(__file__).parent.parent.parent).resolve()))
 
-from ascon_utils import (
-    SboxModel,
-)
 from cocotb_utils import (
-    ERRORS,
+    get_dut_state,
 )
 
 S_TABLE = [
@@ -88,10 +88,19 @@ async def reset_dut_test(dut: cocotb.handle.HierarchyObject) -> None:
         sbox_output = sbox_model.compute(i_data=0)
 
         # Assert the output
-        assert dut.o_data == sbox_output, ERRORS["FAILED_RESET"]
+        assert dut.o_data == sbox_output
 
     except Exception as e:
-        raise RuntimeError(ERRORS["FAILED_RESET"].format(e=e)) from e
+        dut_state = get_dut_state(dut=dut)
+        formatted_dut_state: str = "\n".join(
+            [f"{key}: {value}" for key, value in dut_state.items()],
+        )
+        error_message: str = (
+            f"Failed in reset_dut_test with error: {e}\n"
+            f"DUT state at error:\n"
+            f"{formatted_dut_state}"
+        )
+        raise RuntimeError(error_message) from e
 
 
 @cocotb.test()
@@ -125,10 +134,19 @@ async def sbox_test(dut: cocotb.handle.HierarchyObject) -> None:
             )
 
             # Assert the output
-            assert dut.o_data == sbox_output, ERRORS["FAILED_SIMULATION"]
+            assert dut.o_data == sbox_output
 
     except Exception as e:
-        raise RuntimeError(ERRORS["FAILED_SIMULATION"].format(e=e)) from e
+        dut_state = get_dut_state(dut=dut)
+        formatted_dut_state: str = "\n".join(
+            [f"{key}: {value}" for key, value in dut_state.items()],
+        )
+        error_message: str = (
+            f"Failed in sbox_test with error: {e}\n"
+            f"DUT state at error:\n"
+            f"{formatted_dut_state}"
+        )
+        raise RuntimeError(error_message) from e
 
 
 def test_sbox() -> None:
@@ -180,7 +198,8 @@ def test_sbox() -> None:
         )
 
     except Exception as e:
-        raise RuntimeError(ERRORS["FAILED_COMPILATION"].format(e=e)) from e
+        error_message = f"Failed in test_xor_end with error: {e}"
+        raise RuntimeError(error_message) from e
 
 
 if __name__ == "__main__":

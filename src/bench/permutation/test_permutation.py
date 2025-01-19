@@ -14,15 +14,15 @@ from pathlib import Path
 import cocotb
 from cocotb.runner import get_runner
 from cocotb.triggers import RisingEdge
+from permutation_model import (
+    PermutationModel,
+)
 
 # Add the directory containing the utils.py file to the Python path
 sys.path.insert(0, str((Path(__file__).parent.parent).resolve()))
 
-from ascon_utils import (
-    PermutationModel,
-)
 from cocotb_utils import (
-    ERRORS,
+    get_dut_state,
     init_hierarchy,
     initialize_dut,
 )
@@ -70,7 +70,16 @@ async def reset_dut_test(dut: cocotb.handle.HierarchyObject) -> None:
         permutation_model.assert_output(dut=dut, inputs=INIT_INPUTS)
 
     except Exception as e:
-        raise RuntimeError(ERRORS["FAILED_RESET"].format(e=e)) from e
+        dut_state = get_dut_state(dut=dut)
+        formatted_dut_state: str = "\n".join(
+            [f"{key}: {value}" for key, value in dut_state.items()],
+        )
+        error_message: str = (
+            f"Failed in reset_dut_test with error: {e}\n"
+            f"DUT state at error:\n"
+            f"{formatted_dut_state}"
+        )
+        raise RuntimeError(error_message) from e
 
 
 @cocotb.test()
@@ -133,7 +142,16 @@ async def permutation_test(dut: cocotb.handle.HierarchyObject) -> None:
         await RisingEdge(signal=dut.clock)
 
     except Exception as e:
-        raise RuntimeError(ERRORS["FAILED_COMPUTATION"].format(e=e)) from e
+        dut_state = get_dut_state(dut=dut)
+        formatted_dut_state: str = "\n".join(
+            [f"{key}: {value}" for key, value in dut_state.items()],
+        )
+        error_message: str = (
+            f"Failed in permutation_test with error: {e}\n"
+            f"DUT state at error:\n"
+            f"{formatted_dut_state}"
+        )
+        raise RuntimeError(error_message) from e
 
 
 def test_permutation() -> None:
@@ -193,7 +211,8 @@ def test_permutation() -> None:
         )
 
     except Exception as e:
-        raise RuntimeError(ERRORS["FAILED_COMPILATION"].format(e=e)) from e
+        error_message = f"Failed in test_xor_end with error: {e}"
+        raise RuntimeError(error_message) from e
 
 
 if __name__ == "__main__":
