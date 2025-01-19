@@ -19,12 +19,8 @@ from cocotb.triggers import ClockCycles
 # Add the directory containing the utils.py file to the Python path
 sys.path.insert(0, str((Path(__file__).parent.parent).resolve()))
 
-from ascon_utils import (
-    PermutationModel,
-)
 from cocotb_utils import (
-    ERRORS,
-    init_hierarchy,
+    get_dut_state,
     initialize_dut,
     toggle_signal,
 )
@@ -52,17 +48,8 @@ async def reset_dut_test(dut: cocotb.handle.HierarchyObject) -> None:
 
     """
     try:
-        # Define the model
-        _ = 1
-        # permutation_model = PermutationModel(
-        #     inputs=INIT_INPUTS,
-        # )
-
         # Initialize the DUT
         await initialize_dut(dut=dut, inputs=INIT_INPUTS, outputs={})
-
-        # # Update and Assert the output
-        # permutation_model.assert_output(dut=dut, inputs=INIT_INPUTS)
 
     except Exception as e:
         dut_state = get_dut_state(dut=dut)
@@ -78,11 +65,9 @@ async def reset_dut_test(dut: cocotb.handle.HierarchyObject) -> None:
 
 
 @cocotb.test()
-async def permutation_test(dut: cocotb.handle.HierarchyObject) -> None:
+async def ascon_top_test(dut: cocotb.handle.HierarchyObject) -> None:
     """Test the DUT's behavior during normal computation."""
     try:
-        _ = 1
-
         # Reset the DUT
         await reset_dut_test(dut=dut)
 
@@ -176,7 +161,16 @@ async def permutation_test(dut: cocotb.handle.HierarchyObject) -> None:
         await ClockCycles(signal=dut.clock, num_cycles=12)
 
     except Exception as e:
-        raise RuntimeError(ERRORS["FAILED_COMPUTATION"].format(e=e)) from e
+        dut_state = get_dut_state(dut=dut)
+        formatted_dut_state: str = "\n".join(
+            [f"{key}: {value}" for key, value in dut_state.items()],
+        )
+        error_message: str = (
+            f"Failed in ascon_top_test with error: {e}\n"
+            f"DUT state at error:\n"
+            f"{formatted_dut_state}"
+        )
+        raise RuntimeError(error_message) from e
 
 
 def test_permutation() -> None:
