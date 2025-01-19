@@ -13,15 +13,15 @@ import sys
 from pathlib import Path
 
 import cocotb
+from add_layer_model import (
+    AddLayerModel,
+)
 from cocotb.runner import get_runner
 from cocotb.triggers import Timer
 
 # Add the directory containing the utils.py file to the Python path
 sys.path.insert(0, str((Path(__file__).parent.parent).resolve()))
 
-from ascon_utils import (
-    AddLayerModel,
-)
 from cocotb_utils import (
     ERRORS,
     init_hierarchy,
