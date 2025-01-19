@@ -1,8 +1,8 @@
 """
-Testbench for the XOR Begin Layer.
+Testbench for the Substitution Layer module.
 
-This module tests the XOR Begin Layer function module by comparing the
-output of the Python implementation with the verilog implementation.
+This module tests the Substitution Layer module by comparing the
+output of the Python implementation with the VHDL implementation.
 
 @author: Timothée Charrier
 """
@@ -14,8 +14,8 @@ from pathlib import Path
 import cocotb
 from cocotb.runner import get_runner
 from cocotb.triggers import Timer
-from xor_end_model import (
-    XorEndModel,
+from substitution_layer_model import (
+    SubstitutionLayerModel,
 )
 
 # Add the directory containing the utils.py file to the Python path
@@ -24,14 +24,32 @@ sys.path.insert(0, str((Path(__file__).parent.parent.parent).resolve()))
 from cocotb_utils import (
     get_dut_state,
     init_hierarchy,
+    log_generics,
 )
 
-INPUTS = {
+INIT_INPUTS = {
     "i_state": init_hierarchy(dims=(5,), bitwidth=64, use_random=False),
-    "i_key": 0,
-    "i_enable_xor_key": 0,
-    "i_enable_xor_lsb": 0,
 }
+
+
+def get_generics(dut: cocotb.handle.HierarchyObject) -> dict:
+    """
+    Retrieve the generic parameters from the DUT.
+
+    Parameters
+    ----------
+    dut : object
+        The device under test (DUT).
+
+    Returns
+    -------
+    dict
+        A dictionary containing the generic parameters.
+
+    """
+    return {
+        "NUM_SBOXES": int(dut.NUM_SBOXES.value),
+    }
 
 
 @cocotb.test()
@@ -48,23 +66,27 @@ async def reset_dut_test(dut: cocotb.handle.HierarchyObject) -> None:
 
     """
     try:
+        # Get the generic parameters and Log them
+        generics = get_generics(dut=dut)
+        log_generics(dut=dut, generics=generics)
+
         # Define the model
-        xor_end_model = XorEndModel(
-            inputs=INPUTS,
+        substitution_layer_model = SubstitutionLayerModel(
+            inputs=INIT_INPUTS,
         )
 
         # Initialize the DUT
-        for key, value in INPUTS.items():
-            getattr(dut, key).value = value
+        for key, value in INIT_INPUTS.items():
+            dut.__getattr__(key).value = value
 
         # Wait for few ns (combinatorial logic only in the DUT)
         await Timer(10, units="ns")
 
-        # Verify the output
-        xor_end_model.assert_output(dut=dut, inputs=INPUTS)
+        # Assert the output
+        substitution_layer_model.assert_output(dut=dut, inputs=INIT_INPUTS)
 
     except Exception as e:
-        dut_state = get_dut_state(dut)
+        dut_state: dict = get_dut_state(dut)
         formatted_dut_state: str = "\n".join(
             [f"{key}: {value}" for key, value in dut_state.items()],
         )
@@ -77,12 +99,15 @@ async def reset_dut_test(dut: cocotb.handle.HierarchyObject) -> None:
 
 
 @cocotb.test()
-async def xor_end_test(dut: cocotb.handle.HierarchyObject) -> None:
+async def substitution_layer_test(dut: cocotb.handle.HierarchyObject) -> None:
     """Test the DUT's behavior during normal computation."""
     try:
+        # Get the generic parameters
+        _ = get_generics(dut=dut)
+
         # Define the model
-        xor_end_model = XorEndModel(
-            inputs=INPUTS,
+        substitution_layer_model = SubstitutionLayerModel(
+            inputs=INIT_INPUTS,
         )
 
         await reset_dut_test(dut)
@@ -90,60 +115,42 @@ async def xor_end_test(dut: cocotb.handle.HierarchyObject) -> None:
         # Test with specific inputs
         new_inputs = {
             "i_state": [
-                0xFFFFFFFFFFFFFFFF,
-                0xFFFFFFFFFFFFFFFF,
-                0xFFFFFFFFFFFFFFFF,
-                0xFFFFFFFFFFFFFFFF,
-                0xFFFFFFFFFFFFFFFF,
+                0x80400C0600000000,
+                0x0001020304050607,
+                0x08090A0B0C0D0EFF,
+                0x0001020304050607,
+                0x08090A0B0C0D0E0F,
             ],
-            "i_key": 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,
-            "i_enable_xor_key": 0,
-            "i_enable_xor_lsb": 0,
         }
 
         # Set specific inputs
         for key, value in new_inputs.items():
-            getattr(dut, key).value = value
+            dut.__getattr__(key).value = value
 
         # Wait for few ns
         await Timer(10, units="ns")
 
         # Update the model and assert the output
-        xor_end_model.assert_output(
-            dut=dut,
-            inputs=new_inputs,
-        )
+        substitution_layer_model.assert_output(dut=dut, inputs=new_inputs)
 
-        # Now enable the XOR with the key
-        new_inputs["i_enable_xor_key"] = 1
+        dut._log.info("Starting random tests...")
 
-        # Set specific inputs
-        for key, value in new_inputs.items():
-            getattr(dut, key).value = value
+        # Try with random inputs
+        for _ in range(10):
+            # Generate random inputs
+            new_inputs = {
+                "i_state": init_hierarchy(dims=(5,), bitwidth=64, use_random=True),
+            }
 
-        # Wait for few ns
-        await Timer(10, units="ns")
+            # Set the inputs
+            for key, value in new_inputs.items():
+                getattr(dut, key).value = value
 
-        # Update the model and assert the output
-        xor_end_model.assert_output(
-            dut=dut,
-            inputs=new_inputs,
-        )
+            # Wait for few ns
+            await Timer(10, units="ns")
 
-        # Now enable the XOR with the data
-        new_inputs["i_enable_xor_key"] = 0
-        new_inputs["i_enable_xor_lsb"] = 1
-        for key, value in new_inputs.items():
-            getattr(dut, key).value = value
-
-        # Wait for few ns
-        await Timer(10, units="ns")
-
-        # Update the model and assert the output
-        xor_end_model.assert_output(
-            dut=dut,
-            inputs=new_inputs,
-        )
+            # Update and Assert the output
+            substitution_layer_model.assert_output(dut=dut, inputs=new_inputs)
 
     except Exception as e:
         dut_state: dict = get_dut_state(dut)
@@ -151,14 +158,14 @@ async def xor_end_test(dut: cocotb.handle.HierarchyObject) -> None:
             [f"{key}: {value}" for key, value in dut_state.items()],
         )
         error_message: str = (
-            f"Failed in xor_end_test with error: {e}\n"
+            f"Failed in substitution_layer_test with error: {e}\n"
             f"DUT state at error:\n"
             f"{formatted_dut_state}"
         )
         raise RuntimeError(error_message) from e
 
 
-def test_xor_end() -> None:
+def test_substitution_layer() -> None:
     """Function Invoked by the test runner to execute the tests."""
     # Define the simulator to use
     default_simulator = "verilator"
@@ -172,11 +179,16 @@ def test_xor_end() -> None:
     # Define the sources
     sources = [
         f"{rtl_path}/ascon_pkg.sv",
-        f"{rtl_path}/xor/xor_end.sv",
+        f"{rtl_path}/substitution_layer/sbox.sv",
+        f"{rtl_path}/substitution_layer/substitution_layer.sv",
     ]
 
+    parameters = {
+        "NUM_SBOXES": 64,
+    }
+
     # Top-level HDL entity
-    entity = "xor_end"
+    entity = "substitution_layer"
 
     try:
         # Get simulator name from environment
@@ -188,9 +200,10 @@ def test_xor_end() -> None:
         # Build HDL sources
         runner.build(
             build_dir="sim_build",
-            clean=False,
+            clean=True,
             hdl_library=library,
             hdl_toplevel=entity,
+            parameters=parameters,
             sources=sources,
             verbose=True,
             waves=True,
@@ -212,4 +225,4 @@ def test_xor_end() -> None:
 
 
 if __name__ == "__main__":
-    test_xor_end()
+    test_substitution_layer()
