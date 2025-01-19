@@ -215,7 +215,7 @@ def test_permutation() -> None:
                 "0",
             ],
             build_dir="sim_build",
-            clean=False,
+            clean=True,
             hdl_library=library,
             hdl_toplevel=entity,
             sources=sources,

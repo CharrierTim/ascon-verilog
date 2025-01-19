@@ -20,7 +20,7 @@ from cocotb.triggers import ClockCycles, RisingEdge
 sys.path.insert(0, str((Path(__file__).parent.parent).resolve()))
 
 from cocotb_utils import (
-    ERRORS,
+    get_dut_state,
     initialize_dut,
 )
 
@@ -477,7 +477,16 @@ async def permutation_test(dut: cocotb.handle.HierarchyObject) -> None:
         ascon_fsm_model.compare(dut=dut)
 
     except Exception as e:
-        raise RuntimeError(ERRORS["FAILED_COMPUTATION"].format(e=e)) from e
+        dut_state: dict = get_dut_state(dut)
+        formatted_dut_state: str = "\n".join(
+            [f"{key}: {value}" for key, value in dut_state.items()],
+        )
+        error_message: str = (
+            f"Failed in permutation_test with error: {e}\n"
+            f"DUT state at error:\n"
+            f"{formatted_dut_state}"
+        )
+        raise RuntimeError(error_message) from e
 
 
 def test_ascon_fsm() -> None:
@@ -513,7 +522,7 @@ def test_ascon_fsm() -> None:
                 "0",
             ],
             build_dir="sim_build",
-            clean=False,
+            clean=True,
             hdl_library=library,
             hdl_toplevel=entity,
             sources=sources,
