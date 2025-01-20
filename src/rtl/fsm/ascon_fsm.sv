@@ -31,23 +31,23 @@ module ascon_fsm (
     //
 
     typedef enum logic unsigned [4:0] {
-        STATE_IDLE,                     // Idle state
-        STATE_CONFIGURATION,            // Configuration state
-        STATE_START_INITIALIZATION,     // Start Initialization phase
-        STATE_PROCESS_INITIALIZATION,   // Process Initialization phase
-        STATE_END_INITIALIZATION,       // End Initialization phase
-        STATE_IDLE_ASSOCIATED_DATA,     // Idle state for Associated Data phase
-        STATE_START_ASSOCIATED_DATA,    // Start Associated Data phase
-        STATE_PROCESS_ASSOCIATED_DATA,  // Process Associated Data phase
-        STATE_END_ASSOCIATED_DATA,      // End Associated Data phase
-        STATE_IDLE_PLAIN_TEXT,          // Idle state for Plain Text phase
-        STATE_START_PLAIN_TEXT,         // Start Plain Text phase
-        STATE_PROCESS_PLAIN_TEXT,       // Process Plain Text phase
-        STATE_END_PLAIN_TEXT,           // End Plain Text phase
-        STATE_IDLE_FINALIZATION,        // Idle state for Finalization phase
-        STATE_START_FINALIZATION,       // Start Finalization phase
-        STATE_PROCESS_FINALIZATION,     // Process Finalization phase
-        STATE_END_FINALIZATION          // End Finalization phase
+        STATE_IDLE,                     //! Idle state
+        STATE_CONFIGURATION,            //! Configuration state
+        STATE_START_INITIALIZATION,     //! Start Initialization phase
+        STATE_PROCESS_INITIALIZATION,   //! Process Initialization phase
+        STATE_END_INITIALIZATION,       //! End Initialization phase
+        STATE_IDLE_ASSOCIATED_DATA,     //! Idle state for Associated Data phase
+        STATE_START_ASSOCIATED_DATA,    //! Start Associated Data phase
+        STATE_PROCESS_ASSOCIATED_DATA,  //! Process Associated Data phase
+        STATE_END_ASSOCIATED_DATA,      //! End Associated Data phase
+        STATE_IDLE_PLAIN_TEXT,          //! Idle state for Plain Text phase
+        STATE_START_PLAIN_TEXT,         //! Start Plain Text phase
+        STATE_PROCESS_PLAIN_TEXT,       //! Process Plain Text phase
+        STATE_END_PLAIN_TEXT,           //! End Plain Text phase
+        STATE_IDLE_FINALIZATION,        //! Idle state for Finalization phase
+        STATE_START_FINALIZATION,       //! Start Finalization phase
+        STATE_PROCESS_FINALIZATION,     //! Process Finalization phase
+        STATE_END_FINALIZATION          //! End Finalization phase
     } type_state_e;
 
     //
