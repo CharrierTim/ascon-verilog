@@ -5,11 +5,43 @@
         "**/.pytest_cache": true,
         "**/.ruff_cache": true,
         "**/.venv": true,
-        "**/MNIST": true,
         "**/sim_build": true
     },
     // Workspace settings
     "[python]": {
         "editor.defaultFormatter": "charliermarsh.ruff",
     },
+    // Editor settings
+    "editor.tabSize": 4,
+    "editor.insertSpaces": true,
+    // Verible settings
+    "verible.path": "/home/Utils/oss-cad-suite/bin/verible-verilog-ls",
+    "verible.arguments": [
+        "--rules_config_search",
+        "--wrap_end_else_clauses",
+        "--indentation_spaces=4",
+        "--wrap_spaces=4",
+        "--port_declarations_right_align_unpacked_dimensions",
+        "--port_declarations_right_align_packed_dimensions",
+        "--assignment_statement_alignment=align",
+        "--case_items_alignment=align",
+        "--distribution_items_alignment=align",
+        "--enum_assignment_statement_alignment=align",
+        "--formal_parameters_alignment=align",
+        "--module_net_variable_alignment=align",
+        "--named_parameter_alignment=align",
+        "--named_port_alignment=align",
+        "--port_declarations_alignment=align",
+        "--struct_union_members_alignment=align",
+        "--column_limit=100",
+        "--line_break_penalty=4",
+        "--over_column_limit_penalty=100",
+        "--compact_indexing_and_selections=true",
+        "--expand_coverpoints=false",
+        "--formal_parameters_indentation=wrap",
+        "--named_parameter_indentation=wrap",
+        "--named_port_indentation=wrap",
+        "--port_declarations_indentation=wrap",
+        "--try_wrap_long_lines=true"
+    ]
 }
