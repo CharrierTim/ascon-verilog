@@ -13,6 +13,7 @@ import sys
 from pathlib import Path
 
 import cocotb
+from ascon_model import AsconModel
 from cocotb.runner import get_runner
 from cocotb.triggers import ClockCycles
 
@@ -32,6 +33,26 @@ INIT_INPUTS = {
     "i_key": 0x00000000000000000000000000000000,
     "i_nonce": 0x00000000000000000000000000000000,
 }
+
+
+def to_unsigned(value: int, bitwidth: int = 64) -> int:
+    """
+    Convert a signed integer to an unsigned integer.
+
+    Parameters
+    ----------
+    value : int
+        The signed integer value.
+    bitwidth : int, optional
+        The bit width of the integer, default is 64.
+
+    Returns
+    -------
+    int
+        The unsigned integer value.
+
+    """
+    return value & (1 << bitwidth) - 1
 
 
 @cocotb.test()
@@ -81,6 +102,10 @@ async def ascon_top_test(dut: cocotb.handle.HierarchyObject) -> None:
             "i_nonce": 0x000102030405060708090A0B0C0D0E0F,
         }
 
+        # Define the ASCON model
+        ascon_model = AsconModel(inputs=inputs)
+        output_dict = ascon_model.ascon128(inputs=inputs)
+
         # Set the inputs
         for key, value in inputs.items():
             dut.__getattr__(key).value = value
@@ -89,7 +114,11 @@ async def ascon_top_test(dut: cocotb.handle.HierarchyObject) -> None:
         await ClockCycles(signal=dut.clock, num_cycles=10)
 
         # Send the start signal
-        await toggle_signal(dut=dut, signal_dict={"i_start": 1})
+        await toggle_signal(dut=dut, signal_dict={"i_start": 1}, verbose=False)
+
+        #
+        # Initialisation phase
+        #
 
         # Wait for 12 clock cycles (1 permutation with 12 rounds)
         await ClockCycles(signal=dut.clock, num_cycles=12)
@@ -97,11 +126,15 @@ async def ascon_top_test(dut: cocotb.handle.HierarchyObject) -> None:
         # Wait for a random number of clock cycles
         await ClockCycles(signal=dut.clock, num_cycles=random.randint(0, 15))
 
+        #
+        # Associated Data phase
+        #
+
         # Update i_data
         dut.i_data.value = 0x3230323280000000
 
         # Set i_data_valid to 1
-        await toggle_signal(dut=dut, signal_dict={"i_data_valid": 1})
+        await toggle_signal(dut=dut, signal_dict={"i_data_valid": 1}, verbose=False)
 
         # Wait for 6 clock cycles (1 permutation with 6 rounds)
         await ClockCycles(signal=dut.clock, num_cycles=6)
@@ -113,7 +146,7 @@ async def ascon_top_test(dut: cocotb.handle.HierarchyObject) -> None:
         dut.i_data.value = 0x446576656C6F7070
 
         # Set i_data_valid to 1
-        await toggle_signal(dut=dut, signal_dict={"i_data_valid": 1})
+        await toggle_signal(dut=dut, signal_dict={"i_data_valid": 1}, verbose=False)
 
         # Wait for 6 clock cycles (1 permutation with 6 rounds)
         await ClockCycles(signal=dut.clock, num_cycles=6)
@@ -125,7 +158,7 @@ async def ascon_top_test(dut: cocotb.handle.HierarchyObject) -> None:
         dut.i_data.value = 0x657A204153434F4E
 
         # Set i_data_valid to 1
-        await toggle_signal(dut=dut, signal_dict={"i_data_valid": 1})
+        await toggle_signal(dut=dut, signal_dict={"i_data_valid": 1}, verbose=False)
 
         # Wait for 6 clock cycles (1 permutation with 6 rounds)
         await ClockCycles(signal=dut.clock, num_cycles=6)
@@ -137,7 +170,7 @@ async def ascon_top_test(dut: cocotb.handle.HierarchyObject) -> None:
         dut.i_data.value = 0x20656E206C616E67
 
         # Set i_data_valid to 1
-        await toggle_signal(dut=dut, signal_dict={"i_data_valid": 1})
+        await toggle_signal(dut=dut, signal_dict={"i_data_valid": 1}, verbose=False)
 
         # Wait for 6 clock cycles (1 permutation with 6 rounds)
         await ClockCycles(signal=dut.clock, num_cycles=6)
@@ -149,7 +182,7 @@ async def ascon_top_test(dut: cocotb.handle.HierarchyObject) -> None:
         dut.i_data.value = 0x6167652056484480
 
         # Set i_data_valid to 1
-        await toggle_signal(dut=dut, signal_dict={"i_data_valid": 1})
+        await toggle_signal(dut=dut, signal_dict={"i_data_valid": 1}, verbose=False)
 
         # Wait for 6 clock cycles (1 permutation with 6 rounds)
         await ClockCycles(signal=dut.clock, num_cycles=6)
@@ -159,6 +192,19 @@ async def ascon_top_test(dut: cocotb.handle.HierarchyObject) -> None:
 
         # We should enter in the final phase
         await ClockCycles(signal=dut.clock, num_cycles=12)
+
+        # Check the output
+        output_state_dut_str = " ".join(
+            [f"{to_unsigned(value=x.value.integer):016X}" for x in dut.o_state],
+        )
+        output_tag_dut_str = (
+            f"0x{dut.o_tag.value.integer & 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF:032X}"
+        )
+        output_cipher_str = f"0x{dut.o_cipher.value.integer & 0xFFFFFFFFFFFFFFFF:016X}"
+
+        dut._log.info(f"DUT Output State   : {output_state_dut_str}")
+        dut._log.info(f"DUT Output Tag     : {output_tag_dut_str}")
+        dut._log.info(f"DUT Output Cipher  : {output_cipher_str}")
 
     except Exception as e:
         dut_state = get_dut_state(dut=dut)
@@ -215,7 +261,7 @@ def test_permutation() -> None:
                 "0",
             ],
             build_dir="sim_build",
-            clean=True,
+            clean=False,
             hdl_library=library,
             hdl_toplevel=entity,
             sources=sources,
