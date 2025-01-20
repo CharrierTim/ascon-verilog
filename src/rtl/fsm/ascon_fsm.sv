@@ -236,6 +236,7 @@ module ascon_fsm (
             //
 
             STATE_IDLE: begin
+                o_enable_state_reg = 0;
             end
 
             //
