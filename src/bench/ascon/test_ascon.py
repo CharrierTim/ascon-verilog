@@ -15,7 +15,7 @@ from pathlib import Path
 import cocotb
 from ascon_model import AsconModel
 from cocotb.runner import get_runner
-from cocotb.triggers import ClockCycles
+from cocotb.triggers import ClockCycles, RisingEdge
 
 # Add the directory containing the utils.py file to the Python path
 sys.path.insert(0, str((Path(__file__).parent.parent).resolve()))
@@ -53,6 +53,34 @@ def to_unsigned(value: int, bitwidth: int = 64) -> int:
 
     """
     return value & (1 << bitwidth) - 1
+
+
+async def get_cipher(dut: cocotb.handle.HierarchyObject) -> int:
+    """
+    Get the cipher output from the DUT.
+
+    Parameters
+    ----------
+    dut : object
+        The device under test (DUT).
+
+    Returns
+    -------
+    int
+        The cipher output.
+
+    """
+    cipher = 0
+
+    await RisingEdge(signal=dut.clock)
+
+    if dut.o_valid_cipher.value == 1:
+        cipher = dut.o_cipher.value.integer
+    else:
+        error_message = "Cipher output is not valid."
+        raise RuntimeError(error_message)
+
+    return cipher
 
 
 @cocotb.test()
@@ -101,6 +129,11 @@ async def ascon_top_test(dut: cocotb.handle.HierarchyObject) -> None:
             "i_key": 0x000102030405060708090A0B0C0D0E0F,
             "i_nonce": 0x000102030405060708090A0B0C0D0E0F,
         }
+        output_dut_dict = {
+            "o_state": [0] * 5,
+            "o_tag": [0] * 2,
+            "o_cipher": [0] * 4,
+        }
 
         # Define the ASCON model
         ascon_model = AsconModel(inputs=inputs)
@@ -142,11 +175,18 @@ async def ascon_top_test(dut: cocotb.handle.HierarchyObject) -> None:
         # Wait for a random number of clock cycles
         await ClockCycles(signal=dut.clock, num_cycles=random.randint(0, 15))
 
+        #
+        # Plaintext phase
+        #
+
         # Update i_data
         dut.i_data.value = 0x446576656C6F7070
 
         # Set i_data_valid to 1
         await toggle_signal(dut=dut, signal_dict={"i_data_valid": 1}, verbose=False)
+
+        # Get the cipher
+        output_dut_dict["o_cipher"][0] = await get_cipher(dut=dut)
 
         # Wait for 6 clock cycles (1 permutation with 6 rounds)
         await ClockCycles(signal=dut.clock, num_cycles=6)
@@ -160,6 +200,9 @@ async def ascon_top_test(dut: cocotb.handle.HierarchyObject) -> None:
         # Set i_data_valid to 1
         await toggle_signal(dut=dut, signal_dict={"i_data_valid": 1}, verbose=False)
 
+        # Get the cipher
+        output_dut_dict["o_cipher"][1] = await get_cipher(dut=dut)
+
         # Wait for 6 clock cycles (1 permutation with 6 rounds)
         await ClockCycles(signal=dut.clock, num_cycles=6)
 
@@ -172,6 +215,9 @@ async def ascon_top_test(dut: cocotb.handle.HierarchyObject) -> None:
         # Set i_data_valid to 1
         await toggle_signal(dut=dut, signal_dict={"i_data_valid": 1}, verbose=False)
 
+        # Get the cipher
+        output_dut_dict["o_cipher"][2] = await get_cipher(dut=dut)
+
         # Wait for 6 clock cycles (1 permutation with 6 rounds)
         await ClockCycles(signal=dut.clock, num_cycles=6)
 
@@ -181,8 +227,15 @@ async def ascon_top_test(dut: cocotb.handle.HierarchyObject) -> None:
         # Update i_data
         dut.i_data.value = 0x6167652056484480
 
+        #
+        # Final phase
+        #
+
         # Set i_data_valid to 1
         await toggle_signal(dut=dut, signal_dict={"i_data_valid": 1}, verbose=False)
+
+        # Get the cipher
+        output_dut_dict["o_cipher"][3] = await get_cipher(dut=dut)
 
         # Wait for 6 clock cycles (1 permutation with 6 rounds)
         await ClockCycles(signal=dut.clock, num_cycles=6)
@@ -193,18 +246,37 @@ async def ascon_top_test(dut: cocotb.handle.HierarchyObject) -> None:
         # We should enter in the final phase
         await ClockCycles(signal=dut.clock, num_cycles=12)
 
+        # # We should enter in the final phase so lets wait for o_done to be high
+        # await RisingEdge(signal=dut.o_done)
+
+        # Get the output state
+        for i in range(5):
+            output_dut_dict["o_state"][i] = dut.o_state[i].value.integer
+
         # Check the output
-        output_state_dut_str = " ".join(
-            [f"{to_unsigned(value=x.value.integer):016X}" for x in dut.o_state],
+        output_state_dut_str = (
+            f"{output_dut_dict['o_state'][0]:016X} "
+            f"{output_dut_dict['o_state'][1]:016X} "
+            f"{output_dut_dict['o_state'][2]:016X} "
+            f"{output_dut_dict['o_state'][3]:016X} "
+            f"{output_dut_dict['o_state'][4]:016X}"
         )
         output_tag_dut_str = (
             f"0x{dut.o_tag.value.integer & 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF:032X}"
         )
-        output_cipher_str = f"0x{dut.o_cipher.value.integer & 0xFFFFFFFFFFFFFFFF:016X}"
+        output_cipher_dut_str = (
+            f"0x{output_dut_dict["o_cipher"][0]:016X}{output_dut_dict["o_cipher"][1]:016X}"
+            f"{output_dut_dict["o_cipher"][2]:016X}{output_dut_dict["o_cipher"][3]:016X}"
+        )
 
         dut._log.info(f"DUT Output State   : {output_state_dut_str}")
         dut._log.info(f"DUT Output Tag     : {output_tag_dut_str}")
-        dut._log.info(f"DUT Output Cipher  : {output_cipher_str}")
+        dut._log.info(f"DUT Output Cipher  : {output_cipher_dut_str}")
+
+        # Check the output
+        assert output_dict["o_state"] == output_state_dut_str
+        assert output_dict["o_tag"] == output_tag_dut_str
+        assert output_dict["o_cipher"] == output_cipher_dut_str
 
     except Exception as e:
         dut_state = get_dut_state(dut=dut)
