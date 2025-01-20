@@ -75,24 +75,24 @@ module ascon
     );
 
     permutation permutation_inst (
-        .clock(clock),
-        .reset_n(reset_n),
-        .i_sys_enable(i_sys_enable),
-        .i_mux_select(s_mux_select),
-        .i_enable_xor_key_begin(s_enable_xor_key_begin),
+        .clock                  (clock),
+        .reset_n                (reset_n),
+        .i_sys_enable           (i_sys_enable),
+        .i_mux_select           (s_mux_select),
+        .i_enable_xor_key_begin (s_enable_xor_key_begin),
         .i_enable_xor_data_begin(s_enable_xor_data_begin),
-        .i_enable_xor_key_end(s_enable_xor_key_end),
-        .i_enable_xor_lsb_end(s_enable_xor_lsb_end),
-        .i_enable_cipher_reg(s_enable_cipher_reg),
-        .i_enable_tag_reg(s_enable_tag_reg),
-        .i_enable_state_reg(s_enable_state_reg),
-        .i_state({i_data, i_key[127:64], i_key[63:0], i_nonce[127:64], i_nonce[63:0]}),
-        .i_round(round_counter),
-        .i_data(i_data),
-        .i_key(i_key),
-        .o_state(o_state),
-        .o_cipher(o_cipher),
-        .o_tag(o_tag)
+        .i_enable_xor_key_end   (s_enable_xor_key_end),
+        .i_enable_xor_lsb_end   (s_enable_xor_lsb_end),
+        .i_enable_cipher_reg    (s_enable_cipher_reg),
+        .i_enable_tag_reg       (s_enable_tag_reg),
+        .i_enable_state_reg     (s_enable_state_reg),
+        .i_state                ({i_data, i_key[127:64], i_key[63:0], i_nonce[127:64], i_nonce[63:0]}),
+        .i_round                (round_counter),
+        .i_data                 (i_data),
+        .i_key                  (i_key),
+        .o_state                (o_state),
+        .o_cipher               (o_cipher),
+        .o_tag                  (o_tag)
     );
 
     //

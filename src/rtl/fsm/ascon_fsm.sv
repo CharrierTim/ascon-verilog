@@ -11,7 +11,7 @@ module ascon_fsm (
     input  logic unsigned [1:0] i_block_count,             //! Block Counter value
     output logic                o_valid_cipher,            //! Cipher valid signal
     output logic                o_done,                    //! End of Ascon signal
-    output logic                o_mux_select,              //! Mux select signal
+    output logic                o_mux_select,              //! Mux select signal (low=input, high=outputreg)
     output logic                o_enable_xor_data_begin,   //! Enable XOR with Data, active high
     output logic                o_enable_xor_key_begin,    //! Enable XOR with Key, active high
     output logic                o_enable_xor_key_end,      //! Enable XOR with Key, active high
@@ -23,7 +23,7 @@ module ascon_fsm (
     output logic                o_reset_round_counter_6,   //! Reset round counter, active high
     output logic                o_reset_round_counter_12,  //! Reset round counter, active high
     output logic                o_enable_block_counter,    //! Enable block counter, active high
-    output logic                o_reset_block_counter      //! Count block start signal
+    output logic                o_reset_block_counter      //! Count block start signal, active high
 );
 
     //

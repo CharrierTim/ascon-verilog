@@ -24,17 +24,16 @@ module xor_begin
     // XOR operation
     //
 
-    assign key_state_combined = i_enable_xor_key ?
-        (i_key ^ {i_state[1], i_state[2]}) : {i_state[1], i_state[2]};
+    assign key_state_combined = i_enable_xor_key ? (i_key ^ {i_state[1], i_state[2]}) : {i_state[1], i_state[2]};
 
     //
     // Output assignment
     //
 
-    assign o_state[0] = i_enable_xor_data ? (i_state[0] ^ i_data) : i_state[0];
-    assign o_state[1] = key_state_combined[127:64];
-    assign o_state[2] = key_state_combined[63:0];
-    assign o_state[3] = i_state[3];
-    assign o_state[4] = i_state[4];
+    assign o_state[0]         = i_enable_xor_data ? (i_state[0] ^ i_data) : i_state[0];
+    assign o_state[1]         = key_state_combined[127:64];
+    assign o_state[2]         = key_state_combined[63:0];
+    assign o_state[3]         = i_state[3];
+    assign o_state[4]         = i_state[4];
 
 endmodule

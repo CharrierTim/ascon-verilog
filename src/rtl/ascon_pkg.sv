@@ -19,20 +19,7 @@ package ascon_pkg;
 
     const
     constant_array_t
-    ROUND_CONSTANTS = '{
-        8'hF0,
-        8'hE1,
-        8'hD2,
-        8'hC3,
-        8'hB4,
-        8'hA5,
-        8'h96,
-        8'h87,
-        8'h78,
-        8'h69,
-        8'h5A,
-        8'h4B
-    };
+    ROUND_CONSTANTS = '{8'hF0, 8'hE1, 8'hD2, 8'hC3, 8'hB4, 8'hA5, 8'h96, 8'h87, 8'h78, 8'h69, 8'h5A, 8'h4B};
 
     const
     substitution_table_t
