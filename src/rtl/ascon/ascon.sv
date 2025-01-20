@@ -38,7 +38,11 @@ module ascon
         s_reset_round_counter_6,        //! Reset round counter to 6 for 6 rounds
         s_reset_round_counter_12,       //! Reset round counter to 0 for 12 rounds
         s_enable_block_counter,         //! Enable block counter signal
-        s_reset_block_counter;          //! Reset block counter signal
+        s_reset_block_counter,          //! Reset block counter signal
+        s_valid_cipher,                 //! Valid cipher signal
+        s_valid_cipher_reg,             //! Valid cipher register signal
+        s_done,                         //! Done signal
+        s_done_reg;                     //! Done register signal
 
     t_state_array       o_state;        //! Output state array
     logic         [3:0] round_counter;  //! Round counter Signal
@@ -57,8 +61,8 @@ module ascon
         .i_data_valid            (i_data_valid),
         .i_round_count           (round_counter),
         .i_block_count           (block_counter),
-        .o_valid_cipher          (o_valid_cipher),
-        .o_done                  (o_done),
+        .o_valid_cipher          (s_valid_cipher),
+        .o_done                  (s_done),
         .o_mux_select            (s_mux_select),
         .o_enable_xor_data_begin (s_enable_xor_data_begin),
         .o_enable_xor_key_begin  (s_enable_xor_key_begin),
@@ -101,10 +105,18 @@ module ascon
 
     always_ff @(posedge clock or negedge reset_n) begin
         if (!reset_n) begin
-            round_counter <= 4'b0;
-            block_counter <= 2'b0;
+            round_counter      <= 4'b0;
+            block_counter      <= 2'b0;
+            s_valid_cipher_reg <= 1'b0;
+            s_done_reg         <= 1'b0;
         end
         else if (i_sys_enable) begin
+
+            // Valid cipher
+            s_valid_cipher_reg <= s_valid_cipher;
+
+            // Done signal
+            s_done_reg         <= s_done;
 
             // Round counter
             if (s_reset_round_counter_6) begin
@@ -136,5 +148,11 @@ module ascon
             end
         end
     end
+
+    //
+    // Output assignment
+    //
+    assign o_valid_cipher = s_valid_cipher_reg;
+    assign o_done         = s_done_reg;
 
 endmodule
