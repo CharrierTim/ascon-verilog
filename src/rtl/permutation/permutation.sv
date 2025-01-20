@@ -40,8 +40,8 @@ module permutation
         state_xor_end_output,               //! Output of the xor_end module
         state_output_reg;                   //! Output of the register
 
-    logic [ 63:0] o_cipher_reg; //! Output of the cipher register
-    logic [127:0] o_tag_reg;    //! Output of the tag register
+    logic [ 63:0] o_cipher_reg;             //! Output of the cipher register
+    logic [127:0] o_tag_reg;                //! Output of the tag register
     // verilog_format: on
 
     //
