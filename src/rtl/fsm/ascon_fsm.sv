@@ -232,12 +232,10 @@ module ascon_fsm (
         unique case (current_state)
 
             //
-            // IDLE state, basically reset all signals
+            // IDLE state, do nothing more
             //
+
             STATE_IDLE: begin
-                o_enable_state_reg       = 0;
-                o_mux_select             = 0;
-                o_reset_round_counter_12 = 1;
             end
 
             //
