@@ -1,19 +1,16 @@
 """
 Library for the AsconModel class.
 
-It contains the Python model used to verify the Ascon module.
+This module contains the Python model used to verify the Ascon module.
 
 @author: Timothée Charrier
 """
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from types import NoneType
 
 from cocotb import log
-
-if TYPE_CHECKING:
-    import cocotb
 
 
 class AsconModel:
@@ -23,32 +20,29 @@ class AsconModel:
     This class defines the model used to verify the Ascon module.
     """
 
-    def __init__(
-        self,
-        *,
-        inputs: dict | None = None,
-    ) -> None:
+    def __init__(self, *, inputs: dict[str, int] | None = None) -> None:
         """
         Initialize the model.
 
         Parameters
         ----------
         inputs : dict, optional
-            The initial input dictionary
-            Default is None.
+            The initial input dictionary. Default is None.
 
         """
-        # Inputs parameters
-        self.i_data: int = inputs["i_data"] or 0
-        self.i_key: int = inputs["i_key"] or 0
-        self.i_nonce: int = inputs["i_nonce"] or 0
+        inputs = inputs or {}
 
-        # Output state
-        self.o_cipher = [0] * 4
-        self.o_tag = [0] * 2
+        # Input parameters with default values
+        self.i_data: int = inputs.get("i_data", 0)
+        self.i_key: int = inputs.get("i_key", 0)
+        self.i_nonce: int = inputs.get("i_nonce", 0)
+
+        # Output states
+        self.o_cipher: list[int] = [0] * 4
+        self.o_tag: list[int] = [0] * 2
 
         # Create the input state
-        self.i_state = [
+        self.i_state: list[int] = [
             self.i_data,
             self.i_key >> 64,
             self.i_key & 0xFFFFFFFFFFFFFFFF,
@@ -56,8 +50,8 @@ class AsconModel:
             self.i_nonce & 0xFFFFFFFFFFFFFFFF,
         ]
 
-        # datas
-        self.datas = [
+        # Fixed data values
+        self.datas: list[int] = [
             0x3230323280000000,
             0x446576656C6F7070,
             0x657A204153434F4E,
@@ -65,26 +59,22 @@ class AsconModel:
             0x6167652056484480,
         ]
 
-    def update_inputs(
-        self,
-        inputs: dict | None = None,
-    ) -> None:
+    def update_inputs(self, inputs: dict[str, int] | None = None) -> None:
         """
         Update the input state, data, key, and enable signals of the model.
 
         Parameters
         ----------
         inputs : dict, optional
-            The new input dictionary
+            The new input dictionary. Default is None.
 
         """
-        if inputs is None:
+        if not inputs:
             return
 
-        # Update the inputs
-        self.i_data = inputs["i_data"] or self.i_data
-        self.i_key = inputs["i_key"] or self.i_key
-        self.i_nonce = inputs["i_nonce"] or self.i_nonce
+        self.i_data = inputs.get("i_data", self.i_data)
+        self.i_key = inputs.get("i_key", self.i_key)
+        self.i_nonce = inputs.get("i_nonce", self.i_nonce)
 
         # Reset the output state
         self.o_cipher = [0] * 4
@@ -202,30 +192,68 @@ class AsconModel:
             # Set the output state
             self.o_state = state
 
-    def xor_key_begin(
-        self,
-    ) -> None:
+    def _substitution_layer(self, state: list[int]) -> list[int]:
         """
-        Perform XOR operation at the beginning with the key.
+        Apply the substitution layer (S-box).
 
-        This function computes the output state by performing XOR operations
-        with the key at the beginning of the permutation.
+        Parameters
+        ----------
+        state : List[int]
+            The current state.
+
+        Returns
+        -------
+        List[int]
+            The updated state after the substitution layer.
+
         """
-        # Compute the output state
-        key_state_combined = self.i_key ^ ((self.o_state[3] << 64) | self.o_state[4])
+        state[0] ^= state[4]
+        state[4] ^= state[3]
+        state[2] ^= state[1]
+        temp = [(state[i] ^ 0xFFFFFFFFFFFFFFFF) & state[(i + 1) % 5] for i in range(5)]
+        state = [state[i] ^ temp[(i + 1) % 5] for i in range(5)]
+        state[1] ^= state[0]
+        state[0] ^= state[4]
+        state[3] ^= state[2]
+        state[2] ^= 0xFFFFFFFFFFFFFFFF
+        return state
 
-        self.o_state[3] = (key_state_combined >> 64) & 0xFFFFFFFFFFFFFFFF
-        self.o_state[4] = key_state_combined & 0xFFFFFFFFFFFFFFFF
+    def _linear_diffusion_layer(self, state: list[int]) -> list[int]:
+        """
+        Apply the linear diffusion layer.
 
-    def xor_data_begin(
-        self,
-        data: int,
-    ) -> None:
+        Parameters
+        ----------
+        state : List[int]
+            The current state.
+
+        Returns
+        -------
+        List[int]
+            The updated state after the linear diffusion layer.
+
+        """
+        rotations = [
+            (state[0], [19, 28]),
+            (state[1], [61, 39]),
+            (state[2], [1, 6]),
+            (state[3], [10, 17]),
+            (state[4], [7, 41]),
+        ]
+        return [
+            s ^ self.rotate_right(s, r1) ^ self.rotate_right(s, r2)
+            for s, (r1, r2) in rotations
+        ]
+
+    def xor_key_begin(self) -> None:
+        """Perform XOR operation at the beginning with the key."""
+        key_combined = self.i_key ^ ((self.o_state[3] << 64) | self.o_state[4])
+        self.o_state[3] = (key_combined >> 64) & 0xFFFFFFFFFFFFFFFF
+        self.o_state[4] = key_combined & 0xFFFFFFFFFFFFFFFF
+
+    def xor_data_begin(self, data: int) -> None:
         """
         Perform XOR operation at the beginning with the data.
-
-        This function computes the output state by performing XOR operations
-        with the data at the beginning of the permutation.
 
         Parameters
         ----------
@@ -233,44 +261,38 @@ class AsconModel:
             The data to XOR with the state.
 
         """
-        # Compute the output state
-        self.o_state[0] = self.o_state[0] ^ data
+        self.o_state[0] ^= data
 
-    def xor_key_end(
-        self,
-    ) -> None:
-        """
-        Perform XOR operation at the end with the key.
+    def xor_key_end(self) -> None:
+        """Perform XOR operation at the end with the key."""
+        self.o_state[3] ^= self.i_key >> 64
+        self.o_state[4] ^= self.i_key & 0xFFFFFFFFFFFFFFFF
 
-        This function computes the output state by performing XOR operations
-        with the key at the end of the permutation.
-        """
-        self.o_state[3] = self.o_state[3] ^ (self.i_key >> 64)
-        self.o_state[4] = self.o_state[4] ^ (self.i_key & 0xFFFFFFFFFFFFFFFF)
-
-    def xor_lsb_end(
-        self,
-    ) -> None:
-        """
-        Perform XOR operation at the end with the least significant bit.
-
-        This function computes the output state by performing XOR operations
-        with the least significant bit at the end of the permutation.
-        """
-        self.o_state[4] = self.o_state[4] ^ 0x0000000000000001
+    def xor_lsb_end(self) -> None:
+        """Perform XOR operation at the end with the least significant bit."""
+        self.o_state[4] ^= 0x0000000000000001
 
     def ascon128(
         self,
-        inputs: dict | None = None,
-    ) -> None:
+        inputs: dict[str, int],
+    ) -> dict[str, str]:
         """
         Compute the output state based on the current input state.
 
+        Parameters
+        ----------
+        inputs : dict
+            The input dictionary containing the data, key, and nonce.
+
         Returns
         -------
-        Nothing, only updates the state array.
+        dict
+            The output state, tag, and cipher.
 
         """
+        # Update the input state
+        self.update_inputs(inputs)
+
         #
         # Initialization Phase
         #
@@ -453,8 +475,14 @@ class AsconModel:
         )
 
         output_tag_str = f"0x{self.o_tag[0]:016X}{self.o_tag[1]:016X}"
-        output_cipher_str = f"0x{self.o_cipher[0]:016X}{self.o_cipher[1]:016X}{self.o_cipher[2]:016X}{self.o_cipher[3]:016X}"
-        output_state_str = f"{self.o_state[0]:016X} {self.o_state[1]:016X} {self.o_state[2]:016X} {self.o_state[3]:016X} {self.o_state[4]:016X}"
+        output_cipher_str = (
+            f"0x{self.o_cipher[0]:016X}{self.o_cipher[1]:016X}"
+            f"{self.o_cipher[2]:016X}{self.o_cipher[3]:016X}"
+        )
+        output_state_str = (
+            f"{self.o_state[0]:016X} {self.o_state[1]:016X} {self.o_state[2]:016X} "
+            f"{self.o_state[3]:016X} {self.o_state[4]:016X}"
+        )
 
         return {
             "o_state": output_state_str,
