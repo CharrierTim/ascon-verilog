@@ -24,24 +24,23 @@ module ascon
     // Signal definition
     //
 
-    // verilog_format: off          // my alignment is prettier than the tool's
+    // verilog_format: off              // my alignment is prettier than the tool's
     logic
-        s_mux_select,               //! Mux select signal
-        s_enable_xor_data_begin,    //! Enable XOR with Data, active high
-        s_enable_xor_key_begin,     //! Enable XOR with Key, active high
-        s_enable_xor_key_end,       //! Enable XOR with Key, active high
-        s_enable_xor_lsb_end,       //! Enable XOR with LSB, active high
-        s_enable_state_reg,         //! Enable state register, active high
-        s_enable_cipher_reg,        //! Enable cipher register, active high
-        s_enable_tag_reg,           //! Enable tag register, active high
-        s_enable_round_counter,     //! Enable round counter signal
-        s_reset_round_counter_6,    //! Reset round counter to 6 for 6 rounds
-        s_reset_round_counter_12,   //! Reset round counter to 0 for 12 rounds
-        s_enable_block_counter,     //! Enable block counter signal
-        s_reset_block_counter;      //! Reset block counter signal
+        s_mux_select,                   //! Mux select signal
+        s_enable_xor_data_begin,        //! Enable XOR with Data, active high
+        s_enable_xor_key_begin,         //! Enable XOR with Key, active high
+        s_enable_xor_key_end,           //! Enable XOR with Key, active high
+        s_enable_xor_lsb_end,           //! Enable XOR with LSB, active high
+        s_enable_state_reg,             //! Enable state register, active high
+        s_enable_cipher_reg,            //! Enable cipher register, active high
+        s_enable_tag_reg,               //! Enable tag register, active high
+        s_enable_round_counter,         //! Enable round counter signal
+        s_reset_round_counter_6,        //! Reset round counter to 6 for 6 rounds
+        s_reset_round_counter_12,       //! Reset round counter to 0 for 12 rounds
+        s_enable_block_counter,         //! Enable block counter signal
+        s_reset_block_counter;          //! Reset block counter signal
 
-    t_state_array       o_state;
-
+    t_state_array       o_state;        //! Output state array
     logic         [3:0] round_counter;  //! Round counter Signal
     logic         [1:0] block_counter;  //! Block counter Signal
     // verilog_format: on
