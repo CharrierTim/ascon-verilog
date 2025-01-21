@@ -8,7 +8,40 @@ Author: Timothée Charrier
 
 from __future__ import annotations
 
+import cocotb
 from cocotb import log
+
+
+def convert_output_to_str(
+    dut: cocotb.handle.HierarchyObject,
+    cipher: list[int],
+) -> dict[str, str]:
+    """
+    Convert the DUT output to a string.
+
+    Parameters
+    ----------
+    dut : object
+        The device under test (DUT).
+    cipher : list[int]
+        The cipher output.
+
+    Returns
+    -------
+    dict
+        The DUT output as a string.
+
+    """
+    # Get the DUT outputs as integers
+    o_tag = dut.o_tag.value.integer
+    o_state = [int(x) for x in dut.o_state.value]
+
+    # Convert the DUT outputs to strings
+    return {
+        "o_tag": f"{o_tag:032X}",
+        "o_state": " ".join([f"{x:016X}" for x in o_state]),
+        "o_cipher": "".join([f"{x:016X}" for x in cipher]),
+    }
 
 
 class AsconModel:
@@ -123,7 +156,7 @@ class AsconModel:
 
             # Perform the Round Constants addition
             state[2] ^= 0xF0 - r * 0x10 + r * 0x1
-            log.info("Addition constante : %016X %016X %016X %016X %016X", *state)
+            log.info("Constant addition  : %016X %016X %016X %016X %016X", *state)
 
             # Perform the Substitution Layer
             state = self._substitution_layer(state)
@@ -131,7 +164,7 @@ class AsconModel:
 
             # Perform the Linear Diffusion Layer
             state = self._linear_diffusion_layer(state)
-            log.info("Diffusion linéaire : %016X %016X %016X %016X %016X", *state)
+            log.info("Linear diffusion   : %016X %016X %016X %016X %016X", *state)
 
         # Set the output state
         self.o_state = state
@@ -213,6 +246,25 @@ class AsconModel:
         self.o_state[4] ^= 0x0000000000000001
         log.info("State ^ LSB        : %016X %016X %016X %016X %016X", *self.o_state)
 
+    def _process_finalization_phase(self) -> None:
+        """Process the finalization phase."""
+        self.xor_data_begin(data=self.plaintext[4])
+        self._log_state("Finalization  ")
+
+        # Final Permutation
+        self.o_state[1] ^= self.i_key >> 64
+        self.o_state[2] ^= self.i_key & 0xFFFFFFFFFFFFFFFF
+        self.o_cipher[3] = self.o_state[0]
+        self.permutation(i_round=12)
+
+        # Final XOR
+        self.xor_key_end()
+        self._log_state("Final         ")
+
+        # Extract the tag
+        self.o_tag[0] = self.o_state[3]
+        self.o_tag[1] = self.o_state[4]
+
     def ascon128(self, inputs: dict[str, int]) -> dict[str, str]:
         """
         Compute the output state based on the current input state.
@@ -239,12 +291,12 @@ class AsconModel:
 
         # Associated Data Phase
         self.xor_data_begin(data=self.plaintext[0])
-        self._process_data_phase(rounds=6)
+        self.permutation(i_round=6)
         self.xor_lsb_end()
 
         # Plaintext Phase
         for i in range(3):
-            self._log_state(f"Data A{i + 1}")
+            self._log_state(f"Data A{i + 1}       ")
 
             # Start with Xor Begin
             self.xor_data_begin(data=self.plaintext[i + 1])
@@ -253,8 +305,8 @@ class AsconModel:
             self.o_cipher[i] = self.o_state[0]
 
             # Process the data phase
-            self._process_data_phase(
-                rounds=6,
+            self.permutation(
+                i_round=6,
             )
 
         # Finalization Phase
@@ -266,48 +318,20 @@ class AsconModel:
     def _log_initial_state(self) -> None:
         """Log the initial state."""
         log.info(
-            "*********************************************************************************************************\n"
-            "Valeur initiale    : %016X %016X %016X %016X %016X\n"
-            "*********************************************************************************************************",
+            f"{"*"*105}\n"
+            "Initial State      : %016X %016X %016X %016X %016X\n"
+            f"{"*"*105}",
             *self.i_state,
         )
 
     def _log_state(self, phase: str) -> None:
         """Log the current state."""
         log.info(
-            "*********************************************************************************************************\n"
+            f"{"*"*105}\n"
             f"{phase}     : %016X %016X %016X %016X %016X\n"
-            "*********************************************************************************************************",
+            f"{"*"*105}",
             *self.o_state,
         )
-
-    def _process_data_phase(self, rounds: int) -> None:
-        """
-        Process a data phase.
-
-        Parameters
-        ----------
-        rounds : int
-            The number of rounds of permutation.
-
-        """
-        self.permutation(i_round=rounds)
-
-    def _process_finalization_phase(self) -> None:
-        """Process the finalization phase."""
-        self._log_state("Finalization")
-        self.xor_data_begin(data=self.plaintext[4])
-        self._log_state("État ^ donnée A5")
-        self.o_state[1] ^= self.i_key >> 64
-        self.o_state[2] ^= self.i_key & 0xFFFFFFFFFFFFFFFF
-        self.o_cipher[3] = self.o_state[0]
-        self._log_state("État ^ (0...0 & K)")
-        self.permutation(i_round=12)
-        self.xor_key_end()
-        self._log_state("Final")
-
-        self.o_tag[0] = self.o_state[3]
-        self.o_tag[1] = self.o_state[4]
 
     def _get_output(self) -> dict[str, str]:
         """
@@ -319,9 +343,9 @@ class AsconModel:
             The output state, tag, and cipher.
 
         """
-        output_tag_str = f"0x{self.o_tag[0]:016X}{self.o_tag[1]:016X}"
+        output_tag_str = f"{self.o_tag[0]:016X}{self.o_tag[1]:016X}"
         output_cipher_str = (
-            f"0x{self.o_cipher[0]:016X}{self.o_cipher[1]:016X}"
+            f"{self.o_cipher[0]:016X}{self.o_cipher[1]:016X}"
             f"{self.o_cipher[2]:016X}{self.o_cipher[3]:016X}"
         )
         output_state_str = (
