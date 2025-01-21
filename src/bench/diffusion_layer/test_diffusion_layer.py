@@ -179,6 +179,10 @@ def test_diffusion_layer() -> None:
 
         # Build HDL sources
         runner.build(
+            build_args=[
+                "-j",
+                "0",
+            ],
             build_dir="sim_build",
             clean=True,
             hdl_library=library,
