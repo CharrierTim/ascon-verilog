@@ -26,7 +26,7 @@ from cocotb_utils import (
     toggle_signal,
 )
 
-INIT_INPUTS = {
+INIT_INPUTS: dict[str, int] = {
     "i_start": 0,
     "i_data_valid": 0,
     "i_data": 0x0000000000000000,
@@ -34,25 +34,13 @@ INIT_INPUTS = {
     "i_nonce": 0x00000000000000000000000000000000,
 }
 
-
-def to_unsigned(value: int, bitwidth: int = 64) -> int:
-    """
-    Convert a signed integer to an unsigned integer.
-
-    Parameters
-    ----------
-    value : int
-        The signed integer value.
-    bitwidth : int, optional
-        The bit width of the integer, default is 64.
-
-    Returns
-    -------
-    int
-        The unsigned integer value.
-
-    """
-    return value & (1 << bitwidth) - 1
+PLAINTEXT: list[int] = [
+    0x3230323280000000,
+    0x446576656C6F7070,
+    0x657A204153434F4E,
+    0x20656E206C616E67,
+    0x6167652056484480,
+]
 
 
 async def get_cipher(dut: cocotb.handle.HierarchyObject) -> int:
@@ -136,7 +124,7 @@ async def ascon_top_test(dut: cocotb.handle.HierarchyObject) -> None:
         }
 
         # Define the ASCON model
-        ascon_model = AsconModel(inputs=inputs)
+        ascon_model = AsconModel(inputs=inputs, plaintext=PLAINTEXT)
         output_dict = ascon_model.ascon128(inputs=inputs)
 
         # Set the inputs
@@ -245,9 +233,6 @@ async def ascon_top_test(dut: cocotb.handle.HierarchyObject) -> None:
 
         # We should enter in the final phase
         await ClockCycles(signal=dut.clock, num_cycles=12)
-
-        # # We should enter in the final phase so lets wait for o_done to be high
-        # await RisingEdge(signal=dut.o_done)
 
         # Get the output state
         for i in range(5):

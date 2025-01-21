@@ -3,12 +3,10 @@ Library for the AsconModel class.
 
 This module contains the Python model used to verify the Ascon module.
 
-@author: Timothée Charrier
+Author: Timothée Charrier
 """
 
 from __future__ import annotations
-
-from types import NoneType
 
 from cocotb import log
 
@@ -20,7 +18,12 @@ class AsconModel:
     This class defines the model used to verify the Ascon module.
     """
 
-    def __init__(self, *, inputs: dict[str, int] | None = None) -> None:
+    def __init__(
+        self,
+        *,
+        inputs: dict[str, int] | None = None,
+        plaintext: list[int] | None = None,
+    ) -> None:
         """
         Initialize the model.
 
@@ -28,6 +31,8 @@ class AsconModel:
         ----------
         inputs : dict, optional
             The initial input dictionary. Default is None.
+        plaintext : list, optional
+            The plaintext data. Default is None.
 
         """
         inputs = inputs or {}
@@ -51,13 +56,11 @@ class AsconModel:
         ]
 
         # Fixed data values
-        self.datas: list[int] = [
-            0x3230323280000000,
-            0x446576656C6F7070,
-            0x657A204153434F4E,
-            0x20656E206C616E67,
-            0x6167652056484480,
-        ]
+        self.plaintext: list[int] = plaintext or [0] * 5
+
+        # Check if the plaintext list contains only zeros
+        if all(x == 0 for x in self.plaintext):
+            log.warning("The plaintext list contains only zeros.")
 
     def update_inputs(self, inputs: dict[str, int] | None = None) -> None:
         """
@@ -100,27 +103,16 @@ class AsconModel:
         """
         return (value >> num_bits) | ((value & (1 << num_bits) - 1) << (64 - num_bits))
 
-    def permutation(
-        self,
-        i_round: int = 0,
-        *,
-        is_first: bool = False,
-    ) -> list[int]:
+    def permutation(self, i_round: int = 0, *, is_first: bool = False) -> None:
         """
         Compute the output state based on the current input state.
 
         Parameters
         ----------
         i_round : int, optional
-            The current round number.
-            Default is 0.
+            The current round number. Default is 0.
         is_first : bool, optional
-            True if it is the first permutation, False otherwise.
-            Default is False.
-
-        Returns
-        -------
-        Nothing, only updates the state array.
+            True if it is the first permutation, False otherwise. Default is False.
 
         """
         # Create a copy of the input state
@@ -131,66 +123,18 @@ class AsconModel:
 
             # Perform the Round Constants addition
             state[2] ^= 0xF0 - r * 0x10 + r * 0x1
-
-            log.info(
-                "Addition constante : %016X %016X %016X %016X %016X",
-                state[0],
-                state[1],
-                state[2],
-                state[3],
-                state[4],
-            )
+            log.info("Addition constante : %016X %016X %016X %016X %016X", *state)
 
             # Perform the Substitution Layer
-            state[0] ^= state[4]
-            state[4] ^= state[3]
-            state[2] ^= state[1]
-            temp = [
-                (state[i] ^ 0xFFFFFFFFFFFFFFFF) & state[(i + 1) % 5] for i in range(5)
-            ]
-            for i in range(5):
-                state[i] ^= temp[(i + 1) % 5]
-            state[1] ^= state[0]
-            state[0] ^= state[4]
-            state[3] ^= state[2]
-            state[2] ^= 0xFFFFFFFFFFFFFFFF
-
-            log.info(
-                "Substitution S-box : %016X %016X %016X %016X %016X",
-                state[0],
-                state[1],
-                state[2],
-                state[3],
-                state[4],
-            )
+            state = self._substitution_layer(state)
+            log.info("Substitution S-box : %016X %016X %016X %016X %016X", *state)
 
             # Perform the Linear Diffusion Layer
-            state[0] ^= self.rotate_right(state[0], 19) ^ self.rotate_right(
-                state[0],
-                28,
-            )
-            state[1] ^= self.rotate_right(state[1], 61) ^ self.rotate_right(
-                state[1],
-                39,
-            )
-            state[2] ^= self.rotate_right(state[2], 1) ^ self.rotate_right(state[2], 6)
-            state[3] ^= self.rotate_right(state[3], 10) ^ self.rotate_right(
-                state[3],
-                17,
-            )
-            state[4] ^= self.rotate_right(state[4], 7) ^ self.rotate_right(state[4], 41)
+            state = self._linear_diffusion_layer(state)
+            log.info("Diffusion linéaire : %016X %016X %016X %016X %016X", *state)
 
-            log.info(
-                "Diffusion linéaire : %016X %016X %016X %016X %016X",
-                state[0],
-                state[1],
-                state[2],
-                state[3],
-                state[4],
-            )
-
-            # Set the output state
-            self.o_state = state
+        # Set the output state
+        self.o_state = state
 
     def _substitution_layer(self, state: list[int]) -> list[int]:
         """
@@ -245,12 +189,6 @@ class AsconModel:
             for s, (r1, r2) in rotations
         ]
 
-    def xor_key_begin(self) -> None:
-        """Perform XOR operation at the beginning with the key."""
-        key_combined = self.i_key ^ ((self.o_state[3] << 64) | self.o_state[4])
-        self.o_state[3] = (key_combined >> 64) & 0xFFFFFFFFFFFFFFFF
-        self.o_state[4] = key_combined & 0xFFFFFFFFFFFFFFFF
-
     def xor_data_begin(self, data: int) -> None:
         """
         Perform XOR operation at the beginning with the data.
@@ -262,20 +200,20 @@ class AsconModel:
 
         """
         self.o_state[0] ^= data
+        log.info("State ^ Data       : %016X %016X %016X %016X %016X", *self.o_state)
 
     def xor_key_end(self) -> None:
         """Perform XOR operation at the end with the key."""
         self.o_state[3] ^= self.i_key >> 64
         self.o_state[4] ^= self.i_key & 0xFFFFFFFFFFFFFFFF
+        log.info("State ^ Key        : %016X %016X %016X %016X %016X", *self.o_state)
 
     def xor_lsb_end(self) -> None:
         """Perform XOR operation at the end with the least significant bit."""
         self.o_state[4] ^= 0x0000000000000001
+        log.info("State ^ LSB        : %016X %016X %016X %016X %016X", *self.o_state)
 
-    def ascon128(
-        self,
-        inputs: dict[str, int],
-    ) -> dict[str, str]:
+    def ascon128(self, inputs: dict[str, int]) -> dict[str, str]:
         """
         Compute the output state based on the current input state.
 
@@ -293,187 +231,94 @@ class AsconModel:
         # Update the input state
         self.update_inputs(inputs)
 
-        #
         # Initialization Phase
-        #
+        self._log_initial_state()
+        self.permutation(i_round=12, is_first=True)
+        self.xor_key_end()
+        self._log_state("Initialisation")
 
+        # Associated Data Phase
+        self.xor_data_begin(data=self.plaintext[0])
+        self._process_data_phase(rounds=6)
+        self.xor_lsb_end()
+
+        # Plaintext Phase
+        for i in range(3):
+            self._log_state(f"Data A{i + 1}")
+
+            # Start with Xor Begin
+            self.xor_data_begin(data=self.plaintext[i + 1])
+
+            # Get the cipher
+            self.o_cipher[i] = self.o_state[0]
+
+            # Process the data phase
+            self._process_data_phase(
+                rounds=6,
+            )
+
+        # Finalization Phase
+        self._process_finalization_phase()
+
+        # Return the output state, tag, and cipher
+        return self._get_output()
+
+    def _log_initial_state(self) -> None:
+        """Log the initial state."""
         log.info(
             "*********************************************************************************************************\n"
             "Valeur initiale    : %016X %016X %016X %016X %016X\n"
             "*********************************************************************************************************",
-            self.i_state[0],
-            self.i_state[1],
-            self.i_state[2],
-            self.i_state[3],
-            self.i_state[4],
+            *self.i_state,
         )
 
-        # 12 rounds of permutation
-        self.permutation(i_round=12, is_first=True)
-
-        # Xor end of the state with the key
-        self.xor_key_end()
-
-        log.info(
-            "État ^ (0...0 & K) : %016X %016X %016X %016X %016X",
-            self.o_state[0],
-            self.o_state[1],
-            self.o_state[2],
-            self.o_state[3],
-            self.o_state[4],
-        )
-
+    def _log_state(self, phase: str) -> None:
+        """Log the current state."""
         log.info(
             "*********************************************************************************************************\n"
-            "Initialisation     : %016X %016X %016X %016X %016X\n"
+            f"{phase}     : %016X %016X %016X %016X %016X\n"
             "*********************************************************************************************************",
-            self.o_state[0],
-            self.o_state[1],
-            self.o_state[2],
-            self.o_state[3],
-            self.o_state[4],
+            *self.o_state,
         )
 
-        #
-        # Associated Data Phase
-        #
+    def _process_data_phase(self, rounds: int) -> None:
+        """
+        Process a data phase.
 
-        # Xor begin with data
-        self.xor_data_begin(data=self.datas[0])
+        Parameters
+        ----------
+        rounds : int
+            The number of rounds of permutation.
 
-        log.info(
-            "État ^ donnée A1   : %016X %016X %016X %016X %016X",
-            self.o_state[0],
-            self.o_state[1],
-            self.o_state[2],
-            self.o_state[3],
-            self.o_state[4],
-        )
+        """
+        self.permutation(i_round=rounds)
 
-        # 6 rounds of permutation
-        self.permutation(i_round=6)
-
-        # Xor end lsb
-        self.xor_lsb_end()
-
-        log.info(
-            "État ^ (0...0 & 1) : %016X %016X %016X %016X %016X",
-            self.o_state[0],
-            self.o_state[1],
-            self.o_state[2],
-            self.o_state[3],
-            self.o_state[4],
-        )
-
-        #
-        # Plaintext Phase
-        #
-
-        for i in range(3):
-            log.info(
-                "*********************************************************************************************************\n"
-                "Donnée %d           : %016X %016X %016X %016X %016X\n"
-                "*********************************************************************************************************",
-                i + 2,
-                self.datas[i + 1],
-                self.o_state[0],
-                self.o_state[1],
-                self.o_state[2],
-                self.o_state[3],
-            )
-
-            # Xor begin with data
-            self.xor_data_begin(data=self.datas[i + 1])
-            self.o_cipher[i] = self.o_state[0]
-
-            log.info(
-                "État ^ donnée A%d   : %016X %016X %016X %016X %016X",
-                i + 2,
-                self.o_state[0],
-                self.o_state[1],
-                self.o_state[2],
-                self.o_state[3],
-                self.o_state[4],
-            )
-
-            # 6 rounds of permutation
-            self.permutation(i_round=6)
-
-        #
-        # Finalization Phase
-        #
-
-        log.info(
-            "*********************************************************************************************************\n"
-            "Finalization       : %016X %016X %016X %016X %016X\n"
-            "*********************************************************************************************************",
-            self.datas[4],
-            self.o_state[0],
-            self.o_state[1],
-            self.o_state[2],
-            self.o_state[3],
-        )
-
-        # Xor being with data and key
-        self.xor_data_begin(data=self.datas[4])
-
-        log.info(
-            "État ^ donnée A5   : %016X %016X %016X %016X %016X",
-            self.o_state[0],
-            self.o_state[1],
-            self.o_state[2],
-            self.o_state[3],
-            self.o_state[4],
-        )
-
-        # Xor begin with key
-        self.o_state[1] = self.o_state[1] ^ (self.i_key >> 64)
-        self.o_state[2] = self.o_state[2] ^ (self.i_key & 0xFFFFFFFFFFFFFFFF)
-
+    def _process_finalization_phase(self) -> None:
+        """Process the finalization phase."""
+        self._log_state("Finalization")
+        self.xor_data_begin(data=self.plaintext[4])
+        self._log_state("État ^ donnée A5")
+        self.o_state[1] ^= self.i_key >> 64
+        self.o_state[2] ^= self.i_key & 0xFFFFFFFFFFFFFFFF
         self.o_cipher[3] = self.o_state[0]
-
-        log.info(
-            "État ^ (0...0 & K) : %016X %016X %016X %016X %016X",
-            self.o_state[0],
-            self.o_state[1],
-            self.o_state[2],
-            self.o_state[3],
-            self.o_state[4],
-        )
-
-        # 12 rounds of permutation
+        self._log_state("État ^ (0...0 & K)")
         self.permutation(i_round=12)
-
-        # Xor end with key
         self.xor_key_end()
-
-        # Log the final state
-        log.info(
-            "*********************************************************************************************************\n"
-            "Final              : %016X %016X %016X %016X %016X\n"
-            "*********************************************************************************************************",
-            self.o_state[0],
-            self.o_state[1],
-            self.o_state[2],
-            self.o_state[3],
-            self.o_state[4],
-        )
+        self._log_state("Final")
 
         self.o_tag[0] = self.o_state[3]
         self.o_tag[1] = self.o_state[4]
 
-        # Log the tag and cipher
-        log.info(
-            "Tag                : 0x%016X%016X\n"
-            "Cipher             : 0x%016X%016X%016X%016X\n",
-            self.o_tag[0],
-            self.o_tag[1],
-            self.o_cipher[0],
-            self.o_cipher[1],
-            self.o_cipher[2],
-            self.o_cipher[3],
-        )
+    def _get_output(self) -> dict[str, str]:
+        """
+        Get the output state, tag, and cipher.
 
+        Returns
+        -------
+        dict
+            The output state, tag, and cipher.
+
+        """
         output_tag_str = f"0x{self.o_tag[0]:016X}{self.o_tag[1]:016X}"
         output_cipher_str = (
             f"0x{self.o_cipher[0]:016X}{self.o_cipher[1]:016X}"
