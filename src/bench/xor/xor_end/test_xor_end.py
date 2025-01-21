@@ -1,37 +1,50 @@
 """
-Testbench for the XOR Begin Layer.
+Testbench for the XOR End Layer.
 
-This module tests the XOR Begin Layer function module by comparing the
-output of the Python implementation with the verilog implementation.
+This module tests the XOR End Layer function module by comparing the
+output of the Python implementation with the Verilog implementation.
 
-@author: Timothée Charrier
+Author: Timothée Charrier
 """
 
 import os
+import random
 import sys
 from pathlib import Path
 
 import cocotb
 from cocotb.runner import get_runner
 from cocotb.triggers import Timer
-from xor_end_model import (
-    XorEndModel,
-)
+from xor_end_model import XorEndModel
 
 # Add the directory containing the utils.py file to the Python path
 sys.path.insert(0, str((Path(__file__).parent.parent.parent).resolve()))
 
-from cocotb_utils import (
-    get_dut_state,
-    init_hierarchy,
-)
+from cocotb_utils import get_dut_state, init_hierarchy
 
-INPUTS = {
+INIT_INPUTS = {
     "i_state": init_hierarchy(dims=(5,), bitwidth=64, use_random=False),
     "i_key": 0,
     "i_enable_xor_key": 0,
     "i_enable_xor_lsb": 0,
 }
+
+
+async def initialize_dut(dut: cocotb.handle.HierarchyObject, inputs: dict) -> None:
+    """
+    Initialize the DUT with the given inputs.
+
+    Parameters
+    ----------
+    dut : object
+        The device under test (DUT).
+    inputs : dict
+        The input dictionary.
+
+    """
+    for key, value in inputs.items():
+        getattr(dut, key).value = value
+    await Timer(10, units="ns")
 
 
 @cocotb.test()
@@ -49,26 +62,20 @@ async def reset_dut_test(dut: cocotb.handle.HierarchyObject) -> None:
     """
     try:
         # Define the model
-        xor_end_model = XorEndModel(
-            inputs=INPUTS,
-        )
+        xor_end_model = XorEndModel()
 
         # Initialize the DUT
-        for key, value in INPUTS.items():
-            getattr(dut, key).value = value
-
-        # Wait for few ns (combinatorial logic only in the DUT)
-        await Timer(10, units="ns")
+        await initialize_dut(dut, INIT_INPUTS)
 
         # Verify the output
-        xor_end_model.assert_output(dut=dut, inputs=INPUTS)
+        xor_end_model.assert_output(dut=dut, inputs=INIT_INPUTS)
 
     except Exception as e:
         dut_state = get_dut_state(dut)
-        formatted_dut_state: str = "\n".join(
-            [f"{key}: {value}" for key, value in dut_state.items()],
+        formatted_dut_state = "\n".join(
+            f"{key}: {value}" for key, value in dut_state.items()
         )
-        error_message: str = (
+        error_message = (
             f"Failed in reset_dut_test with error: {e}\n"
             f"DUT state at error:\n"
             f"{formatted_dut_state}"
@@ -78,79 +85,71 @@ async def reset_dut_test(dut: cocotb.handle.HierarchyObject) -> None:
 
 @cocotb.test()
 async def xor_end_test(dut: cocotb.handle.HierarchyObject) -> None:
-    """Test the DUT's behavior during normal computation."""
+    """
+    Test the DUT's behavior during normal computation.
+
+    Parameters
+    ----------
+    dut : object
+        The device under test (DUT).
+
+    """
     try:
         # Define the model
-        xor_end_model = XorEndModel(
-            inputs=INPUTS,
-        )
+        xor_end_model = XorEndModel()
 
+        # Reset the DUT
         await reset_dut_test(dut)
 
         # Test with specific inputs
-        new_inputs = {
-            "i_state": [
-                0xFFFFFFFFFFFFFFFF,
-                0xFFFFFFFFFFFFFFFF,
-                0xFFFFFFFFFFFFFFFF,
-                0xFFFFFFFFFFFFFFFF,
-                0xFFFFFFFFFFFFFFFF,
-            ],
-            "i_key": 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,
-            "i_enable_xor_key": 0,
-            "i_enable_xor_lsb": 0,
-        }
+        specific_inputs = [
+            {
+                "i_state": [0xFFFFFFFFFFFFFFFF] * 5,
+                "i_key": 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,
+                "i_enable_xor_key": 0,
+                "i_enable_xor_lsb": 0,
+            },
+            {
+                "i_state": [0xFFFFFFFFFFFFFFFF] * 5,
+                "i_key": 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,
+                "i_enable_xor_key": 1,
+                "i_enable_xor_lsb": 0,
+            },
+            {
+                "i_state": [0xFFFFFFFFFFFFFFFF] * 5,
+                "i_key": 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,
+                "i_enable_xor_key": 0,
+                "i_enable_xor_lsb": 1,
+            },
+            {
+                "i_state": [0xFFFFFFFFFFFFFFFF] * 5,
+                "i_key": 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,
+                "i_enable_xor_key": 1,
+                "i_enable_xor_lsb": 1,
+            },
+        ]
 
-        # Set specific inputs
-        for key, value in new_inputs.items():
-            getattr(dut, key).value = value
+        for inputs in specific_inputs:
+            await initialize_dut(dut, inputs)
+            xor_end_model.assert_output(dut=dut, inputs=inputs)
 
-        # Wait for few ns
-        await Timer(10, units="ns")
-
-        # Update the model and assert the output
-        xor_end_model.assert_output(
-            dut=dut,
-            inputs=new_inputs,
-        )
-
-        # Now enable the XOR with the key
-        new_inputs["i_enable_xor_key"] = 1
-
-        # Set specific inputs
-        for key, value in new_inputs.items():
-            getattr(dut, key).value = value
-
-        # Wait for few ns
-        await Timer(10, units="ns")
-
-        # Update the model and assert the output
-        xor_end_model.assert_output(
-            dut=dut,
-            inputs=new_inputs,
-        )
-
-        # Now enable the XOR with the data
-        new_inputs["i_enable_xor_key"] = 0
-        new_inputs["i_enable_xor_lsb"] = 1
-        for key, value in new_inputs.items():
-            getattr(dut, key).value = value
-
-        # Wait for few ns
-        await Timer(10, units="ns")
-
-        # Update the model and assert the output
-        xor_end_model.assert_output(
-            dut=dut,
-            inputs=new_inputs,
-        )
+        # Test with random inputs
+        for _ in range(10):
+            random_inputs = {
+                "i_state": init_hierarchy(dims=(5,), bitwidth=64, use_random=True),
+                "i_key": random.randint(0, 2**128 - 1),
+                "i_enable_xor_key": random.randint(0, 1),
+                "i_enable_xor_lsb": random.randint(0, 1),
+            }
+            await initialize_dut(dut, random_inputs)
+            xor_end_model.assert_output(dut=dut, inputs=random_inputs)
 
     except Exception as e:
-        dut_state: dict = get_dut_state(dut)
-        formatted_dut_state: str = "\n".join(
-            [f"{key}: {value}" for key, value in dut_state.items()],
+        dut_state = get_dut_state(dut)
+        formatted_dut_state = "\n".join(
+            f"{key}: {value}" for key, value in dut_state.items()
         )
-        error_message: str = (
+        error_message = (
             f"Failed in xor_end_test with error: {e}\n"
             f"DUT state at error:\n"
             f"{formatted_dut_state}"
@@ -187,8 +186,9 @@ def test_xor_end() -> None:
 
         # Build HDL sources
         runner.build(
+            build_args=["-j", "0"],
             build_dir="sim_build",
-            clean=True,
+            clean=False,
             hdl_library=library,
             hdl_toplevel=entity,
             sources=sources,
