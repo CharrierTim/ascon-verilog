@@ -13,7 +13,7 @@ import sys
 from pathlib import Path
 
 import cocotb
-from ascon_model import AsconModel
+from ascon_model import AsconModel, convert_output_to_str
 from cocotb.runner import get_runner
 from cocotb.triggers import ClockCycles, RisingEdge
 
@@ -42,33 +42,26 @@ PLAINTEXT: list[int] = [
     0x6167652056484480,
 ]
 
-
-async def get_cipher(dut: cocotb.handle.HierarchyObject) -> int:
-    """
-    Get the cipher output from the DUT.
-
-    Parameters
-    ----------
-    dut : object
-        The device under test (DUT).
-
-    Returns
-    -------
-    int
-        The cipher output.
-
-    """
-    cipher = 0
-
-    await RisingEdge(signal=dut.clock)
-
-    if dut.o_valid_cipher.value == 1:
-        cipher = dut.o_cipher.value.integer
-    else:
-        error_message = "Cipher output is not valid."
-        raise RuntimeError(error_message)
-
-    return cipher
+# Define the FSM states
+STATES = {
+    "STATE_IDLE": 0,
+    "STATE_CONFIGURATION": 1,
+    "STATE_START_INITIALIZATION": 2,
+    "STATE_PROCESS_INITIALIZATION": 3,
+    "STATE_END_INITIALIZATION": 4,
+    "STATE_IDLE_ASSOCIATED_DATA": 5,
+    "STATE_START_ASSOCIATED_DATA": 6,
+    "STATE_PROCESS_ASSOCIATED_DATA": 7,
+    "STATE_END_ASSOCIATED_DATA": 8,
+    "STATE_IDLE_PLAIN_TEXT": 9,
+    "STATE_START_PLAIN_TEXT": 10,
+    "STATE_PROCESS_PLAIN_TEXT": 11,
+    "STATE_END_PLAIN_TEXT": 12,
+    "STATE_IDLE_FINALIZATION": 13,
+    "STATE_START_FINALIZATION": 14,
+    "STATE_PROCESS_FINALIZATION": 15,
+    "STATE_END_FINALIZATION": 16,
+}
 
 
 @cocotb.test()
@@ -85,8 +78,17 @@ async def reset_dut_test(dut: cocotb.handle.HierarchyObject) -> None:
 
     """
     try:
+        # Expected outputs
+        expected_outputs = {
+            "o_state": [0] * 5,
+            "o_tag": 0,
+            "o_cipher": 0,
+            "o_valid_cipher": 0,
+            "o_done": 0,
+        }
+
         # Initialize the DUT
-        await initialize_dut(dut=dut, inputs=INIT_INPUTS, outputs={})
+        await initialize_dut(dut=dut, inputs=INIT_INPUTS, outputs=expected_outputs)
 
     except Exception as e:
         dut_state = get_dut_state(dut=dut)
@@ -117,11 +119,7 @@ async def ascon_top_test(dut: cocotb.handle.HierarchyObject) -> None:
             "i_key": 0x000102030405060708090A0B0C0D0E0F,
             "i_nonce": 0x000102030405060708090A0B0C0D0E0F,
         }
-        output_dut_dict = {
-            "o_state": [0] * 5,
-            "o_tag": [0] * 2,
-            "o_cipher": [0] * 4,
-        }
+        output_cipher = [0] * 4
 
         # Define the ASCON model
         ascon_model = AsconModel(inputs=inputs, plaintext=PLAINTEXT)
@@ -136,132 +134,141 @@ async def ascon_top_test(dut: cocotb.handle.HierarchyObject) -> None:
 
         # Send the start signal
         await toggle_signal(dut=dut, signal_dict={"i_start": 1}, verbose=False)
+        assert dut.ascon_fsm_inst.current_state.value == STATES["STATE_CONFIGURATION"]
 
         #
         # Initialisation phase
         #
 
-        # Wait for 12 clock cycles (1 permutation with 12 rounds)
-        await ClockCycles(signal=dut.clock, num_cycles=12)
-
-        # Wait for a random number of clock cycles
-        await ClockCycles(signal=dut.clock, num_cycles=random.randint(0, 15))
+        # Wait at least 12 clock cycles (12 rounds permutation)
+        await ClockCycles(signal=dut.clock, num_cycles=random.randint(13, 20))
+        assert (
+            dut.ascon_fsm_inst.current_state.value
+            == STATES["STATE_IDLE_ASSOCIATED_DATA"]
+        )
 
         #
         # Associated Data phase
         #
 
         # Update i_data
-        dut.i_data.value = 0x3230323280000000
+        dut.i_data.value = PLAINTEXT[0]
 
         # Set i_data_valid to 1
         await toggle_signal(dut=dut, signal_dict={"i_data_valid": 1}, verbose=False)
+        assert (
+            dut.ascon_fsm_inst.current_state.value
+            == STATES["STATE_START_ASSOCIATED_DATA"]
+        )
 
-        # Wait for 6 clock cycles (1 permutation with 6 rounds)
-        await ClockCycles(signal=dut.clock, num_cycles=6)
-
-        # Wait for a random number of clock cycles
-        await ClockCycles(signal=dut.clock, num_cycles=random.randint(0, 15))
+        # Wait at least 6 clock cycles (6 rounds permutation)
+        await ClockCycles(signal=dut.clock, num_cycles=random.randint(7, 10))
+        assert dut.ascon_fsm_inst.current_state.value == STATES["STATE_IDLE_PLAIN_TEXT"]
 
         #
         # Plaintext phase
         #
 
+        # Block 1
+
+        # # Update i_data
+        dut.i_data.value = PLAINTEXT[1]
+
+        # # Set i_data_valid to 1
+        await toggle_signal(dut=dut, signal_dict={"i_data_valid": 1}, verbose=False)
+        assert (
+            dut.ascon_fsm_inst.current_state.value == STATES["STATE_START_PLAIN_TEXT"]
+        )
+
+        # Get the cipher
+        # The valid cipher is always set to 1 STATE_START_PLAIN_TEXT
+        await RisingEdge(signal=dut.o_valid_cipher)
+        output_cipher[0] = dut.o_cipher.value.integer
+        assert dut.o_valid_cipher.value == 1, "Cipher is not valid"
+
+        # Wait at least 12 clock cycles (12 rounds permutation)
+        await ClockCycles(signal=dut.clock, num_cycles=random.randint(13, 20))
+        assert dut.ascon_fsm_inst.current_state.value == STATES["STATE_IDLE_PLAIN_TEXT"]
+
+        # Block 2
+
         # Update i_data
-        dut.i_data.value = 0x446576656C6F7070
+        dut.i_data.value = PLAINTEXT[2]
 
         # Set i_data_valid to 1
         await toggle_signal(dut=dut, signal_dict={"i_data_valid": 1}, verbose=False)
+        assert (
+            dut.ascon_fsm_inst.current_state.value == STATES["STATE_START_PLAIN_TEXT"]
+        )
 
         # Get the cipher
-        output_dut_dict["o_cipher"][0] = await get_cipher(dut=dut)
+        await RisingEdge(signal=dut.o_valid_cipher)
+        output_cipher[1] = dut.o_cipher.value.integer
+        assert dut.o_valid_cipher.value == 1, "Cipher is not valid"
 
-        # Wait for 6 clock cycles (1 permutation with 6 rounds)
-        await ClockCycles(signal=dut.clock, num_cycles=6)
+        # Wait at least 12 clock cycles (12 rounds permutation)
+        await ClockCycles(signal=dut.clock, num_cycles=random.randint(13, 20))
+        assert dut.ascon_fsm_inst.current_state.value == STATES["STATE_IDLE_PLAIN_TEXT"]
 
-        # Wait for a random number of clock cycles
-        await ClockCycles(signal=dut.clock, num_cycles=random.randint(0, 15))
+        # Block 3
 
         # Update i_data
-        dut.i_data.value = 0x657A204153434F4E
+        dut.i_data.value = PLAINTEXT[3]
 
         # Set i_data_valid to 1
         await toggle_signal(dut=dut, signal_dict={"i_data_valid": 1}, verbose=False)
+        assert (
+            dut.ascon_fsm_inst.current_state.value == STATES["STATE_START_PLAIN_TEXT"]
+        )
 
         # Get the cipher
-        output_dut_dict["o_cipher"][1] = await get_cipher(dut=dut)
+        await RisingEdge(signal=dut.o_valid_cipher)
+        output_cipher[2] = dut.o_cipher.value.integer
+        assert dut.o_valid_cipher.value == 1, "Cipher is not valid"
 
-        # Wait for 6 clock cycles (1 permutation with 6 rounds)
-        await ClockCycles(signal=dut.clock, num_cycles=6)
+        # Wait at least 12 clock cycles (12 rounds permutation)
+        await ClockCycles(signal=dut.clock, num_cycles=random.randint(13, 20))
+        assert (
+            dut.ascon_fsm_inst.current_state.value == STATES["STATE_IDLE_FINALIZATION"]
+        )
 
-        # Wait for a random number of clock cycles
-        await ClockCycles(signal=dut.clock, num_cycles=random.randint(0, 15))
-
-        # Update i_data
-        dut.i_data.value = 0x20656E206C616E67
-
-        # Set i_data_valid to 1
-        await toggle_signal(dut=dut, signal_dict={"i_data_valid": 1}, verbose=False)
-
-        # Get the cipher
-        output_dut_dict["o_cipher"][2] = await get_cipher(dut=dut)
-
-        # Wait for 6 clock cycles (1 permutation with 6 rounds)
-        await ClockCycles(signal=dut.clock, num_cycles=6)
-
-        # Wait for a random number of clock cycles
-        await ClockCycles(signal=dut.clock, num_cycles=random.randint(0, 15))
-
-        # Update i_data
-        dut.i_data.value = 0x6167652056484480
-
-        #
         # Final phase
-        #
+
+        # Update i_data
+        dut.i_data.value = PLAINTEXT[4]
 
         # Set i_data_valid to 1
         await toggle_signal(dut=dut, signal_dict={"i_data_valid": 1}, verbose=False)
+        assert (
+            dut.ascon_fsm_inst.current_state.value == STATES["STATE_START_FINALIZATION"]
+        )
 
         # Get the cipher
-        output_dut_dict["o_cipher"][3] = await get_cipher(dut=dut)
+        await RisingEdge(signal=dut.o_valid_cipher)
+        output_cipher[3] = dut.o_cipher.value.integer
+        assert dut.o_valid_cipher.value == 1, "Cipher is not valid"
 
-        # Wait for 6 clock cycles (1 permutation with 6 rounds)
-        await ClockCycles(signal=dut.clock, num_cycles=6)
+        # Wait for the o_done signal
+        await RisingEdge(signal=dut.o_done)
+        assert dut.ascon_fsm_inst.current_state.value == STATES["STATE_IDLE"]
+        await ClockCycles(signal=dut.clock, num_cycles=5)
 
-        # Wait for a random number of clock cycles
-        await ClockCycles(signal=dut.clock, num_cycles=random.randint(0, 15))
+        #
+        # Check the output
+        #
 
-        # We should enter in the final phase
-        await ClockCycles(signal=dut.clock, num_cycles=12)
+        # Get output state, tag, and cipher
+        output_dut_dict = convert_output_to_str(dut=dut, cipher=output_cipher)
 
-        # Get the output state
-        for i in range(5):
-            output_dut_dict["o_state"][i] = dut.o_state[i].value.integer
+        # Log the DUT output
+        dut._log.info("DUT Output State   : " + output_dut_dict["o_state"])
+        dut._log.info("DUT Output Tag     : " + output_dut_dict["o_tag"])
+        dut._log.info("DUT Output Cipher  : " + output_dut_dict["o_cipher"])
 
         # Check the output
-        output_state_dut_str = (
-            f"{output_dut_dict['o_state'][0]:016X} "
-            f"{output_dut_dict['o_state'][1]:016X} "
-            f"{output_dut_dict['o_state'][2]:016X} "
-            f"{output_dut_dict['o_state'][3]:016X} "
-            f"{output_dut_dict['o_state'][4]:016X}"
-        )
-        output_tag_dut_str = (
-            f"0x{dut.o_tag.value.integer & 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF:032X}"
-        )
-        output_cipher_dut_str = (
-            f"0x{output_dut_dict["o_cipher"][0]:016X}{output_dut_dict["o_cipher"][1]:016X}"
-            f"{output_dut_dict["o_cipher"][2]:016X}{output_dut_dict["o_cipher"][3]:016X}"
-        )
-
-        dut._log.info(f"DUT Output State   : {output_state_dut_str}")
-        dut._log.info(f"DUT Output Tag     : {output_tag_dut_str}")
-        dut._log.info(f"DUT Output Cipher  : {output_cipher_dut_str}")
-
-        # Check the output
-        assert output_dict["o_state"] == output_state_dut_str
-        assert output_dict["o_tag"] == output_tag_dut_str
-        assert output_dict["o_cipher"] == output_cipher_dut_str
+        assert output_dict["o_state"] == output_dut_dict["o_state"]
+        assert output_dict["o_tag"] == output_dut_dict["o_tag"]
+        assert output_dict["o_cipher"] == output_dut_dict["o_cipher"]
 
     except Exception as e:
         dut_state = get_dut_state(dut=dut)
