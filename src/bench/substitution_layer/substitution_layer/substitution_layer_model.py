@@ -23,25 +23,8 @@ class SubstitutionLayerModel:
 
     def __init__(
         self,
-        inputs: dict | None = None,
     ) -> None:
-        """
-        Initialize the model.
-
-        Parameters
-        ----------
-        inputs : dict, optional
-            The initial input dictionary
-
-        """
-        if inputs is None:
-            inputs = {
-                "i_state": [0] * 5,
-            }
-
-        # Inputs parameters
-        self.i_state: list[int] = inputs["i_state"]
-
+        """Initialize the model."""
         # Output state
         self.o_state: list[int] = [0] * 5
 
@@ -71,52 +54,6 @@ class SubstitutionLayerModel:
         state[2] ^= 0xFFFFFFFFFFFFFFFF
         return state
 
-    def compute(
-        self,
-        inputs: dict | None = None,
-    ) -> list[int]:
-        """
-        Compute the output state based on the input state.
-
-        Parameters
-        ----------
-        inputs : dict, optional
-            The input dictionary.
-
-        Returns
-        -------
-        Nothing, only updates the state array.
-
-        """
-        # Update the inputs
-        if inputs is not None:
-            self.update_inputs(inputs)
-
-        # Create a copy of the input state
-        state = self.i_state.copy()
-
-        # Apply the substitution layer
-        self.o_state = self._substitution_layer(state=state)
-
-    def update_inputs(
-        self,
-        inputs: dict | None = None,
-    ) -> None:
-        """
-        Update the input state of the model.
-
-        Parameters
-        ----------
-        inputs : dict, optional
-            The new input dictionary
-
-        """
-        if inputs is None:
-            return
-
-        # Update the inputs
-        self.i_state = inputs["i_state"]
-
     def assert_output(
         self,
         dut: cocotb.handle.HierarchyObject,
@@ -134,14 +71,14 @@ class SubstitutionLayerModel:
 
         """
         # Compute the expected output
-        self.compute(inputs=inputs)
+        self.o_state = self._substitution_layer(state=inputs["i_state"])
 
         # Get the output state from the DUT
         o_state = [int(x) for x in dut.o_state.value]
 
         # Convert the output to a list of integers
         input_str = "{:016X} {:016X} {:016X} {:016X} {:016X}".format(
-            *tuple(x & 0xFFFFFFFFFFFFFFFF for x in self.i_state),
+            *tuple(x & 0xFFFFFFFFFFFFFFFF for x in inputs["i_state"]),
         )
         expected_str = "{:016X} {:016X} {:016X} {:016X} {:016X}".format(
             *tuple(x & 0xFFFFFFFFFFFFFFFF for x in self.o_state),

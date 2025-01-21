@@ -71,9 +71,7 @@ async def reset_dut_test(dut: cocotb.handle.HierarchyObject) -> None:
         log_generics(dut=dut, generics=generics)
 
         # Define the model
-        substitution_layer_model = SubstitutionLayerModel(
-            inputs=INIT_INPUTS,
-        )
+        substitution_layer_model = SubstitutionLayerModel()
 
         # Initialize the DUT
         for key, value in INIT_INPUTS.items():
@@ -102,18 +100,13 @@ async def reset_dut_test(dut: cocotb.handle.HierarchyObject) -> None:
 async def substitution_layer_test(dut: cocotb.handle.HierarchyObject) -> None:
     """Test the DUT's behavior during normal computation."""
     try:
-        # Get the generic parameters
-        _ = get_generics(dut=dut)
-
         # Define the model
-        substitution_layer_model = SubstitutionLayerModel(
-            inputs=INIT_INPUTS,
-        )
+        substitution_layer_model = SubstitutionLayerModel()
 
         await reset_dut_test(dut)
 
         # Test with specific inputs
-        new_inputs = {
+        specific_input = {
             "i_state": [
                 0x80400C0600000000,
                 0x0001020304050607,
@@ -124,14 +117,14 @@ async def substitution_layer_test(dut: cocotb.handle.HierarchyObject) -> None:
         }
 
         # Set specific inputs
-        for key, value in new_inputs.items():
+        for key, value in specific_input.items():
             dut.__getattr__(key).value = value
 
         # Wait for few ns
         await Timer(10, units="ns")
 
         # Update the model and assert the output
-        substitution_layer_model.assert_output(dut=dut, inputs=new_inputs)
+        substitution_layer_model.assert_output(dut=dut, inputs=specific_input)
 
         dut._log.info("Starting random tests...")
 
