@@ -118,8 +118,8 @@ async def permutation_test(dut: cocotb.handle.HierarchyObject) -> None:
         dut._log.info("Starting Permutation With the Last Permutation State")
 
         # Log the Key and Data
-        dut._log.info(f"Data:       {new_inputs['i_data']:016X}")
-        dut._log.info(f"Key:        {new_inputs['i_key']:016X}")
+        dut._log.info("Key            : 0x{:032X}".format(new_inputs["i_key"]))
+        dut._log.info("Data           : 0x{:016X}".format(new_inputs["i_data"]))
 
         for i_round in range(13):
             # Update the values

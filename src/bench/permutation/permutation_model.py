@@ -98,6 +98,59 @@ class PermutationModel:
         """
         return (value >> num_bits) | ((value & (1 << num_bits) - 1) << (64 - num_bits))
 
+    def _linear_diffusion_layer(self, state: list[int]) -> list[int]:
+        """
+        Apply the linear diffusion layer.
+
+        Parameters
+        ----------
+        state : List[int]
+            The current state.
+
+        Returns
+        -------
+        List[int]
+            The updated state after the linear diffusion layer.
+
+        """
+        rotations = [
+            (state[0], [19, 28]),
+            (state[1], [61, 39]),
+            (state[2], [1, 6]),
+            (state[3], [10, 17]),
+            (state[4], [7, 41]),
+        ]
+        return [
+            s ^ self.rotate_right(s, r1) ^ self.rotate_right(s, r2)
+            for s, (r1, r2) in rotations
+        ]
+
+    def _substitution_layer(self, state: list[int]) -> list[int]:
+        """
+        Apply the substitution layer (S-box).
+
+        Parameters
+        ----------
+        state : List[int]
+            The current state.
+
+        Returns
+        -------
+        List[int]
+            The updated state after the substitution layer.
+
+        """
+        state[0] ^= state[4]
+        state[4] ^= state[3]
+        state[2] ^= state[1]
+        temp = [(state[i] ^ 0xFFFFFFFFFFFFFFFF) & state[(i + 1) % 5] for i in range(5)]
+        state = [state[i] ^ temp[(i + 1) % 5] for i in range(5)]
+        state[1] ^= state[0]
+        state[0] ^= state[4]
+        state[3] ^= state[2]
+        state[2] ^= 0xFFFFFFFFFFFFFFFF
+        return state
+
     def compute(
         self,
         inputs: dict | None = None,
@@ -127,34 +180,10 @@ class PermutationModel:
             state[2] ^= 0xF0 - r * 0x10 + r * 0x1
 
             # Perform the Substitution Layer
-            state[0] ^= state[4]
-            state[4] ^= state[3]
-            state[2] ^= state[1]
-            temp = [
-                (state[i] ^ 0xFFFFFFFFFFFFFFFF) & state[(i + 1) % 5] for i in range(5)
-            ]
-            for i in range(5):
-                state[i] ^= temp[(i + 1) % 5]
-            state[1] ^= state[0]
-            state[0] ^= state[4]
-            state[3] ^= state[2]
-            state[2] ^= 0xFFFFFFFFFFFFFFFF
+            state = self._substitution_layer(state)
 
             # Perform the Linear Diffusion Layer
-            state[0] ^= self.rotate_right(state[0], 19) ^ self.rotate_right(
-                state[0],
-                28,
-            )
-            state[1] ^= self.rotate_right(state[1], 61) ^ self.rotate_right(
-                state[1],
-                39,
-            )
-            state[2] ^= self.rotate_right(state[2], 1) ^ self.rotate_right(state[2], 6)
-            state[3] ^= self.rotate_right(state[3], 10) ^ self.rotate_right(
-                state[3],
-                17,
-            )
-            state[4] ^= self.rotate_right(state[4], 7) ^ self.rotate_right(state[4], 41)
+            state = self._linear_diffusion_layer(state)
 
             # Set the output state
             self.o_state = state
@@ -178,17 +207,32 @@ class PermutationModel:
         # Compute the expected output
         self.compute(inputs=inputs)
 
+        # Get the output state from the DUT
+        o_state = [int(x) for x in dut.o_state.value]
+
         # Convert the output to a list of integers
         round_str = f"{self.i_round:02X}"
-        input_str = " ".join([f"{x:016X}" for x in self.i_state])
-        output_str = " ".join([f"{x:016X}" for x in self.o_state])
-        output_dut_str = " ".join([f"{int(x):016X}" for x in dut.o_state])
+        input_str = "{:016X} {:016X} {:016X} {:016X} {:016X}".format(
+            *tuple(x & 0xFFFFFFFFFFFFFFFF for x in self.i_state),
+        )
+        expected_str = "{:016X} {:016X} {:016X} {:016X} {:016X}".format(
+            *tuple(x & 0xFFFFFFFFFFFFFFFF for x in self.o_state),
+        )
+        output_dut_str = "{:016X} {:016X} {:016X} {:016X} {:016X}".format(
+            *tuple(x & 0xFFFFFFFFFFFFFFFF for x in o_state),
+        )
 
-        # Log the input and output values
-        dut._log.info(f"Round:      {round_str}")
-        dut._log.info(f"Input:      {input_str}")
-        dut._log.info(f"Expected:   {output_str}")
-        dut._log.info(f"DUT Output: {output_dut_str}")
+        dut._log.info("Round          : " + round_str)
+        dut._log.info("Input state    : " + input_str)
+        dut._log.info("Expected state : " + expected_str)
+        dut._log.info("Output state   : " + output_dut_str)
         dut._log.info("")
 
-        # Assert the output
+        # Check if the output is correct
+        if expected_str != output_dut_str:
+            error_msg = (
+                f"Output mismatch for round {round_str}\n"
+                f"Expected: {expected_str}\n"
+                f"Received: {output_dut_str}"
+            )
+            raise ValueError(error_msg)
