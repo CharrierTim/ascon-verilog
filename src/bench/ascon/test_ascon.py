@@ -261,9 +261,12 @@ async def ascon_top_test(dut: cocotb.handle.HierarchyObject) -> None:
         output_dut_dict = convert_output_to_str(dut=dut, cipher=output_cipher)
 
         # Log the DUT output
+        dut._log.info("Model Output State : " + output_dict["o_state"])
+        dut._log.info("Model Output Tag   : " + output_dict["o_tag"])
+        dut._log.info("Model Output Cipher: " + output_dict["o_cipher"] + "\n")
         dut._log.info("DUT Output State   : " + output_dut_dict["o_state"])
         dut._log.info("DUT Output Tag     : " + output_dut_dict["o_tag"])
-        dut._log.info("DUT Output Cipher  : " + output_dut_dict["o_cipher"])
+        dut._log.info("DUT Output Cipher  : " + output_dut_dict["o_cipher"] + "\n")
 
         # Check the output
         assert output_dict["o_state"] == output_dut_dict["o_state"]
