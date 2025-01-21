@@ -23,118 +23,35 @@ class XorBeginModel:
 
     def __init__(
         self,
-        *,
-        inputs: dict | None = None,
     ) -> None:
-        """
-        Initialize the model.
-
-        Parameters
-        ----------
-        inputs : dict, optional
-            The initial input dictionary
-            Default is None.
-
-        """
-        if inputs is None:
-            inputs = {
-                "i_state": [0] * 5,
-                "i_data": 0,
-                "i_key": 0,
-                "i_enable_xor_key": False,
-                "i_enable_xor_data": False,
-            }
-
-        # Inputs parameters
-        self.i_state: list[int] = inputs["i_state"]
-        self.i_data: int = inputs["i_data"]
-        self.i_key: int = inputs["i_key"]
-        self.i_enable_xor_key: bool = inputs["i_enable_xor_key"]
-        self.i_enable_xor_data: bool = inputs["i_enable_xor_data"]
-
+        """Initialize the model."""
         # Output state
         self.o_state: list[int] = [0] * 5
 
-    def update_inputs(
-        self,
-        inputs: dict | None = None,
-    ) -> None:
+    def xor_data_begin(self, data: int) -> None:
         """
-        Update the input state, data, key, and enable signals of the model.
+        Perform XOR operation at the beginning with the data.
 
         Parameters
         ----------
-        inputs : dict, optional
-            The new input dictionary
+        data : int
+            The data to XOR with the state.
 
         """
-        if inputs is None:
-            return
+        self.o_state[0] ^= data
 
-        # Update the inputs
-        self.i_state = inputs["i_state"]
-        self.i_data = inputs["i_data"]
-        self.i_key = inputs["i_key"]
-        self.i_enable_xor_key = inputs["i_enable_xor_key"]
-        self.i_enable_xor_data = inputs["i_enable_xor_data"]
-
-        # Reset the output state
-        self.o_state = [0] * 5
-
-    def to_unsigned(self, value: int, bitwidth: int = 64) -> int:
+    def xor_key_begin(self, key: int) -> None:
         """
-        Convert a signed integer to an unsigned integer.
+        Perform XOR operation at the beginning with the key.
 
         Parameters
         ----------
-        value : int
-            The signed integer value.
-        bitwidth : int, optional
-            The bit width of the integer, default is 64.
-
-        Returns
-        -------
-        int
-            The unsigned integer value.
+        key : int
+            The key to XOR with the state.
 
         """
-        return value & (1 << bitwidth) - 1
-
-    def compute(
-        self,
-        inputs: dict | None = None,
-    ) -> list[int]:
-        """
-        Compute the output state based on the current input state.
-
-        Parameters
-        ----------
-        inputs : dict, optional
-            The input dictionary.
-
-        Returns
-        -------
-        Nothing, only updates the state array.
-
-        """
-        # Update the inputs
-        if inputs is not None:
-            self.update_inputs(inputs)
-
-        # Compute the output state
-        key_state_combined = (
-            (self.i_key ^ ((self.i_state[1] << 64) | self.i_state[2]))
-            if self.i_enable_xor_key
-            else ((self.i_state[1] << 64) | self.i_state[2])
-        )
-
-        self.o_state[0] = (
-            self.i_state[0] ^ self.i_data if self.i_enable_xor_data else self.i_state[0]
-        )
-        self.o_state[1] = (key_state_combined >> 64) & 0xFFFFFFFFFFFFFFFF
-        self.o_state[2] = key_state_combined & 0xFFFFFFFFFFFFFFFF
-        self.o_state[3] = self.i_state[3]
-        self.o_state[4] = self.i_state[4]
+        self.o_state[1] ^= (key >> 64) & 0xFFFFFFFFFFFFFFFF
+        self.o_state[2] ^= key & 0xFFFFFFFFFFFFFFFF
 
     def assert_output(
         self,
@@ -152,36 +69,42 @@ class XorBeginModel:
             The input dictionary.
 
         """
+        # Set o_state to the input state
+        self.o_state = inputs["i_state"].copy()
+
         # Compute the expected output
-        self.compute(inputs=inputs)
+        if inputs["i_enable_xor_key"]:
+            self.xor_key_begin(inputs["i_key"])
+
+        if inputs["i_enable_xor_data"]:
+            self.xor_data_begin(inputs["i_data"])
+
+        # Get the output state from the DUT
+        o_state = [int(x) for x in dut.o_state.value]
 
         # Convert the output to a list of integers
         enable_str = (
-            f"XOR Key = {int(self.i_enable_xor_key)}, "
-            f"XOR Data = {int(self.i_enable_xor_data)}"
+            f"Xor Key: {inputs['i_enable_xor_key']}, "
+            f"Xor Data: {inputs['i_enable_xor_data']}"
         )
-        data_str = f"{self.i_data:016X}"
-        key_str = f"{self.i_key:032X}"
-        input_str = " ".join(
-            [f"{self.to_unsigned(value=x):016X}" for x in self.i_state],
+        input_str = "{:016X} {:016X} {:016X} {:016X} {:016X}".format(
+            *tuple(x & 0xFFFFFFFFFFFFFFFF for x in inputs["i_state"]),
         )
-        output_str = " ".join(
-            [f"{self.to_unsigned(value=x):016X}" for x in self.o_state],
+        expected_str = "{:016X} {:016X} {:016X} {:016X} {:016X}".format(
+            *tuple(x & 0xFFFFFFFFFFFFFFFF for x in self.o_state),
         )
-        output_dut_str = " ".join(
-            [f"{self.to_unsigned(value=x.value.integer):016X}" for x in dut.o_state],
+        output_dut_str = "{:016X} {:016X} {:016X} {:016X} {:016X}".format(
+            *tuple(x & 0xFFFFFFFFFFFFFFFF for x in o_state),
         )
 
         # Log the input and output values
-        dut._log.info(f"Enables:    {enable_str}")
-        dut._log.info(f"Data:       {data_str}")
-        dut._log.info(f"Key:        {key_str}")
-        dut._log.info(f"Input:      {input_str}")
-        dut._log.info(f"Expected:   {output_str}")
-        dut._log.info(f"DUT Output: {output_dut_str}")
+        dut._log.info("Enable XOR     : " + enable_str)
+        dut._log.info("Input state    : " + input_str)
+        dut._log.info("Expected state : " + expected_str)
+        dut._log.info("Output state   : " + output_dut_str)
         dut._log.info("")
 
-        # Check the output
-        if output_str != output_dut_str:
-            error_msg = f"Expected: {output_str}\nReceived: {output_dut_str}"
+        # Check if the output is correct
+        if expected_str != output_dut_str:
+            error_msg = f"Expected: {expected_str}\nReceived: {output_dut_str}"
             raise ValueError(error_msg)
