@@ -45,24 +45,31 @@ class SubstitutionLayerModel:
         # Output state
         self.o_state: list[int] = [0] * 5
 
-    def to_unsigned(self, value: int, bitwidth: int = 64) -> int:
+    def _substitution_layer(self, state: list[int]) -> list[int]:
         """
-        Convert a signed integer to an unsigned integer.
+        Apply the substitution layer (S-box).
 
         Parameters
         ----------
-        value : int
-            The signed integer value.
-        bitwidth : int, optional
-            The bit width of the integer, default is 64.
+        state : List[int]
+            The current state.
 
         Returns
         -------
-        int
-            The unsigned integer value.
+        List[int]
+            The updated state after the substitution layer.
 
         """
-        return value & (1 << bitwidth) - 1
+        state[0] ^= state[4]
+        state[4] ^= state[3]
+        state[2] ^= state[1]
+        temp = [(state[i] ^ 0xFFFFFFFFFFFFFFFF) & state[(i + 1) % 5] for i in range(5)]
+        state = [state[i] ^ temp[(i + 1) % 5] for i in range(5)]
+        state[1] ^= state[0]
+        state[0] ^= state[4]
+        state[3] ^= state[2]
+        state[2] ^= 0xFFFFFFFFFFFFFFFF
+        return state
 
     def compute(
         self,
@@ -88,19 +95,8 @@ class SubstitutionLayerModel:
         # Create a copy of the input state
         state = self.i_state.copy()
 
-        # Compute the output state
-        state[0] ^= state[4]
-        state[4] ^= state[3]
-        state[2] ^= state[1]
-        temp = [(state[i] ^ 0xFFFFFFFFFFFFFFFF) & state[(i + 1) % 5] for i in range(5)]
-        for i in range(5):
-            state[i] ^= temp[(i + 1) % 5]
-        state[1] ^= state[0]
-        state[0] ^= state[4]
-        state[3] ^= state[2]
-        state[2] ^= 0xFFFFFFFFFFFFFFFF
-
-        self.o_state = state
+        # Apply the substitution layer
+        self.o_state = self._substitution_layer(state=state)
 
     def update_inputs(
         self,
@@ -139,26 +135,27 @@ class SubstitutionLayerModel:
         """
         # Compute the expected output
         self.compute(inputs=inputs)
-        self.i_state = [int(x) for x in self.i_state]
+
+        # Get the output state from the DUT
+        o_state = [int(x) for x in dut.o_state.value]
 
         # Convert the output to a list of integers
-        input_str = " ".join(
-            [f"{self.to_unsigned(value=x):016X}" for x in self.i_state],
+        input_str = "{:016X} {:016X} {:016X} {:016X} {:016X}".format(
+            *tuple(x & 0xFFFFFFFFFFFFFFFF for x in self.i_state),
         )
-        output_str = " ".join(
-            [f"{self.to_unsigned(value=x):016X}" for x in self.o_state],
+        expected_str = "{:016X} {:016X} {:016X} {:016X} {:016X}".format(
+            *tuple(x & 0xFFFFFFFFFFFFFFFF for x in self.o_state),
         )
-        output_dut_str = " ".join(
-            [f"{self.to_unsigned(value=x.value.integer):016X}" for x in dut.o_state],
+        output_dut_str = "{:016X} {:016X} {:016X} {:016X} {:016X}".format(
+            *tuple(x & 0xFFFFFFFFFFFFFFFF for x in o_state),
         )
 
-        # Log the input and output values
-        dut._log.info(f"Input:      {input_str}")
-        dut._log.info(f"Expected:   {output_str}")
-        dut._log.info(f"DUT Output: {output_dut_str}")
+        dut._log.info("Input state    : " + input_str)
+        dut._log.info("Expected state : " + expected_str)
+        dut._log.info("Output state   : " + output_dut_str)
         dut._log.info("")
 
-        # Check the output
-        if output_str != output_dut_str:
-            error_msg = f"Expected: {output_str}\nReceived: {output_dut_str}"
+        # Check if the output is correct
+        if expected_str != output_dut_str:
+            error_msg = f"Expected: {expected_str}\nReceived: {output_dut_str}"
             raise ValueError(error_msg)
