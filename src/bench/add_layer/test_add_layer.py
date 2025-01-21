@@ -73,7 +73,7 @@ async def reset_dut_test(dut: cocotb.handle.HierarchyObject) -> None:
         await Timer(10, units="ns")
 
         # Assert the output
-        adder_model.assert_output(dut=dut)
+        adder_model.assert_output(dut=dut, inputs=INIT_INPUTS)
 
     except Exception as e:
         dut_state = get_dut_state(dut=dut)
@@ -176,6 +176,10 @@ def test_add_layer() -> None:
 
         # Build HDL sources
         runner.build(
+            build_args=[
+                "-j",
+                "0",
+            ],
             build_dir="sim_build",
             clean=True,
             hdl_library=library,
