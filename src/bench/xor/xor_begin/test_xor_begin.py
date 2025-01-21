@@ -41,6 +41,7 @@ async def initialize_dut(dut: cocotb.handle.HierarchyObject, inputs: dict) -> No
         The device under test (DUT).
     inputs : dict
         The input dictionary.
+
     """
     for key, value in inputs.items():
         getattr(dut, key).value = value
@@ -58,6 +59,7 @@ async def reset_dut_test(dut: cocotb.handle.HierarchyObject) -> None:
     ----------
     dut : object
         The device under test (DUT).
+
     """
     try:
         # Define the model
@@ -91,6 +93,7 @@ async def xor_begin_test(dut: cocotb.handle.HierarchyObject) -> None:
     ----------
     dut : object
         The device under test (DUT).
+
     """
     try:
         # Define the model
