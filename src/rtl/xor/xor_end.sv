@@ -1,4 +1,4 @@
-// filepath: ~/Project/PROJET_ASCON/src/rtl/xor/xor_end.sv
+// filepath         : ~/PROJET_ASCON/src/rtl/xor/xor_end.sv
 //------------------------------------------------------------------------------
 // Module Name      : xor_end
 // Author           : Timothée Charrier

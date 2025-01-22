@@ -1,4 +1,4 @@
-// filepath: ~/Project/PROJET_ASCON/src/rtl/diffusion_layer/diffusion_layer.sv
+// filepath         : ~/PROJET_ASCON/src/rtl/diffusion_layer/diffusion_layer.sv
 //------------------------------------------------------------------------------
 // Module Name      : diffusion_layer
 // Author           : Timothée Charrier

@@ -1,4 +1,4 @@
-// filepath: ~/Project/PROJET_ASCON/src/rtl/fsm/ascon_fsm.sv
+// filepath         : ~/PROJET_ASCON/src/rtl/fsm/ascon_fsm.sv
 //------------------------------------------------------------------------------
 // Module Name      : ascon_fsm
 // Author           : Timothée Charrier
