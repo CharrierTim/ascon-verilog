@@ -13,7 +13,7 @@ import sys
 from pathlib import Path
 
 import cocotb
-from add_layer_model import (
+from addition_layer_model import (
     AddLayerModel,
 )
 from cocotb.runner import get_runner
@@ -102,7 +102,7 @@ async def reset_dut_test(dut: cocotb.handle.HierarchyObject) -> None:
 
 
 @cocotb.test()
-async def add_layer_test(dut: cocotb.handle.HierarchyObject) -> None:
+async def addition_layer_test(dut: cocotb.handle.HierarchyObject) -> None:
     """Test the DUT's behavior during normal computation."""
     try:
         # Define the model
@@ -146,14 +146,14 @@ async def add_layer_test(dut: cocotb.handle.HierarchyObject) -> None:
             [f"{key}: {value}" for key, value in dut_state.items()],
         )
         error_message: str = (
-            f"Failed in add_layer_test with error: {e}\n"
+            f"Failed in addition_layer_test with error: {e}\n"
             f"DUT state at error:\n"
             f"{formatted_dut_state}"
         )
         raise RuntimeError(error_message) from e
 
 
-def test_add_layer() -> None:
+def test_addition_layer() -> None:
     """Function Invoked by the test runner to execute the tests."""
     # Define the simulator to use
     default_simulator: str = "verilator"
@@ -170,11 +170,11 @@ def test_add_layer() -> None:
     # Define the sources
     sources = [
         f"{rtl_path}/ascon_pkg.sv",
-        f"{rtl_path}/add_layer/add_layer.sv",
+        f"{rtl_path}/addition_layer/addition_layer.sv",
     ]
 
     # Top-level HDL entity
-    entity: str = "add_layer"
+    entity: str = "addition_layer"
 
     try:
         # Get simulator name from environment
@@ -215,4 +215,4 @@ def test_add_layer() -> None:
 
 
 if __name__ == "__main__":
-    test_add_layer()
+    test_addition_layer()
