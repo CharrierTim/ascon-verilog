@@ -123,6 +123,7 @@ module permutation
 
             // System enable
             if (i_sys_enable) begin
+
                 // State output assignment
                 if (i_enable_state_reg) begin
                     state_output_reg <= state_xor_end_output;
