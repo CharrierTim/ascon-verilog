@@ -1,4 +1,4 @@
-// filepath: ~/Project/PROJET_ASCON/src/rtl/ascon/ascon.sv
+// filepath         : ~/PROJET_ASCON/src/rtl/ascon/ascon.sv
 //------------------------------------------------------------------------------
 // Module Name      : ascon
 // Author           : Timothée Charrier
