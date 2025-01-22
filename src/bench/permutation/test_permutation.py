@@ -170,7 +170,7 @@ def test_permutation() -> None:
     # Define the sources
     sources: list[str] = [
         f"{rtl_path}/ascon_pkg.sv",
-        f"{rtl_path}/add_layer/add_layer.sv",
+        f"{rtl_path}/addition_layer/addition_layer.sv",
         f"{rtl_path}/substitution_layer/sbox.sv",
         f"{rtl_path}/substitution_layer/substitution_layer.sv",
         f"{rtl_path}/diffusion_layer/diffusion_layer.sv",

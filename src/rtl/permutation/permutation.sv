@@ -6,7 +6,7 @@
 // Description      : This module implements the permutation layer of the ASCON 128
 //                    cryptographic algorithm. It is composed of the following modules:
 //                    - xor_begin
-//                    - add_layer
+//                    - addition_layer
 //                    - substitution_layer
 //                    - diffusion_layer
 //                    - xor_end
@@ -49,7 +49,7 @@ module permutation
     t_state_array
         state_mux_output,                   //! Output of the input Multiplexer
         state_xor_begin_output,             //! Output of the xor_begin module
-        state_adder_output,                 //! Output of the add_layer module
+        state_adder_output,                 //! Output of the addition_layer module
         state_substitution_layer_output,    //! Output of the substitution_layer module
         state_diffusion_output,             //! Output of the diffusion_layer module
         state_xor_end_output,               //! Output of the xor_end module
@@ -79,8 +79,8 @@ module permutation
         .o_state          (state_xor_begin_output)
     );
 
-    // Instantiate add_layer
-    add_layer add_layer_1 (
+    // Instantiate addition_layer
+    addition_layer addition_layer_1 (
         .i_round(i_round),
         .i_state(state_xor_begin_output),
         .o_state(state_adder_output)

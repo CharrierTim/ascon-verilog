@@ -1,6 +1,6 @@
-// filepath         : ~/PROJET_ASCON/src/rtl/add_layer/add_layer.sv
+// filepath         : ~/PROJET_ASCON/src/rtl/addition_layer/addition_layer.sv
 //------------------------------------------------------------------------------
-// Module Name      : add_layer
+// Module Name      : addition_layer
 // Author           : Timothée Charrier
 // Date             : 2025-01-22
 // Description      : This module implements the addition layer of the ASCON 128
@@ -13,7 +13,7 @@
 `timescale 1ns / 1ps
 
 
-module add_layer
+module addition_layer
     import ascon_pkg::t_state_array, ascon_pkg::ROUND_CONSTANTS;
 (
     input  logic         [3:0] i_round,  //! Input round number, used to select round constant
