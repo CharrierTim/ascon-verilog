@@ -1,5 +1,11 @@
-# Makefile can be in ./subdir/Makefile or ./subdir/another/Makefile
-SUBDIRS := $(shell find . -mindepth 1 -maxdepth 1 -type d) 
+# Makefile running all testbenches
+
+SUBDIRS := add_layer/ \
+           diffusion_layer/ \
+		   substitution_layer/sbox substitution_layer/substitution_layer \
+		   xor/xor_begin xor/xor_end \
+		   permutation \
+		   ascon
 
 .PHONY: all $(SUBDIRS)
 
