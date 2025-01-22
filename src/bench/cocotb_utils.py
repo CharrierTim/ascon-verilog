@@ -337,7 +337,9 @@ def log_generics(dut: cocotb.handle.HierarchyObject, generics: dict[str, int]) -
 
     """
     table: str = tabulate(
-        generics.items(), headers=["Parameter", "Value"], tablefmt="grid"
+        tabular_data=generics.items(),
+        headers=["Parameter", "Value"],
+        tablefmt="grid",
     )
     dut._log.info(f"Running with generics:\n{table}")
 
