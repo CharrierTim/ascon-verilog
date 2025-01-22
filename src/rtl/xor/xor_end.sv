@@ -1,5 +1,14 @@
-// XOR END file
-// By: Timothée Charrier
+// filepath: ~/Project/PROJET_ASCON/src/rtl/xor/xor_end.sv
+//------------------------------------------------------------------------------
+// Module Name      : xor_end
+// Author           : Timothée Charrier
+// Date             : 2025-01-22
+// Description      : This module implements the XOR operation at the end
+//                    of the permutation layer of the ASCON 128 cryptographic.
+//------------------------------------------------------------------------------
+// Revision History :
+//   - 2025-01-22
+//------------------------------------------------------------------------------
 
 `timescale 1ns / 1ps
 

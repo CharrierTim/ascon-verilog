@@ -1,5 +1,17 @@
-// SBOX
-// By: Timothée Charrier
+// filepath: ~/Project/PROJET_ASCON/src/rtl/substitution_layer/sbox.sv
+//------------------------------------------------------------------------------
+// Module Name      : sbox
+// Author           : Timothée Charrier
+// Date             : 2025-01-22
+// Description      : This module implements the substitution layer sub-module
+//                    of the ASCON 128 cryptographic algorithm. It is used to
+//                    substitute the input data with the corresponding value in
+//                    a lookup table.
+//------------------------------------------------------------------------------
+// Revision History :
+//   - 2025-01-22
+//------------------------------------------------------------------------------
+
 
 `timescale 1ns / 1ps
 
