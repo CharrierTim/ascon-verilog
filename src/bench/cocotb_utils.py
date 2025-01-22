@@ -35,14 +35,14 @@ def random_signed_value(bitwidth: int) -> int:
 
     """
     if not isinstance(bitwidth, int) or bitwidth <= 0:
-        error_message = (
+        error_message: str = (
             f"Invalid bitwidth: {bitwidth}",
             "Hint: bitwidth should be a positive integer.",
         )
         raise ValueError(error_message)
 
-    max_val = (1 << (bitwidth - 1)) - 1
-    min_val = -(1 << (bitwidth - 1))
+    max_val: int = (1 << (bitwidth - 1)) - 1
+    min_val: int = -(1 << (bitwidth - 1))
     return random.randint(min_val, max_val)
 
 
@@ -71,7 +71,7 @@ def init_hierarchy(
 
     """
     if not dims:
-        return random_signed_value(bitwidth) if use_random else 0
+        return random_signed_value(bitwidth=bitwidth) if use_random else 0
 
     return [
         init_hierarchy(
@@ -112,7 +112,7 @@ async def setup_clock(
         dut._log.info(f"Clock started with period {period_ns} ns.")
 
     except Exception as e:
-        error_message = (
+        error_message: str = (
             f"Failed in setup_clock with error: {e}",
             "Hint: DUT might not have a clock signal.",
         )
@@ -146,7 +146,7 @@ async def reset_dut(
 
     """
     if reset_high not in [0, 1]:
-        error_message = (
+        error_message: str = (
             f"Invalid reset_high value: {reset_high}",
             "Hint: reset_high should be 0 or 1.",
         )
@@ -157,14 +157,14 @@ async def reset_dut(
         else:
             dut.reset_h.value = 1
 
-        await ClockCycles(dut.clock, num_cycles)
+        await ClockCycles(signal=dut.clock, num_cycles=num_cycles)
 
         if reset_high == 0:
             dut.reset_n.value = 1
         else:
             dut.reset_h.value = 0
 
-        await ClockCycles(dut.clock, 2)
+        await ClockCycles(signal=dut.clock, num_cycles=2)
 
         if verbose:
             dut._log.info(
@@ -172,7 +172,7 @@ async def reset_dut(
             )
 
     except Exception as e:
-        error_message = (
+        error_message: str = (
             f"Failed in reset_dut with error: {e}",
             "Hint: DUT might not have reset_n or reset_h port.",
         )
@@ -205,7 +205,7 @@ async def sys_enable_dut(
         dut._log.info("DUT enabled.")
 
     except Exception as e:
-        error_message = (
+        error_message: str = (
             f"Failed in sys_enable_dut with error: {e}",
             "Hint: DUT might not have i_sys_enable port or clock signal.",
         )
@@ -271,7 +271,7 @@ async def initialize_dut(
         dut._log.info("DUT initialized successfully.")
 
     except Exception as e:
-        error_message = f"Failed in initialize_dut with error: {e}"
+        error_message: str = f"Failed in initialize_dut with error: {e}"
         raise RuntimeError(error_message) from e
 
 
@@ -317,7 +317,7 @@ async def toggle_signal(
             dut._log.info("Signal toggled successfully.")
 
     except Exception as e:
-        error_message = (
+        error_message: str = (
             f"Failed to toggle signal {key}.",
             f"Error: {e}",
         )
@@ -336,7 +336,9 @@ def log_generics(dut: cocotb.handle.HierarchyObject, generics: dict[str, int]) -
         A dictionary of generic parameters.
 
     """
-    table = tabulate(generics.items(), headers=["Parameter", "Value"], tablefmt="grid")
+    table: str = tabulate(
+        generics.items(), headers=["Parameter", "Value"], tablefmt="grid"
+    )
     dut._log.info(f"Running with generics:\n{table}")
 
 
@@ -366,6 +368,6 @@ def get_dut_state(dut: cocotb.handle.HierarchyObject) -> dict:
                     value = hex(int(value))
                 state[attr] = value
             except (TypeError, ValueError) as e:
-                error_message = f"Failed to get the value of {attr}.\nError: {e}"
+                error_message: str = f"Failed to get the value of {attr}.\nError: {e}"
                 raise RuntimeError(error_message) from e
     return state
