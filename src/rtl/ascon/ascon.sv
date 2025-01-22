@@ -1,5 +1,18 @@
-// ASCON top module
-// By: Timothée Charrier
+// filepath: ~/Project/PROJET_ASCON/src/rtl/ascon/ascon.sv
+//------------------------------------------------------------------------------
+// Module Name      : ascon
+// Author           : Timothée Charrier
+// Date             : 2025-01-22
+// Description      : This module implements the top lovel of the ASCON 128
+//                    cryptographic algorithm.
+//                    It is composed of the following modules:
+//                    - ascon_fsm
+//                    - permutation
+//                    - registers process
+//------------------------------------------------------------------------------
+// Revision History :
+//   - 2025-01-22
+//------------------------------------------------------------------------------
 
 `timescale 1ns / 1ps
 

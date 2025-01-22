@@ -1,5 +1,16 @@
-// SUBSTITUTION LAYER file
-// By: Timothée Charrier
+// filepath: ~/Project/PROJET_ASCON/src/rtl/substitution_layer/substitution_layer.sv
+//------------------------------------------------------------------------------
+// Module Name      : substitution_layer
+// Author           : Timothée Charrier
+// Date             : 2025-01-22
+// Description      : This module implements the substitution layer of the
+//                    ASCON 128 cryptographic algorithm. It is composed of the
+//                    following modules:
+//                    - sbox
+//------------------------------------------------------------------------------
+// Revision History :
+//   - 2025-01-22
+//------------------------------------------------------------------------------
 
 `timescale 1ns / 1ps
 

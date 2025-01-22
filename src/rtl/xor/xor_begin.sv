@@ -1,5 +1,14 @@
-// XOR BEGIN file
-// By: Timothée Charrier
+// filepath: ~/Project/PROJET_ASCON/src/rtl/xor/xor_begin.sv
+//------------------------------------------------------------------------------
+// Module Name      : xor_begin
+// Author           : Timothée Charrier
+// Date             : 2025-01-22
+// Description      : This module implements the XOR operation at the beginning
+//                    of the permutation layer of the ASCON 128 cryptographic.
+//------------------------------------------------------------------------------
+// Revision History :
+//   - 2025-01-22
+//------------------------------------------------------------------------------
 
 `timescale 1ns / 1ps
 
