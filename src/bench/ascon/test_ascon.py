@@ -9,6 +9,7 @@ output of the Python implementation with the verilog implementation.
 
 import os
 import random
+import subprocess
 import sys
 from pathlib import Path
 
@@ -62,6 +63,52 @@ STATES = {
     "STATE_PROCESS_FINALIZATION": 15,
     "STATE_END_FINALIZATION": 16,
 }
+
+
+def generate_coverage_report(sim_build_dir: Path) -> None:
+    """
+    Generate the coverage report.
+
+    This function generates the coverage report using the verilator_coverage
+    and genhtml commands. The coverage report is stored in the sim_build_dir/coverage
+    directory. Just open the index.html file in a browser to view the report.
+
+    Parameters
+    ----------
+    sim_build_dir : Path
+        The simulation build directory
+
+    """
+    try:
+        # Create the coverage directory
+        coverage_dir: Path = sim_build_dir / "coverage"
+        coverage_dir.mkdir(exist_ok=True)
+
+        # Define the commands as argument lists
+        command_coverage: list[str] = [
+            "verilator_coverage",
+            "-write-info",
+            f"{sim_build_dir}/coverage.info",
+            f"{sim_build_dir}/coverage.dat",
+        ]
+        command_genhtml: list[str] = [
+            "genhtml",
+            f"{sim_build_dir}/coverage.info",
+            "--output-directory",
+            f"{coverage_dir}",
+        ]
+
+        # Run the commands
+        subprocess.run(args=command_coverage, check=True)
+        subprocess.run(args=command_genhtml, check=True)
+
+        # Log the coverage report path
+        coverage_report_path = (sim_build_dir / "coverage" / "index.html").resolve()
+        sys.stdout.write(f"HTML Coverage report: {coverage_report_path}\n")
+
+    except Exception as e:
+        error_message: str = f"Failed to generate the coverage report with error: {e}"
+        raise RuntimeError(error_message) from e
 
 
 @cocotb.test()
@@ -294,6 +341,9 @@ def test_permutation() -> None:
     # Build Args
     build_args: list[str] = ["-j", "0"]
 
+    # Extra Args
+    extra_args: list[str] = ["--coverage"]
+
     # Define LIB_RTL
     library: str = "LIB_RTL"
 
@@ -326,7 +376,7 @@ def test_permutation() -> None:
 
         # Build HDL sources
         runner.build(
-            build_args=build_args,
+            build_args=build_args + extra_args,
             build_dir="sim_build",
             clean=True,
             hdl_library=library,
@@ -347,6 +397,9 @@ def test_permutation() -> None:
         # Log the wave file path
         wave_file: Path = (Path("sim_build") / "dump.vcd").resolve()
         sys.stdout.write(f"Wave file: {wave_file}\n")
+
+        # Generate the coverage report
+        generate_coverage_report(sim_build_dir=Path("sim_build"))
 
     except Exception as e:
         error_message: str = f"Failed in test_xor_end with error: {e}"
