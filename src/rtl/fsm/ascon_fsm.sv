@@ -212,6 +212,14 @@ module ascon_fsm (
             STATE_END_FINALIZATION: begin
                 next_state = STATE_IDLE;
             end
+
+            /*verilator coverage_off*/
+            default: begin
+                // Default value for unspecified states
+                // This should never happen
+                next_state = STATE_IDLE;
+            end
+            /*verilator coverage_on*/
         endcase
     end
 
@@ -345,6 +353,28 @@ module ascon_fsm (
                 o_enable_tag_reg     = 1;
                 o_done               = 1;
             end
+
+            /*verilator coverage_off*/
+            default: begin
+                // Default values for unspecified states
+                // This should never happen
+                o_done                   = 0;
+                o_mux_select             = 1;
+                o_enable_xor_data_begin  = 0;
+                o_enable_xor_key_begin   = 0;
+                o_enable_xor_key_end     = 0;
+                o_enable_xor_lsb_end     = 0;
+                o_enable_state_reg       = 1;
+                o_enable_cipher_reg      = 0;
+                o_enable_tag_reg         = 0;
+                o_enable_round_counter   = 0;
+                o_reset_round_counter_6  = 0;
+                o_reset_round_counter_12 = 0;
+                o_enable_block_counter   = 0;
+                o_reset_block_counter    = 0;
+                o_valid_cipher           = 0;
+            end
+            /*verilator coverage_on*/
         endcase
     end
 
