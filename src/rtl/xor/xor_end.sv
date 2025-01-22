@@ -23,18 +23,20 @@ module xor_end
 );
 
     // Signals declaration
-    logic [63:0] state_part_3;  //! Signal to store the 3rd part of the state
-    logic [63:0] state_part_4;  //! Signal to store the 4th part of the state
+    logic [63:0] state_part_4_xored_with_lsb;  //! Signal to store the 4th part of the state xor-ed with the LSB
 
-    // XOR END operation and output assignment
-    assign o_state[0]   = i_state[0];
-    assign o_state[1]   = i_state[1];
-    assign o_state[2]   = i_state[2];
+    // Xor the 4th part of the state with the LSB
+    assign state_part_4_xored_with_lsb = {i_state[4][63:1], i_state[4][0] ^ i_enable_xor_lsb};
 
-    assign state_part_3 = i_state[3];
-    assign state_part_4 = {i_state[4][63:1], i_state[4][0] ^ i_enable_xor_lsb};
+    //
+    // Output assignment
+    //
 
-    assign o_state[3]   = i_enable_xor_key ? (state_part_3 ^ i_key[127:64]) : state_part_3;
-    assign o_state[4]   = i_enable_xor_key ? (state_part_4 ^ i_key[63:0]) : state_part_4;
+    assign o_state[0] = i_state[0];
+    assign o_state[1] = i_state[1];
+    assign o_state[2] = i_state[2];
+    assign o_state[3] = i_enable_xor_key ? (i_state[3] ^ i_key[127:64]) : i_state[3];
+    assign
+        o_state[4] = i_enable_xor_key ? (state_part_4_xored_with_lsb ^ i_key[63:0]) : state_part_4_xored_with_lsb;
 
 endmodule
