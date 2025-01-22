@@ -12,7 +12,7 @@ import sys
 from pathlib import Path
 
 import cocotb
-from cocotb.runner import get_runner
+from cocotb.runner import Simulator, get_runner
 from cocotb.triggers import Timer
 from sbox_model import (
     SboxModel,
@@ -25,7 +25,7 @@ from cocotb_utils import (
     get_dut_state,
 )
 
-S_TABLE = [
+S_TABLE: list[int] = [
     0x04,
     0x0B,
     0x1F,
@@ -82,10 +82,10 @@ async def reset_dut_test(dut: cocotb.handle.HierarchyObject) -> None:
         dut.i_data.value = 0
 
         # Wait for few ns (combinatorial logic only in the DUT)
-        await Timer(10, units="ns")
+        await Timer(time=10, units="ns")
 
         # Check the output
-        sbox_output = sbox_model.compute(i_data=0)
+        sbox_output: int = sbox_model.compute(i_data=0)
 
         # Assert the output
         assert dut.o_data == sbox_output
@@ -111,7 +111,7 @@ async def sbox_test(dut: cocotb.handle.HierarchyObject) -> None:
         sbox_model = SboxModel(s_table=S_TABLE)
 
         # Initialize the DUT
-        await reset_dut_test(dut)
+        await reset_dut_test(dut=dut)
 
         # Loop through the test vectors
         for elem in S_TABLE:
@@ -119,10 +119,10 @@ async def sbox_test(dut: cocotb.handle.HierarchyObject) -> None:
             dut.i_data.value = elem
 
             # Wait for few ns (combinatorial logic only in the DUT)
-            await Timer(10, units="ns")
+            await Timer(time=10, units="ns")
 
             # Check the output
-            sbox_output = sbox_model.compute(i_data=elem)
+            sbox_output: int = sbox_model.compute(i_data=elem)
 
             dut._log.info(
                 "Input: 0x%02X, Unsigned Input: %d, "
@@ -152,32 +152,36 @@ async def sbox_test(dut: cocotb.handle.HierarchyObject) -> None:
 def test_sbox() -> None:
     """Function Invoked by the test runner to execute the tests."""
     # Define the simulator to use
-    default_simulator = "verilator"
+    default_simulator: str = "verilator"
+
+    # Build Args
+    build_args: list[str] = ["-j", "0"]
 
     # Define LIB_RTL
-    library = "LIB_RTL"
+    library: str = "LIB_RTL"
 
     # Define rtl_path
-    rtl_path = (Path(__file__).parent.parent.parent.parent / "rtl/").resolve()
+    rtl_path: Path = (Path(__file__).parent.parent.parent.parent / "rtl/").resolve()
 
     # Define the sources
-    sources = [
+    sources: list[str] = [
         f"{rtl_path}/ascon_pkg.sv",
         f"{rtl_path}/substitution_layer/sbox.sv",
     ]
 
     # Top-level HDL entity
-    entity = "sbox"
+    entity: str = "sbox"
 
     try:
         # Get simulator name from environment
-        simulator = os.environ.get("SIM", default_simulator)
+        simulator: str = os.environ.get("SIM", default=default_simulator)
 
         # Initialize the test runner
-        runner = get_runner(simulator_name=simulator)
+        runner: Simulator = get_runner(simulator_name=simulator)
 
         # Build HDL sources
         runner.build(
+            build_args=build_args,
             build_dir="sim_build",
             clean=True,
             hdl_library=library,
@@ -197,8 +201,12 @@ def test_sbox() -> None:
             waves=True,
         )
 
+        # Log the wave file path
+        wave_file: Path = (Path("sim_build") / "dump.vcd").resolve()
+        sys.stdout.write(f"Wave file: {wave_file}\n")
+
     except Exception as e:
-        error_message = f"Failed in test_xor_end with error: {e}"
+        error_message: str = f"Failed in test_xor_end with error: {e}"
         raise RuntimeError(error_message) from e
 
 

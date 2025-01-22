@@ -37,13 +37,30 @@ INIT_INPUTS = {
 IV = 0x80400C0600000000
 KEY = 0x000102030405060708090A0B0C0D0E0F
 NONCE = 0x000102030405060708090A0B0C0D0E0F
-STATE = [
+STATE: list[int] = [
     IV,
     (KEY >> 64) & 0xFFFFFFFFFFFFFFFF,  # Upper 64 bits of KEY
     KEY & 0xFFFFFFFFFFFFFFFF,  # Lower 64 bits of KEY
     (NONCE >> 64) & 0xFFFFFFFFFFFFFFFF,  # Upper 64 bits of NONCE
     NONCE & 0xFFFFFFFFFFFFFFFF,  # Lower 64 bits of NONCE
 ]
+
+
+async def initialize_dut(dut: cocotb.handle.HierarchyObject, inputs: dict) -> None:
+    """
+    Initialize the DUT with the given inputs.
+
+    Parameters
+    ----------
+    dut : object
+        The device under test (DUT).
+    inputs : dict
+        The input dictionary.
+
+    """
+    for key, value in inputs.items():
+        getattr(dut, key).value = value
+    await Timer(time=10, units="ns")
 
 
 @cocotb.test()
@@ -66,11 +83,7 @@ async def reset_dut_test(dut: cocotb.handle.HierarchyObject) -> None:
         )
 
         # Initialize the DUT
-        for key, value in INIT_INPUTS.items():
-            getattr(dut, key).value = value
-
-        # Wait for few ns (combinatorial logic only in the DUT)
-        await Timer(10, units="ns")
+        await initialize_dut(dut=dut, inputs=INIT_INPUTS)
 
         # Assert the output
         adder_model.assert_output(dut=dut, inputs=INIT_INPUTS)
@@ -97,42 +110,35 @@ async def add_layer_test(dut: cocotb.handle.HierarchyObject) -> None:
             inputs=INIT_INPUTS,
         )
 
-        await reset_dut_test(dut)
+        await reset_dut_test(dut=dut)
 
-        # Set specific inputs defined by i_state = [IV, P1, P2, P3, P4]
-        new_inputs = {
+        # Set dut inputs defined by i_state = [IV, P1, P2, P3, P4]
+        dut_inputs = {
             "i_state": STATE,
             "i_round": 0,
         }
 
-        for key, value in new_inputs.items():
-            getattr(dut, key).value = value
-
-        # Wait for few ns
-        await Timer(10, units="ns")
+        # Initialize the DUT
+        await initialize_dut(dut=dut, inputs=dut_inputs)
 
         # Assert the output
-        adder_model.assert_output(dut=dut, inputs=new_inputs)
+        adder_model.assert_output(dut=dut, inputs=dut_inputs)
 
         dut._log.info("Starting random tests...")
 
         # Try with random inputs
         for _ in range(10):
             # Generate random inputs
-            new_inputs = {
+            dut_inputs = {
                 "i_state": init_hierarchy(dims=(5,), bitwidth=64, use_random=True),
                 "i_round": random.randint(0, 10),
             }
 
             # Set the inputs
-            for key, value in new_inputs.items():
-                getattr(dut, key).value = value
-
-            # Wait for few ns
-            await Timer(10, units="ns")
+            await initialize_dut(dut=dut, inputs=dut_inputs)
 
             # Update and Assert the output
-            adder_model.assert_output(dut=dut, inputs=new_inputs)
+            adder_model.assert_output(dut=dut, inputs=dut_inputs)
 
     except Exception as e:
         dut_state = get_dut_state(dut=dut)
@@ -150,10 +156,13 @@ async def add_layer_test(dut: cocotb.handle.HierarchyObject) -> None:
 def test_add_layer() -> None:
     """Function Invoked by the test runner to execute the tests."""
     # Define the simulator to use
-    default_simulator = "verilator"
+    default_simulator: str = "verilator"
+
+    # Build Args
+    build_args: list[str] = ["-j", "0"]
 
     # Define LIB_RTL
-    library = "LIB_RTL"
+    library: str = "LIB_RTL"
 
     # Define rtl_path
     rtl_path = (Path(__file__).parent.parent.parent / "rtl/").resolve()
@@ -165,7 +174,7 @@ def test_add_layer() -> None:
     ]
 
     # Top-level HDL entity
-    entity = "add_layer"
+    entity: str = "add_layer"
 
     try:
         # Get simulator name from environment
@@ -176,10 +185,7 @@ def test_add_layer() -> None:
 
         # Build HDL sources
         runner.build(
-            build_args=[
-                "-j",
-                "0",
-            ],
+            build_args=build_args,
             build_dir="sim_build",
             clean=True,
             hdl_library=library,
@@ -199,8 +205,12 @@ def test_add_layer() -> None:
             waves=True,
         )
 
+        # Log the wave file path
+        wave_file: Path = (Path("sim_build") / "dump.vcd").resolve()
+        sys.stdout.write(f"Wave file: {wave_file}\n")
+
     except Exception as e:
-        error_message = f"Failed in test_xor_end with error: {e}"
+        error_message: str = f"Failed in test_xor_end with error: {e}"
         raise RuntimeError(error_message) from e
 
 
