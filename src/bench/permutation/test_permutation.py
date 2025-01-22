@@ -12,7 +12,7 @@ import sys
 from pathlib import Path
 
 import cocotb
-from cocotb.runner import get_runner
+from cocotb.runner import Simulator, get_runner
 from cocotb.triggers import RisingEdge
 from permutation_model import (
     PermutationModel,
@@ -87,7 +87,7 @@ async def permutation_test(dut: cocotb.handle.HierarchyObject) -> None:
         # Reset the DUT
         await reset_dut_test(dut=dut)
 
-        # Define specific inputs
+        # Test with specific inputs
         dut_inputs = {
             "i_mux_select": 0,
             "i_enable_xor_key_begin": 0,
@@ -115,7 +115,7 @@ async def permutation_test(dut: cocotb.handle.HierarchyObject) -> None:
         dut._log.info("Key            : 0x{:032X}".format(dut_inputs["i_key"]))
         dut._log.info("Data           : 0x{:016X}".format(dut_inputs["i_data"]))
 
-        # Set specific inputs
+        # Set dut inputs
         for key, value in dut_inputs.items():
             dut.__getattr__(key).value = value
 
@@ -126,7 +126,7 @@ async def permutation_test(dut: cocotb.handle.HierarchyObject) -> None:
             # Update the values
             dut_inputs["i_round"] = i_round
 
-            # Set specific inputs
+            # Set dut inputs
             for key, value in dut_inputs.items():
                 dut.__getattr__(key).value = value
 
@@ -156,16 +156,19 @@ async def permutation_test(dut: cocotb.handle.HierarchyObject) -> None:
 def test_permutation() -> None:
     """Function Invoked by the test runner to execute the tests."""
     # Define the simulator to use
-    default_simulator = "verilator"
+    default_simulator: str = "verilator"
+
+    # Build Args
+    build_args: list[str] = ["-j", "0"]
 
     # Define LIB_RTL
-    library = "LIB_RTL"
+    library: str = "LIB_RTL"
 
     # Define rtl_path
-    rtl_path = (Path(__file__).parent.parent.parent / "rtl/").resolve()
+    rtl_path: Path = (Path(__file__).parent.parent.parent / "rtl/").resolve()
 
     # Define the sources
-    sources = [
+    sources: list[str] = [
         f"{rtl_path}/ascon_pkg.sv",
         f"{rtl_path}/add_layer/add_layer.sv",
         f"{rtl_path}/substitution_layer/sbox.sv",
@@ -177,21 +180,18 @@ def test_permutation() -> None:
     ]
 
     # Top-level HDL entity
-    entity = "permutation"
+    entity: str = "permutation"
 
     try:
         # Get simulator name from environment
-        simulator = os.environ.get("SIM", default_simulator)
+        simulator: str = os.environ.get("SIM", default=default_simulator)
 
         # Initialize the test runner
-        runner = get_runner(simulator_name=simulator)
+        runner: Simulator = get_runner(simulator_name=simulator)
 
         # Build HDL sources
         runner.build(
-            build_args=[
-                "-j",
-                "0",
-            ],
+            build_args=build_args,
             build_dir="sim_build",
             clean=False,
             hdl_library=library,
@@ -209,8 +209,12 @@ def test_permutation() -> None:
             waves=True,
         )
 
+        # Log the wave file path
+        wave_file: Path = (Path("sim_build") / "dump.vcd").resolve()
+        sys.stdout.write(f"Wave file: {wave_file}\n")
+
     except Exception as e:
-        error_message = f"Failed in test_xor_end with error: {e}"
+        error_message: str = f"Failed in test_xor_end with error: {e}"
         raise RuntimeError(error_message) from e
 
 

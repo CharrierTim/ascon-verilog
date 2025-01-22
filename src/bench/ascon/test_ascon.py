@@ -14,7 +14,7 @@ from pathlib import Path
 
 import cocotb
 from ascon_model import AsconModel, convert_output_to_str
-from cocotb.runner import get_runner
+from cocotb.runner import Simulator, get_runner
 from cocotb.triggers import ClockCycles, RisingEdge
 
 # Add the directory containing the utils.py file to the Python path
@@ -289,16 +289,19 @@ async def ascon_top_test(dut: cocotb.handle.HierarchyObject) -> None:
 def test_permutation() -> None:
     """Function Invoked by the test runner to execute the tests."""
     # Define the simulator to use
-    default_simulator = "verilator"
+    default_simulator: str = "verilator"
+
+    # Build Args
+    build_args: list[str] = ["-j", "0"]
 
     # Define LIB_RTL
-    library = "LIB_RTL"
+    library: str = "LIB_RTL"
 
     # Define rtl_path
-    rtl_path = (Path(__file__).parent.parent.parent / "rtl/").resolve()
+    rtl_path: Path = (Path(__file__).parent.parent.parent / "rtl/").resolve()
 
     # Define the sources
-    sources = [
+    sources: list[str] = [
         f"{rtl_path}/ascon_pkg.sv",
         f"{rtl_path}/add_layer/add_layer.sv",
         f"{rtl_path}/substitution_layer/sbox.sv",
@@ -312,21 +315,18 @@ def test_permutation() -> None:
     ]
 
     # Top-level HDL entity
-    entity = "ascon"
+    entity: str = "ascon"
 
     try:
         # Get simulator name from environment
-        simulator = os.environ.get("SIM", default_simulator)
+        simulator: str = os.environ.get("SIM", default=default_simulator)
 
         # Initialize the test runner
-        runner = get_runner(simulator_name=simulator)
+        runner: Simulator = get_runner(simulator_name=simulator)
 
         # Build HDL sources
         runner.build(
-            build_args=[
-                "-j",
-                "0",
-            ],
+            build_args=build_args,
             build_dir="sim_build",
             clean=True,
             hdl_library=library,
@@ -344,8 +344,12 @@ def test_permutation() -> None:
             waves=True,
         )
 
+        # Log the wave file path
+        wave_file: Path = (Path("sim_build") / "dump.vcd").resolve()
+        sys.stdout.write(f"Wave file: {wave_file}\n")
+
     except Exception as e:
-        error_message = f"Failed in test_xor_end with error: {e}"
+        error_message: str = f"Failed in test_xor_end with error: {e}"
         raise RuntimeError(error_message) from e
 
 

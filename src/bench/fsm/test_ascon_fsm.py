@@ -492,10 +492,10 @@ async def permutation_test(dut: cocotb.handle.HierarchyObject) -> None:
 def test_ascon_fsm() -> None:
     """Function Invoked by the test runner to execute the tests."""
     # Define the simulator to use
-    default_simulator = "verilator"
+    default_simulator: str = "verilator"
 
     # Define LIB_RTL
-    library = "LIB_RTL"
+    library: str = "LIB_RTL"
 
     # Define rtl_path
     rtl_path: Path = (Path(__file__).parent.parent.parent / "rtl/").resolve()
@@ -506,7 +506,7 @@ def test_ascon_fsm() -> None:
     ]
 
     # Top-level HDL entity
-    entity = "ascon_fsm"
+    entity: str = "ascon_fsm"
 
     try:
         # Get simulator name from environment
@@ -539,7 +539,7 @@ def test_ascon_fsm() -> None:
         )
 
     except Exception as e:
-        error_message = f"Failed in test_xor_end with error: {e}"
+        error_message: str = f"Failed in test_xor_end with error: {e}"
         raise RuntimeError(error_message) from e
 
 
