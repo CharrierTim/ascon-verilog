@@ -235,6 +235,19 @@ class AsconModel:
         self.o_state[0] ^= data
         log.info("State ^ Data       : %016X %016X %016X %016X %016X", *self.o_state)
 
+    def xor_key_begin(self, key: int) -> None:
+        """
+        Perform XOR operation at the beginning with the key.
+
+        Parameters
+        ----------
+        key : int
+            The key to XOR with the state.
+
+        """
+        self.o_state[1] ^= (key >> 64) & 0xFFFFFFFFFFFFFFFF
+        self.o_state[2] ^= key & 0xFFFFFFFFFFFFFFFF
+
     def xor_key_end(self) -> None:
         """Perform XOR operation at the end with the key."""
         self.o_state[3] ^= self.i_key >> 64
@@ -252,8 +265,7 @@ class AsconModel:
         self._log_state("Finalization  ")
 
         # Final Permutation
-        self.o_state[1] ^= self.i_key >> 64
-        self.o_state[2] ^= self.i_key & 0xFFFFFFFFFFFFFFFF
+        self.xor_key_begin(key=self.i_key)
         self.o_cipher[3] = self.o_state[0]
         self.permutation(i_round=12)
 
