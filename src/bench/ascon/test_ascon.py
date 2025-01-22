@@ -115,7 +115,12 @@ def generate_coverage_report(sim_build_dir: Path) -> None:
         sys.stdout.write(f"HTML Coverage report: {coverage_report_path}\n")
 
     except Exception as e:
-        error_message: str = f"Failed to generate the coverage report with error: {e}"
+        error_message: str = {
+            f"Failed to generate the coverage report with error: {e}",
+            "Hint: Make sure that genhtml is installed on your system.",
+            "If not, you can install it using the following command:",
+            "sudo apt-get install lcov",
+        }
         raise RuntimeError(error_message) from e
 
 
