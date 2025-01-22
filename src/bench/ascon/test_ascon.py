@@ -100,7 +100,15 @@ def generate_coverage_report(sim_build_dir: Path) -> None:
 
         # Run the commands
         subprocess.run(args=command_coverage, check=True)
-        subprocess.run(args=command_genhtml, check=True)
+
+        # Suppress the output
+        with Path(os.devnull).open("w") as devnull:
+            subprocess.run(
+                args=command_genhtml,
+                check=True,
+                stdout=devnull,
+                stderr=devnull,
+            )
 
         # Log the coverage report path
         coverage_report_path = (sim_build_dir / "coverage" / "index.html").resolve()
@@ -342,7 +350,10 @@ def test_permutation() -> None:
     build_args: list[str] = ["-j", "0"]
 
     # Extra Args
-    extra_args: list[str] = ["--coverage"]
+    # Coverage max width is set to the number of bits in the state vector
+    # Reducing it can greatly improve the performance, but it may cause
+    # some bits to be missed in the coverage report.
+    extra_args: list[str] = ["--coverage", "--coverage-max-width", "320"]
 
     # Define LIB_RTL
     library: str = "LIB_RTL"
