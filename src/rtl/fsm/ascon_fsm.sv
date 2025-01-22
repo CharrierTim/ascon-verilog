@@ -200,10 +200,6 @@ module ascon_fsm (
             STATE_END_FINALIZATION: begin
                 next_state = STATE_IDLE;
             end
-
-            default: begin
-                next_state = STATE_IDLE;
-            end
         endcase
     end
 
@@ -336,9 +332,6 @@ module ascon_fsm (
                 o_enable_xor_key_end = 1;
                 o_enable_tag_reg     = 1;
                 o_done               = 1;
-            end
-
-            default: begin
             end
         endcase
     end
