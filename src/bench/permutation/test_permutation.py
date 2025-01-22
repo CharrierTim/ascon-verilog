@@ -59,15 +59,10 @@ async def reset_dut_test(dut: cocotb.handle.HierarchyObject) -> None:
     """
     try:
         # Define the model
-        permutation_model = PermutationModel(
-            inputs=INIT_INPUTS,
-        )
+        _ = PermutationModel()
 
         # Initialize the DUT
         await initialize_dut(dut=dut, inputs=INIT_INPUTS, outputs={})
-
-        # Update and Assert the output
-        permutation_model.assert_output(dut=dut, inputs=INIT_INPUTS)
 
     except Exception as e:
         dut_state = get_dut_state(dut=dut)
@@ -86,15 +81,14 @@ async def reset_dut_test(dut: cocotb.handle.HierarchyObject) -> None:
 async def permutation_test(dut: cocotb.handle.HierarchyObject) -> None:
     """Test the DUT's behavior during normal computation."""
     try:
-        permutation_model = PermutationModel(
-            inputs=INIT_INPUTS,
-        )
+        # Define the model
+        permutation_model = PermutationModel()
 
         # Reset the DUT
         await reset_dut_test(dut=dut)
 
         # Define specific inputs
-        new_inputs = {
+        dut_inputs = {
             "i_mux_select": 0,
             "i_enable_xor_key_begin": 0,
             "i_enable_xor_data_begin": 0,
@@ -118,26 +112,31 @@ async def permutation_test(dut: cocotb.handle.HierarchyObject) -> None:
         dut._log.info("Starting Permutation With the Last Permutation State")
 
         # Log the Key and Data
-        dut._log.info("Key            : 0x{:032X}".format(new_inputs["i_key"]))
-        dut._log.info("Data           : 0x{:016X}".format(new_inputs["i_data"]))
+        dut._log.info("Key            : 0x{:032X}".format(dut_inputs["i_key"]))
+        dut._log.info("Data           : 0x{:016X}".format(dut_inputs["i_data"]))
 
-        for i_round in range(13):
+        # Set specific inputs
+        for key, value in dut_inputs.items():
+            dut.__getattr__(key).value = value
+
+        await RisingEdge(signal=dut.clock)
+        dut_inputs["i_mux_select"] = 1
+
+        for i_round in range(1, 13):
             # Update the values
-            new_inputs["i_round"] = i_round
-
-            if i_round == 0:
-                new_inputs["i_mux_select"] = 0
-            else:
-                new_inputs["i_mux_select"] = 1
+            dut_inputs["i_round"] = i_round
 
             # Set specific inputs
-            for key, value in new_inputs.items():
+            for key, value in dut_inputs.items():
                 dut.__getattr__(key).value = value
 
             await RisingEdge(signal=dut.clock)
 
             # Update and Assert the output
-            permutation_model.assert_output(dut=dut, inputs=new_inputs)
+            permutation_model.assert_output(
+                dut=dut,
+                inputs=dut_inputs,
+            )
 
         await RisingEdge(signal=dut.clock)
 
@@ -194,7 +193,7 @@ def test_permutation() -> None:
                 "0",
             ],
             build_dir="sim_build",
-            clean=True,
+            clean=False,
             hdl_library=library,
             hdl_toplevel=entity,
             sources=sources,

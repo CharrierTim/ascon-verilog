@@ -23,60 +23,10 @@ class PermutationModel:
 
     def __init__(
         self,
-        *,
-        inputs: dict | None = None,
     ) -> None:
-        """
-        Initialize the model.
-
-        Parameters
-        ----------
-        inputs : dict, optional
-            The initial input dictionary
-            Default is None.
-
-        """
-        if inputs is None:
-            inputs = {
-                "i_state": [0] * 5,
-                "i_round": 0,
-                "i_data": 0,
-                "i_key": 0,
-            }
-
-        # Inputs parameters
-        self.i_state: list[int] = inputs["i_state"]
-        self.i_round: int = inputs["i_round"]
-        self.i_data: int = inputs["i_data"]
-        self.i_key: int = inputs["i_key"]
-
+        """Initialize the model."""
         # Output state
         self.o_state: list[int] = [0] * 5
-
-    def update_inputs(
-        self,
-        inputs: dict | None = None,
-    ) -> None:
-        """
-        Update the input state, data, key, and enable signals of the model.
-
-        Parameters
-        ----------
-        inputs : dict, optional
-            The new input dictionary
-
-        """
-        if inputs is None:
-            return
-
-        # Update the inputs
-        self.i_state = inputs["i_state"]
-        self.i_round = inputs["i_round"]
-        self.i_data = inputs["i_data"]
-        self.i_key = inputs["i_key"]
-
-        # Reset the output state
-        self.o_state = [0] * 5
 
     @staticmethod
     def rotate_right(value: int, num_bits: int) -> int:
@@ -151,31 +101,29 @@ class PermutationModel:
         state[2] ^= 0xFFFFFFFFFFFFFFFF
         return state
 
-    def compute(
+    def permutation(
         self,
-        inputs: dict | None = None,
+        i_round: int,
+        i_state: list[int],
     ) -> list[int]:
         """
         Compute the output state based on the current input state.
 
         Parameters
         ----------
-        inputs : dict, optional
-            The input dictionary.
+        i_round : int
+            The number of the current round.
+        i_state : List[int]
+            The current input state.
 
         Returns
         -------
         Nothing, only updates the state array.
 
         """
-        # Update the inputs
-        if inputs is not None:
-            self.update_inputs(inputs)
+        state = i_state.copy()
 
-        # Create a copy of the input state
-        state = self.i_state.copy()
-
-        for r in range(self.i_round):
+        for r in range(i_round + 1):
             # Perform the Round Constants addition
             state[2] ^= 0xF0 - r * 0x10 + r * 0x1
 
@@ -185,13 +133,13 @@ class PermutationModel:
             # Perform the Linear Diffusion Layer
             state = self._linear_diffusion_layer(state)
 
-            # Set the output state
-            self.o_state = state
+        # Set the output state
+        self.o_state = state
 
     def assert_output(
         self,
         dut: cocotb.handle.HierarchyObject,
-        inputs: dict | None = None,
+        inputs: dict[str, any],
     ) -> None:
         """
         Assert the output of the DUT and log the input and output values.
@@ -204,16 +152,19 @@ class PermutationModel:
             The input dictionary.
 
         """
-        # Compute the expected output
-        self.compute(inputs=inputs)
+        # Compute the output state
+        self.permutation(
+            i_state=inputs["i_state"],
+            i_round=inputs["i_round"] - 1,
+        )
 
         # Get the output state from the DUT
         o_state = [int(x) for x in dut.o_state.value]
 
         # Convert the output to a list of integers
-        round_str = f"{self.i_round:02X}"
+        round_str = f"{inputs['i_round']:02X}"
         input_str = "{:016X} {:016X} {:016X} {:016X} {:016X}".format(
-            *tuple(x & 0xFFFFFFFFFFFFFFFF for x in self.i_state),
+            *tuple(x & 0xFFFFFFFFFFFFFFFF for x in inputs["i_state"]),
         )
         expected_str = "{:016X} {:016X} {:016X} {:016X} {:016X}".format(
             *tuple(x & 0xFFFFFFFFFFFFFFFF for x in self.o_state),
