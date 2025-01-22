@@ -126,12 +126,7 @@ module ascon
                 round_counter <= 4'b0;
             end
             else if (s_enable_round_counter) begin
-                if (round_counter == 4'b1111) begin
-                    round_counter <= 4'b0000;
-                end
-                else begin
-                    round_counter <= round_counter + 4'b0001;
-                end
+                round_counter <= round_counter + 4'b0001;
             end
 
             // Block counter
@@ -139,12 +134,7 @@ module ascon
                 block_counter <= 2'b00;
             end
             else if (s_enable_block_counter) begin
-                if (block_counter == 2'b11) begin
-                    block_counter <= 2'b00;
-                end
-                else begin
-                    block_counter <= block_counter + 2'b01;
-                end
+                block_counter <= block_counter + 2'b01;
             end
         end
     end
