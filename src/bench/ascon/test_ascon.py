@@ -102,7 +102,7 @@ def generate_coverage_report(sim_build_dir: Path) -> None:
         subprocess.run(args=command_coverage, check=True)
 
         # Suppress the output
-        with Path(os.devnull).open("w") as devnull:
+        with Path(os.devnull).open(mode="w") as devnull:
             subprocess.run(
                 args=command_genhtml,
                 check=True,
@@ -111,17 +111,19 @@ def generate_coverage_report(sim_build_dir: Path) -> None:
             )
 
         # Log the coverage report path
-        coverage_report_path = (sim_build_dir / "coverage" / "index.html").resolve()
+        coverage_report_path: Path = (
+            sim_build_dir / "coverage" / "index.html"
+        ).resolve()
         sys.stdout.write(f"HTML Coverage report: {coverage_report_path}\n")
 
     except Exception as e:
-        error_message: str = {
-            f"Failed to generate the coverage report with error: {e}",
-            "Hint: Make sure that genhtml is installed on your system.",
-            "If not, you can install it using the following command:",
-            "sudo apt-get install lcov",
-        }
-        raise RuntimeError(error_message) from e
+        error_message: str = (
+            f"Failed to generate the coverage report with error: {e}\n"
+            "Hint: Make sure that genhtml is installed on your system.\n"
+            "If not, you can install it using the following command:\n"
+            "sudo apt-get install lcov"
+        )
+        raise SystemExit(error_message) from e
 
 
 @cocotb.test()
@@ -151,7 +153,7 @@ async def reset_dut_test(dut: cocotb.handle.HierarchyObject) -> None:
         await initialize_dut(dut=dut, inputs=INIT_INPUTS, outputs=expected_outputs)
 
     except Exception as e:
-        dut_state = get_dut_state(dut=dut)
+        dut_state: dict = get_dut_state(dut=dut)
         formatted_dut_state: str = "\n".join(
             [f"{key}: {value}" for key, value in dut_state.items()],
         )
@@ -394,7 +396,7 @@ def test_permutation() -> None:
         runner.build(
             build_args=build_args + extra_args,
             build_dir="sim_build",
-            clean=True,
+            clean=False,
             hdl_library=library,
             hdl_toplevel=entity,
             sources=sources,
