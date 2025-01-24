@@ -35,6 +35,7 @@ package ascon_pkg;
     //
 
     // Round constants for ASCON
+    /* verilator lint_off UNUSEDPARAM */
     localparam constant_array_t ROUND_CONSTANTS = '{
         8'hF0,
         8'hE1,
@@ -85,6 +86,7 @@ package ascon_pkg;
         8'h0F,
         8'h17
     };
+    /* verilator lint_on UNUSEDPARAM */
 
 endpackage : ascon_pkg
 
