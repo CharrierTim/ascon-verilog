@@ -116,7 +116,7 @@ module ascon_fsm (
             end
 
             STATE_PROCESS_INITIALIZATION: begin
-                if (i_round_count == 4'hA) begin
+                if (i_round_count >= 4'hA) begin
                     next_state = STATE_END_INITIALIZATION;
                 end
                 else begin
@@ -143,7 +143,7 @@ module ascon_fsm (
             end
 
             STATE_PROCESS_ASSOCIATED_DATA: begin
-                if (i_round_count == 4'hA) begin
+                if (i_round_count >= 4'hA) begin
                     next_state = STATE_END_ASSOCIATED_DATA;
                 end
                 else begin
@@ -170,7 +170,7 @@ module ascon_fsm (
             end
 
             STATE_PROCESS_PLAIN_TEXT: begin
-                if (i_round_count == 4'hA) begin
+                if (i_round_count >= 4'hA) begin
                     next_state = STATE_END_PLAIN_TEXT;
                 end
                 else begin
@@ -179,7 +179,7 @@ module ascon_fsm (
             end
 
             STATE_END_PLAIN_TEXT: begin
-                if (i_block_count == 2'b11) begin
+                if (i_block_count >= 2'b11) begin
                     next_state = STATE_IDLE_FINALIZATION;
                 end
                 else begin
@@ -201,7 +201,7 @@ module ascon_fsm (
             end
 
             STATE_PROCESS_FINALIZATION: begin
-                if (i_round_count == 4'hA) begin
+                if (i_round_count >= 4'hA) begin
                     next_state = STATE_END_FINALIZATION;
                 end
                 else begin
