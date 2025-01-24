@@ -191,7 +191,7 @@ def test_xor_end() -> None:
         runner.build(
             build_args=build_args,
             build_dir="sim_build",
-            clean=False,
+            clean=True,
             hdl_library=library,
             hdl_toplevel=entity,
             sources=sources,
