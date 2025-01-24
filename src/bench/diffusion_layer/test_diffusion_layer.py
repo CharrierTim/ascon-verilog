@@ -147,7 +147,7 @@ def test_diffusion_layer() -> None:
     default_simulator: str = "verilator"
 
     # Build Args
-    build_args: list[str] = ["-j", "0"]
+    build_args: list[str] = ["-j", "0", "-Wall"]
 
     # Define LIB_RTL
     library: str = "LIB_RTL"

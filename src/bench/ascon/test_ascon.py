@@ -354,7 +354,7 @@ def test_permutation() -> None:
     default_simulator: str = "verilator"
 
     # Build Args
-    build_args: list[str] = ["-j", "0"]
+    build_args: list[str] = ["-j", "0", "-Wall"]
 
     # Extra Args
     # Coverage max width is set to the number of bits in the state vector
