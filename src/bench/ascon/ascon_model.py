@@ -33,8 +33,8 @@ def convert_output_to_str(
 
     """
     # Get the DUT outputs as integers
-    o_tag = dut.o_tag.value.integer
-    o_state = [int(x) for x in dut.o_state.value]
+    o_tag: list[cocotb.binary.BinaryValue] = dut.o_tag.value.integer
+    o_state: list[int] = [int(x) for x in dut.o_state.value]
 
     # Convert the DUT outputs to strings
     return {
@@ -149,7 +149,7 @@ class AsconModel:
 
         """
         # Create a copy of the input state
-        state = self.i_state.copy() if is_first else self.o_state.copy()
+        state: list[int] = self.i_state.copy() if is_first else self.o_state.copy()
 
         for r in range(12 - i_round, 12):
             log.info("-- Permutation (r=%d) --", r)
@@ -159,11 +159,11 @@ class AsconModel:
             log.info("Constant addition  : %016X %016X %016X %016X %016X", *state)
 
             # Perform the Substitution Layer
-            state = self._substitution_layer(state)
+            state = self._substitution_layer(state=state)
             log.info("Substitution S-box : %016X %016X %016X %016X %016X", *state)
 
             # Perform the Linear Diffusion Layer
-            state = self._linear_diffusion_layer(state)
+            state = self._linear_diffusion_layer(state=state)
             log.info("Linear diffusion   : %016X %016X %016X %016X %016X", *state)
 
         # Set the output state
@@ -210,7 +210,7 @@ class AsconModel:
             The updated state after the linear diffusion layer.
 
         """
-        rotations = [
+        rotations: list[tuple[int, list[int]]] = [
             (state[0], [19, 28]),
             (state[1], [61, 39]),
             (state[2], [1, 6]),
@@ -218,7 +218,15 @@ class AsconModel:
             (state[4], [7, 41]),
         ]
         return [
-            s ^ self.rotate_right(s, r1) ^ self.rotate_right(s, r2)
+            s
+            ^ self.rotate_right(
+                value=s,
+                num_bits=r1,
+            )
+            ^ self.rotate_right(
+                value=s,
+                num_bits=r2,
+            )
             for s, (r1, r2) in rotations
         ]
 
@@ -262,7 +270,7 @@ class AsconModel:
     def _process_finalization_phase(self) -> None:
         """Process the finalization phase."""
         self.xor_data_begin(data=self.plaintext[4])
-        self._log_state("Finalization  ")
+        self._log_state(phase="Finalization  ")
 
         # Final Permutation
         self.xor_key_begin(key=self.i_key)
@@ -271,7 +279,7 @@ class AsconModel:
 
         # Final XOR
         self.xor_key_end()
-        self._log_state("Final         ")
+        self._log_state(phase="Final         ")
 
         # Extract the tag
         self.o_tag[0] = self.o_state[3]
@@ -293,13 +301,13 @@ class AsconModel:
 
         """
         # Update the input state
-        self.update_inputs(inputs)
+        self.update_inputs(inputs=inputs)
 
         # Initialization Phase
         self._log_initial_state()
         self.permutation(i_round=12, is_first=True)
         self.xor_key_end()
-        self._log_state("Initialisation")
+        self._log_state(phase="Initialisation")
 
         # Associated Data Phase
         self.xor_data_begin(data=self.plaintext[0])
@@ -308,7 +316,7 @@ class AsconModel:
 
         # Plaintext Phase
         for i in range(3):
-            self._log_state(f"Data A{i + 1}       ")
+            self._log_state(phase=f"Data A{i + 1}       ")
 
             # Start with Xor Begin
             self.xor_data_begin(data=self.plaintext[i + 1])
@@ -330,18 +338,16 @@ class AsconModel:
     def _log_initial_state(self) -> None:
         """Log the initial state."""
         log.info(
-            f"{"*"*105}\n"
+            f"{'*' * 105}\n"
             "Initial State      : %016X %016X %016X %016X %016X\n"
-            f"{"*"*105}",
+            f"{'*' * 105}",
             *self.i_state,
         )
 
     def _log_state(self, phase: str) -> None:
         """Log the current state."""
         log.info(
-            f"{"*"*105}\n"
-            f"{phase}     : %016X %016X %016X %016X %016X\n"
-            f"{"*"*105}",
+            f"{'*' * 105}\n{phase}     : %016X %016X %016X %016X %016X\n{'*' * 105}",
             *self.o_state,
         )
 
@@ -355,12 +361,12 @@ class AsconModel:
             The output state, tag, and cipher.
 
         """
-        output_tag_str = f"{self.o_tag[0]:016X}{self.o_tag[1]:016X}"
-        output_cipher_str = (
+        output_tag_str: str = f"{self.o_tag[0]:016X}{self.o_tag[1]:016X}"
+        output_cipher_str: str = (
             f"{self.o_cipher[0]:016X}{self.o_cipher[1]:016X}"
             f"{self.o_cipher[2]:016X}{self.o_cipher[3]:016X}"
         )
-        output_state_str = (
+        output_state_str: str = (
             f"{self.o_state[0]:016X} {self.o_state[1]:016X} {self.o_state[2]:016X} "
             f"{self.o_state[3]:016X} {self.o_state[4]:016X}"
         )
