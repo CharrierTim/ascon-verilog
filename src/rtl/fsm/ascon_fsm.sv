@@ -14,28 +14,28 @@
 `timescale 1ns / 1ps
 
 module ascon_fsm (
-    input  logic                clock,                     //! Clock signal
-    input  logic                reset_n,                   //! Reset signal, active low
-    input  logic                i_sys_enable,              //! System enable signal, active high
-    input  logic                i_start,                   //! Start signal, active high
-    input  logic                i_data_valid,              //! Data valid signal, active high
-    input  logic unsigned [3:0] i_round_count,             //! Round Counter value
-    input  logic unsigned [1:0] i_block_count,             //! Block Counter value
-    output logic                o_valid_cipher,            //! Cipher valid signal
-    output logic                o_done,                    //! End of Ascon signal
-    output logic                o_mux_select,              //! Mux select signal (low=input, high=outputreg)
-    output logic                o_enable_xor_data_begin,   //! Enable XOR with Data, active high
-    output logic                o_enable_xor_key_begin,    //! Enable XOR with Key, active high
-    output logic                o_enable_xor_key_end,      //! Enable XOR with Key, active high
-    output logic                o_enable_xor_lsb_end,      //! Enable XOR with LSB, active high
-    output logic                o_enable_state_reg,        //! Enable state register, active high
-    output logic                o_enable_cipher_reg,       //! Enable cipher register, active high
-    output logic                o_enable_tag_reg,          //! Enable tag register, active high
-    output logic                o_enable_round_counter,    //! Enable round counter, active high
-    output logic                o_reset_round_counter_6,   //! Reset round counter, active high
-    output logic                o_reset_round_counter_12,  //! Reset round counter, active high
-    output logic                o_enable_block_counter,    //! Enable block counter, active high
-    output logic                o_reset_block_counter      //! Count block start signal, active high
+    input  logic                clock,                       //! Clock signal
+    input  logic                reset_n,                     //! Reset signal, active low
+    input  logic                i_sys_enable,                //! System enable signal, active high
+    input  logic                i_start,                     //! Start signal, active high
+    input  logic                i_data_valid,                //! Data valid signal, active high
+    input  logic unsigned [3:0] i_round_count,               //! Round Counter value
+    input  logic unsigned [1:0] i_block_count,               //! Block Counter value
+    output logic                o_valid_cipher,              //! Cipher valid signal
+    output logic                o_done,                      //! End of Ascon signal
+    output logic                o_mux_select,                //! Mux select signal (low=input, high=outputreg)
+    output logic                o_enable_xor_data_begin,     //! Enable XOR with Data, active high
+    output logic                o_enable_xor_key_begin,      //! Enable XOR with Key, active high
+    output logic                o_enable_xor_key_end,        //! Enable XOR with Key, active high
+    output logic                o_enable_xor_lsb_end,        //! Enable XOR with LSB, active high
+    output logic                o_enable_state_reg,          //! Enable state register, active high
+    output logic                o_enable_cipher_reg,         //! Enable cipher register, active high
+    output logic                o_enable_tag_reg,            //! Enable tag register, active high
+    output logic                o_enable_round_counter,      //! Enable round counter, active high
+    output logic                o_reset_round_counter_to_6,  //! Reset round counter, active high
+    output logic                o_reset_round_counter_to_0,  //! Reset round counter, active high
+    output logic                o_enable_block_counter,      //! Enable block counter, active high
+    output logic                o_reset_block_counter        //! Count block start signal, active high
 );
 
     //
@@ -229,21 +229,21 @@ module ascon_fsm (
 
     always_comb begin
         // Default values
-        o_done                   = 0;
-        o_mux_select             = 1;
-        o_enable_xor_data_begin  = 0;
-        o_enable_xor_key_begin   = 0;
-        o_enable_xor_key_end     = 0;
-        o_enable_xor_lsb_end     = 0;
-        o_enable_state_reg       = 1;
-        o_enable_cipher_reg      = 0;
-        o_enable_tag_reg         = 0;
-        o_enable_round_counter   = 0;
-        o_reset_round_counter_6  = 0;
-        o_reset_round_counter_12 = 0;
-        o_enable_block_counter   = 0;
-        o_reset_block_counter    = 0;
-        o_valid_cipher           = 0;
+        o_done                     = 0;
+        o_mux_select               = 1;
+        o_enable_xor_data_begin    = 0;
+        o_enable_xor_key_begin     = 0;
+        o_enable_xor_key_end       = 0;
+        o_enable_xor_lsb_end       = 0;
+        o_enable_state_reg         = 1;
+        o_enable_cipher_reg        = 0;
+        o_enable_tag_reg           = 0;
+        o_enable_round_counter     = 0;
+        o_reset_round_counter_to_6 = 0;
+        o_reset_round_counter_to_0 = 0;
+        o_enable_block_counter     = 0;
+        o_reset_block_counter      = 0;
+        o_valid_cipher             = 0;
 
         unique case (current_state)
 
@@ -260,9 +260,9 @@ module ascon_fsm (
             //
 
             STATE_CONFIGURATION: begin
-                o_enable_state_reg       = 0;
-                o_mux_select             = 0;
-                o_reset_round_counter_12 = 1;
+                o_enable_state_reg         = 0;
+                o_mux_select               = 0;
+                o_reset_round_counter_to_0 = 1;
             end
 
             STATE_START_INITIALIZATION: begin
@@ -283,8 +283,8 @@ module ascon_fsm (
             //
 
             STATE_IDLE_ASSOCIATED_DATA: begin
-                o_enable_state_reg      = 0;
-                o_reset_round_counter_6 = 1;
+                o_enable_state_reg         = 0;
+                o_reset_round_counter_to_6 = 1;
             end
 
             STATE_START_ASSOCIATED_DATA: begin
@@ -306,8 +306,8 @@ module ascon_fsm (
             //
 
             STATE_IDLE_PLAIN_TEXT: begin
-                o_enable_state_reg      = 0;
-                o_reset_round_counter_6 = 1;
+                o_enable_state_reg         = 0;
+                o_reset_round_counter_to_6 = 1;
             end
 
             STATE_START_PLAIN_TEXT: begin
@@ -331,9 +331,9 @@ module ascon_fsm (
             //
 
             STATE_IDLE_FINALIZATION: begin
-                o_enable_round_counter   = 1;
-                o_enable_state_reg       = 0;
-                o_reset_round_counter_12 = 1;
+                o_enable_round_counter     = 1;
+                o_enable_state_reg         = 0;
+                o_reset_round_counter_to_0 = 1;
             end
 
             STATE_START_FINALIZATION: begin
@@ -358,21 +358,21 @@ module ascon_fsm (
             default: begin
                 // Default values for unspecified states
                 // This should never happen
-                o_done                   = 0;
-                o_mux_select             = 1;
-                o_enable_xor_data_begin  = 0;
-                o_enable_xor_key_begin   = 0;
-                o_enable_xor_key_end     = 0;
-                o_enable_xor_lsb_end     = 0;
-                o_enable_state_reg       = 1;
-                o_enable_cipher_reg      = 0;
-                o_enable_tag_reg         = 0;
-                o_enable_round_counter   = 0;
-                o_reset_round_counter_6  = 0;
-                o_reset_round_counter_12 = 0;
-                o_enable_block_counter   = 0;
-                o_reset_block_counter    = 0;
-                o_valid_cipher           = 0;
+                o_done                     = 0;
+                o_mux_select               = 1;
+                o_enable_xor_data_begin    = 0;
+                o_enable_xor_key_begin     = 0;
+                o_enable_xor_key_end       = 0;
+                o_enable_xor_lsb_end       = 0;
+                o_enable_state_reg         = 1;
+                o_enable_cipher_reg        = 0;
+                o_enable_tag_reg           = 0;
+                o_enable_round_counter     = 0;
+                o_reset_round_counter_to_6 = 0;
+                o_reset_round_counter_to_0 = 0;
+                o_enable_block_counter     = 0;
+                o_reset_block_counter      = 0;
+                o_valid_cipher             = 0;
             end
             /*verilator coverage_on*/
         endcase
