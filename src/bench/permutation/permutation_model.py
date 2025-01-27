@@ -63,7 +63,7 @@ class PermutationModel:
             The updated state after the linear diffusion layer.
 
         """
-        rotations = [
+        rotations: list[tuple[int, list[int]]] = [
             (state[0], [19, 28]),
             (state[1], [61, 39]),
             (state[2], [1, 6]),
@@ -71,7 +71,15 @@ class PermutationModel:
             (state[4], [7, 41]),
         ]
         return [
-            s ^ self.rotate_right(s, r1) ^ self.rotate_right(s, r2)
+            s
+            ^ self.rotate_right(
+                value=s,
+                num_bits=r1,
+            )
+            ^ self.rotate_right(
+                value=s,
+                num_bits=r2,
+            )
             for s, (r1, r2) in rotations
         ]
 
@@ -121,17 +129,17 @@ class PermutationModel:
         Nothing, only updates the state array.
 
         """
-        state = i_state.copy()
+        state: list[int] = i_state.copy()
 
         for r in range(i_round + 1):
             # Perform the Round Constants addition
             state[2] ^= 0xF0 - r * 0x10 + r * 0x1
 
             # Perform the Substitution Layer
-            state = self._substitution_layer(state)
+            state = self._substitution_layer(state=state)
 
             # Perform the Linear Diffusion Layer
-            state = self._linear_diffusion_layer(state)
+            state = self._linear_diffusion_layer(state=state)
 
         # Set the output state
         self.o_state = state
@@ -159,17 +167,17 @@ class PermutationModel:
         )
 
         # Get the output state from the DUT
-        o_state = [int(x) for x in dut.o_state.value]
+        o_state: list[int] = [int(x) for x in dut.o_state.value]
 
         # Convert the output to a list of integers
-        round_str = f"{inputs['i_round']:02X}"
-        input_str = "{:016X} {:016X} {:016X} {:016X} {:016X}".format(
+        round_str: str = f"{inputs['i_round']:02X}"
+        input_str: str = "{:016X} {:016X} {:016X} {:016X} {:016X}".format(
             *tuple(x & 0xFFFFFFFFFFFFFFFF for x in inputs["i_state"]),
         )
-        expected_str = "{:016X} {:016X} {:016X} {:016X} {:016X}".format(
+        expected_str: str = "{:016X} {:016X} {:016X} {:016X} {:016X}".format(
             *tuple(x & 0xFFFFFFFFFFFFFFFF for x in self.o_state),
         )
-        output_dut_str = "{:016X} {:016X} {:016X} {:016X} {:016X}".format(
+        output_dut_str: str = "{:016X} {:016X} {:016X} {:016X} {:016X}".format(
             *tuple(x & 0xFFFFFFFFFFFFFFFF for x in o_state),
         )
 
@@ -181,7 +189,7 @@ class PermutationModel:
 
         # Check if the output is correct
         if expected_str != output_dut_str:
-            error_msg = (
+            error_msg: str = (
                 f"Output mismatch for round {round_str}\n"
                 f"Expected: {expected_str}\n"
                 f"Received: {output_dut_str}"
