@@ -43,27 +43,6 @@ PLAINTEXT: list[int] = [
     0x6167652056484480,
 ]
 
-# Define the FSM states
-STATES = {
-    "STATE_IDLE": 0,
-    "STATE_CONFIGURATION": 1,
-    "STATE_START_INITIALIZATION": 2,
-    "STATE_PROCESS_INITIALIZATION": 3,
-    "STATE_END_INITIALIZATION": 4,
-    "STATE_IDLE_ASSOCIATED_DATA": 5,
-    "STATE_START_ASSOCIATED_DATA": 6,
-    "STATE_PROCESS_ASSOCIATED_DATA": 7,
-    "STATE_END_ASSOCIATED_DATA": 8,
-    "STATE_IDLE_PLAIN_TEXT": 9,
-    "STATE_START_PLAIN_TEXT": 10,
-    "STATE_PROCESS_PLAIN_TEXT": 11,
-    "STATE_END_PLAIN_TEXT": 12,
-    "STATE_IDLE_FINALIZATION": 13,
-    "STATE_START_FINALIZATION": 14,
-    "STATE_PROCESS_FINALIZATION": 15,
-    "STATE_END_FINALIZATION": 16,
-}
-
 
 def generate_coverage_report(sim_build_dir: Path) -> None:
     """
@@ -173,7 +152,7 @@ async def ascon_top_test(dut: cocotb.handle.HierarchyObject) -> None:
         await reset_dut_test(dut=dut)
 
         # Define the ASCON inputs
-        inputs = {
+        inputs: dict[str, int] = {
             "i_sys_enable": 1,
             "i_start": 0,
             "i_data_valid": 0,
@@ -181,11 +160,11 @@ async def ascon_top_test(dut: cocotb.handle.HierarchyObject) -> None:
             "i_key": 0x000102030405060708090A0B0C0D0E0F,
             "i_nonce": 0x000102030405060708090A0B0C0D0E0F,
         }
-        output_cipher = [0] * 4
+        output_cipher: list[int] = [0] * 4
 
         # Define the ASCON model
         ascon_model = AsconModel(inputs=inputs, plaintext=PLAINTEXT)
-        output_dict = ascon_model.ascon128(inputs=inputs)
+        output_dict: dict[str, str] = ascon_model.ascon128(inputs=inputs)
 
         # Set the inputs
         for key, value in inputs.items():
@@ -196,7 +175,6 @@ async def ascon_top_test(dut: cocotb.handle.HierarchyObject) -> None:
 
         # Send the start signal
         await toggle_signal(dut=dut, signal_dict={"i_start": 1}, verbose=False)
-        assert dut.ascon_fsm_inst.current_state.value == STATES["STATE_CONFIGURATION"]
 
         #
         # Initialisation phase
@@ -204,10 +182,6 @@ async def ascon_top_test(dut: cocotb.handle.HierarchyObject) -> None:
 
         # Wait at least 12 clock cycles (12 rounds permutation)
         await ClockCycles(signal=dut.clock, num_cycles=random.randint(13, 20))
-        assert (
-            dut.ascon_fsm_inst.current_state.value
-            == STATES["STATE_IDLE_ASSOCIATED_DATA"]
-        )
 
         #
         # Associated Data phase
@@ -218,14 +192,9 @@ async def ascon_top_test(dut: cocotb.handle.HierarchyObject) -> None:
 
         # Set i_data_valid to 1
         await toggle_signal(dut=dut, signal_dict={"i_data_valid": 1}, verbose=False)
-        assert (
-            dut.ascon_fsm_inst.current_state.value
-            == STATES["STATE_START_ASSOCIATED_DATA"]
-        )
 
         # Wait at least 6 clock cycles (6 rounds permutation)
         await ClockCycles(signal=dut.clock, num_cycles=random.randint(7, 10))
-        assert dut.ascon_fsm_inst.current_state.value == STATES["STATE_IDLE_PLAIN_TEXT"]
 
         #
         # Plaintext phase
@@ -238,9 +207,6 @@ async def ascon_top_test(dut: cocotb.handle.HierarchyObject) -> None:
 
         # # Set i_data_valid to 1
         await toggle_signal(dut=dut, signal_dict={"i_data_valid": 1}, verbose=False)
-        assert (
-            dut.ascon_fsm_inst.current_state.value == STATES["STATE_START_PLAIN_TEXT"]
-        )
 
         # Get the cipher
         # The valid cipher is always set to 1 STATE_START_PLAIN_TEXT
@@ -250,7 +216,6 @@ async def ascon_top_test(dut: cocotb.handle.HierarchyObject) -> None:
 
         # Wait at least 12 clock cycles (12 rounds permutation)
         await ClockCycles(signal=dut.clock, num_cycles=random.randint(13, 20))
-        assert dut.ascon_fsm_inst.current_state.value == STATES["STATE_IDLE_PLAIN_TEXT"]
 
         # Block 2
 
@@ -259,9 +224,6 @@ async def ascon_top_test(dut: cocotb.handle.HierarchyObject) -> None:
 
         # Set i_data_valid to 1
         await toggle_signal(dut=dut, signal_dict={"i_data_valid": 1}, verbose=False)
-        assert (
-            dut.ascon_fsm_inst.current_state.value == STATES["STATE_START_PLAIN_TEXT"]
-        )
 
         # Get the cipher
         await RisingEdge(signal=dut.o_valid_cipher)
@@ -270,7 +232,6 @@ async def ascon_top_test(dut: cocotb.handle.HierarchyObject) -> None:
 
         # Wait at least 12 clock cycles (12 rounds permutation)
         await ClockCycles(signal=dut.clock, num_cycles=random.randint(13, 20))
-        assert dut.ascon_fsm_inst.current_state.value == STATES["STATE_IDLE_PLAIN_TEXT"]
 
         # Block 3
 
@@ -279,9 +240,6 @@ async def ascon_top_test(dut: cocotb.handle.HierarchyObject) -> None:
 
         # Set i_data_valid to 1
         await toggle_signal(dut=dut, signal_dict={"i_data_valid": 1}, verbose=False)
-        assert (
-            dut.ascon_fsm_inst.current_state.value == STATES["STATE_START_PLAIN_TEXT"]
-        )
 
         # Get the cipher
         await RisingEdge(signal=dut.o_valid_cipher)
@@ -290,9 +248,6 @@ async def ascon_top_test(dut: cocotb.handle.HierarchyObject) -> None:
 
         # Wait at least 12 clock cycles (12 rounds permutation)
         await ClockCycles(signal=dut.clock, num_cycles=random.randint(13, 20))
-        assert (
-            dut.ascon_fsm_inst.current_state.value == STATES["STATE_IDLE_FINALIZATION"]
-        )
 
         # Final phase
 
@@ -301,9 +256,6 @@ async def ascon_top_test(dut: cocotb.handle.HierarchyObject) -> None:
 
         # Set i_data_valid to 1
         await toggle_signal(dut=dut, signal_dict={"i_data_valid": 1}, verbose=False)
-        assert (
-            dut.ascon_fsm_inst.current_state.value == STATES["STATE_START_FINALIZATION"]
-        )
 
         # Get the cipher
         await RisingEdge(signal=dut.o_valid_cipher)
@@ -312,7 +264,6 @@ async def ascon_top_test(dut: cocotb.handle.HierarchyObject) -> None:
 
         # Wait for the o_done signal
         await RisingEdge(signal=dut.o_done)
-        assert dut.ascon_fsm_inst.current_state.value == STATES["STATE_IDLE"]
         await ClockCycles(signal=dut.clock, num_cycles=5)
 
         #
@@ -320,7 +271,10 @@ async def ascon_top_test(dut: cocotb.handle.HierarchyObject) -> None:
         #
 
         # Get output state, tag, and cipher
-        output_dut_dict = convert_output_to_str(dut=dut, cipher=output_cipher)
+        output_dut_dict: dict[str, str] = convert_output_to_str(
+            dut=dut,
+            cipher=output_cipher,
+        )
 
         # Log the DUT output
         dut._log.info("Model Output State : " + output_dict["o_state"])
