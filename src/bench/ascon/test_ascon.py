@@ -308,13 +308,21 @@ def test_permutation() -> None:
     default_simulator: str = "verilator"
 
     # Build Args
-    build_args: list[str] = ["-j", "0", "-Wall"]
+    build_args: list[str] = [
+        "-j",
+        "0",
+        "-Wall",
+    ]
 
     # Extra Args
     # Coverage max width is set to the number of bits in the state vector
     # Reducing it can greatly improve the performance, but it may cause
     # some bits to be missed in the coverage report.
-    extra_args: list[str] = ["--coverage", "--coverage-max-width", "320"]
+    extra_args: list[str] = [
+        "--coverage",
+        "--coverage-max-width",
+        "320",
+    ]
 
     # Define LIB_RTL
     library: str = "LIB_RTL"
@@ -350,7 +358,7 @@ def test_permutation() -> None:
         runner.build(
             build_args=build_args + extra_args,
             build_dir="sim_build",
-            clean=True,
+            clean=False,
             hdl_library=library,
             hdl_toplevel=entity,
             sources=sources,
