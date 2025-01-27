@@ -150,6 +150,7 @@ async def reset_dut(
             f"Invalid reset_high value: {reset_high}",
             "Hint: reset_high should be 0 or 1.",
         )
+        raise ValueError(error_message)
 
     try:
         if reset_high == 0:
