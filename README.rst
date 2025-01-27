@@ -2,15 +2,22 @@
  ascon-verilog - Ascon implementation in Verilog
 #################################################
 
-.. contents::
-   :depth: 2
-
 **********
  Synopsis
 **********
 
 This project provides a synthesizable implementation of the Ascon 128
-algorithm in Verilog, using open-source tools.
+algorithm in Verilog, using open-source tools. The project is divided
+into two main parts:
+
+#. The `src/rtl` directory contains the Verilog modules for the Ascon
+   128 algorithm.
+#. The `src/bench` directory contains the python testbenches for the
+   Ascon 128 algorithm.
+
+This project is an improvement of a project I did during my studies at
+the `École des Mines de Saint-Étienne
+<https://www.mines-stetienne.fr/>`_.
 
 **********************
  Open-source Software
@@ -54,6 +61,13 @@ lcov
 
 `lcov <http://ltp.sourceforge.net/coverage/lcov.php>`_ is a tool used to
 generate html coverage reports.
+
+Ruff
+====
+
+`Ruff <https://github.com/astral-sh/ruff>`_ is a linter and formatter
+for Python source code. It is used to ensure the code is clean and
+readable.
 
 *******
  Setup
