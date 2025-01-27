@@ -1,0 +1,225 @@
+*********************************************************************************************************
+Valeur initiale    : 80400c0600000000 0001020304050607 08090a0b0c0d0e0f 0001020304050607 08090a0b0c0d0e0f
+*********************************************************************************************************
+-- Permutation (r=00)
+Addition constante : 80400c0600000000 0001020304050607 08090a0b0c0d0eff 0001020304050607 08090a0b0c0d0e0f
+Substitution S-box : 8849060f0c0d0eff 80410e05040506f7 ffffffffffffff0f 80400406000000f0 0808080a08080808
+Diffusion linéaire : e94618fea85c8f8e 88417420cb2db357 3fffffffffffff74 bc185427038300f0 1d1c1c1e181c1c1c
+-- Permutation (r=01)
+Addition constante : e94618fea85c8f8e 88417420cb2db357 3fffffffffffff95 bc185427038300f0 1d1c1c1e181c1c1c
+Substitution S-box : 6ae1b706d420e3bb 43a5af3f4cbe6c75 49457c38d331af31 5ef8d3208f0dd32c a905383950b23ca9
+Diffusion linéaire : 3498e1ec4cdb4952 2011aa1dc3ca4481 28c2d7d459e5be15 7c7942682ebe57de e6ff6b5776c7da4c
+-- Permutation (r=02)
+Addition constante : 3498e1ec4cdb4952 2011aa1dc3ca4481 28c2d7d459e5bec7 7c7942682ebe57de e6ff6b5776c7da4c
+Substitution S-box : 6033d640bb82e04b 8e9c7746c5636841 75aaab2135918db9 b64d9436c6d43794 ba96093b99bbc913
+Diffusion linéaire : 8414bef0c2779330 77f50ba06d6512a3 2aa9541d2b8f0d53 48aa5c75017ee1f3 002ff8cd6755f585
+-- Permutation (r=03)
+Addition constante : 8414bef0c2779330 77f50ba06d6512a3 2aa9541d2b8f0d90 48aa5c75017ee1f3 002ff8cd6755f585
+Substitution S-box : b772bf1889c66fd1 fb6419c0cbd999c6 a2a600cadf14f4c8 91c9e145a0958845 3b41ad382e6e0474
+Diffusion linéaire : e6ee74eda90e8f61 a1d364f518e39fc2 d17f98ac9be2dd7f 448f5bd9015f7d6d 4f201960642f78aa
+-- Permutation (r=04)
+Addition constante : e6ee74eda90e8f61 a1d364f518e39fc2 d17f98ac9be2ddcb 448f5bd9015f7d6d 4f201960642f78aa
+Substitution S-box : f25cb74c3b93ba05 5c3292f0569c1564 8473038618debd74 9f438aa46e7fcdee 0bbe42c975b20dc7
+Diffusion linéaire : 3c27a95888b149b4 5d0b3d582ac4db63 145b4e4b0cd2993b 021315e702366522 e113e74a04dcb6fd
+-- Permutation (r=05)
+Addition constante : 3c27a95888b149b4 5d0b3d582ac4db63 145b4e4b0cd2999e 021315e702366522 e113e74a04dcb6fd
+Substitution S-box : 3e6fcff4ac152c28 826c35ada29b01b4 57af6ee4dd212fdf b67788eea8ed9902 e30bc3e5246ad3fd
+Diffusion linéaire : 5ab80abab31746e0 ca48aec3df47d47b 8126642d20c53c8f 3a5b4e375730f612 ea5fe10b10d383bb
+-- Permutation (r=06)
+Addition constante : 5ab80abab31746e0 ca48aec3df47d47b 8126642d20c53c19 3a5b4e375730f612 ea5fe10b10d383bb
+Substitution S-box : 2bcd00e398a488d2 4b98014f5c332f30 7495941900be1634 91d2655008759f8b 9a0cab7e1be06589
+Diffusion linéaire : 309fc8b88468f5ff 89e06d6bdd3d66b0 9f0d0845e4e3e576 bcf3d9206edf86d6 3635421a231aa317
+-- Permutation (r=07)
+Addition constante : 309fc8b88468f5ff 89e06d6bdd3d66b0 9f0d0845e4e3e5f1 bcf3d9206edf86d6 3635421a231aa317
+Substitution S-box : 132174d59278d278 31557fcd1c8cb58f eb1698cbc7215dbf ac32be94f43376be 0386fe7315c805d1
+Diffusion linéaire : 2ee351308ef52d6e 21c798cee68bb309 e1318ecd0bad7616 b8c6e4220e44007a 980b178d1b6256a5
+-- Permutation (r=08)
+Addition constante : 2ee351308ef52d6e 21c798cee68bb309 e1318ecd0bad766e b8c6e4220e44007a 980b178d1b6256a5
+Substitution S-box : 57122b51eb9de972 6f1f385278788cbc 3f00fa7103fb6c1d ee19e5bc72d1ba98 21ca6bed772ed6df
+Diffusion linéaire : 53e2f696dfd5611f b3160bd8c362d72f d47c84a0460937a3 956e14c9ef13379e 69326851c2506e47
+-- Permutation (r=09)
+Addition constante : 53e2f696dfd5611f b3160bd8c362d72f d47c84a0460937ca 956e14c9ef13379e 69326851c2506e47
+Substitution S-box : 03e26767f6ada666 5daa01beb0feefad f08518977ad4575b 989471e67abc993a 7d5a7d80ef2189fe
+Diffusion linéaire : ddf4c17b84672ecc cd9bf1946db2c6c4 670580be9a552dab 9aaf18b03bd10b42 41d759bf11c167d3
+-- Permutation (r=10)
+Addition constante : ddf4c17b84672ecc cd9bf1946db2c6c4 670580be9a552df1 9aaf18b03bd10b42 41d759bf11c167d3
+Substitution S-box : 24c7b8f145e38a7f 639d61ea6241a6a8 1431cfda0818705b 7562b055599085e8 9ae0201f4200ea51
+Diffusion linéaire : 0bb0fb9bfe862dd7 abb2edf4208ba928 f279ef08643429b7 4d8bd24814ec4d01 3674e02a54499b95
+-- Permutation (r=11)
+Addition constante : 0bb0fb9bfe862dd7 abb2edf4208ba928 f279ef08643429fc 4d8bd24814ec4d01 3674e02a54499b95
+Substitution S-box : 9440cf9fae5e692a c23f244dde3052bf 9440dd21fb41edbf 2234f907ba187f03 f9cdd62640a5dfbc
+Diffusion linéaire : bc830fbef3a1651b 487a66865036b909 a031b0c5810c1cd6 dd7de52387752410 931e1f65d25872e8
+État ^ (0...0 & K) : bc830fbef3a1651b 487a66865036b909 a031b0c5810c1cd6 dd7ce72083702217 9b17156ede557ce7
+*********************************************************************************************************
+Initialisation     : bc830fbef3a1651b 487a66865036b909 a031b0c5810c1cd6 dd7ce72083702217 9b17156ede557ce7
+*********************************************************************************************************
+État ^ donnée A1   : 8eb33d8c73a1651b 487a66865036b909 a031b0c5810c1cd6 dd7ce72083702217 9b17156ede557ce7
+-- Permutation (r=06)
+Addition constante : 8eb33d8c73a1651b 487a66865036b909 a031b0c5810c1c40 dd7ce72083702217 9b17156ede557ce7
+Substitution S-box : bb940ce921dbe34d e8ebff057e8aa6a3 15b739f272c00656 26b0298dae9fdab2 0e31b44a0d27fef1
+Diffusion linéaire : da438f40190609e4 a5491263cd0e4442 473a79ec826b0564 676096dfd932aa0b c92b44dde1baa9d6
+-- Permutation (r=07)
+Addition constante : da438f40190609e4 a5491263cd0e4442 473a79ec826b05e3 676096dfd932aa0b c92b44dde1baa9d6
+Substitution S-box : 5b106071c757e60e f1132422a7c14fdb 9587d4709012bf8a 1c38b4cd76eb4a5c 0a4ac2603d8a479d
+Diffusion linéaire : d2afcbf67a5fd9f8 3cc587a82e29174c f51221191a5baab1 2e11b4fc1fd04bfb 004092c733747673
+-- Permutation (r=08)
+Addition constante : d2afcbf67a5fd9f8 3cc587a82e29174c f51221191a5baac9 2e11b4fc1fd04bfb 004092c733747673
+Substitution S-box : 11acd99353dd2ac6 0938eec47cd0523c 36685b4deba9767a 3728494e4a8d407d 0251a0b30aa42dcc
+Diffusion linéaire : 8926b7c7d222d988 c8063843e240b201 c585d78629d3689e 885b18c83db8c66b c3d051e48ab04d47
+-- Permutation (r=09)
+Addition constante : 8926b7c7d222d988 c8063843e240b201 c585d78629d368f7 885b18c83db8c66b c3d051e48ab04d47
+Substitution S-box : 84fc70cb44497515 072909ec87696a31 b1fc511eb66c2c0d c62c102a3cb9015a cb8b516c1548a92c
+Diffusion linéaire : eec9910c85971128 e76f945cde2c69aa 5fc588d597838abb 1030f8383e233146 2416e39a5b07fdd6
+-- Permutation (r=10)
+Addition constante : eec9910c85971128 e76f945cde2c69aa 5fc588d597838ae1 1030f8383e233146 2416e39a5b07fdd6
+Substitution S-box : c359e5fdba1ba32f 35200e7b373f1711 6353e0f4f754d024 46458727ac183ef3 11069fea6508cd90
+Diffusion linéaire : 16862f6ab33a4bb7 6a4e038cacadef84 c3775f0d5f23eb76 e5edb564a660eef0 c41616b379ca5f44
+-- Permutation (r=11)
+Addition constante : 16862f6ab33a4bb7 6a4e038cacadef84 c3775f0d5f23eb3d e5edb564a660eef0 c41616b379ca5f44
+Substitution S-box : 5a14c40b62554e7a 7d2bc730313f110e 56d4a1ed55fbea42 9ec6f37e0c34ff0e 09b5a1d3fba75ab0
+Diffusion linéaire : d68f68ec5b986286 f4178093a43dcef3 74e5a39c4a51f0ca 22e60da1aa08f42b 805b193d0454ced5
+État ^ (0...0 & 1) : d68f68ec5b986286 f4178093a43dcef3 74e5a39c4a51f0ca 22e60da1aa08f42b 805b193d0454ced4
+*********************************************************************************************************
+Donnée associée A  : d68f68ec5b986286 f4178093a43dcef3 74e5a39c4a51f0ca 22e60da1aa08f42b 805b193d0454ced4
+*********************************************************************************************************
+État ^ Texte P1    : 92ea1e8937f712f6 f4178093a43dcef3 74e5a39c4a51f0ca 22e60da1aa08f42b 805b193d0454ced4
+-- Texte chiffré C1 = 0x 92 EA 1E 89 37 F7 12 F6
+-- Permutation (r=06)
+Addition constante : 92ea1e8937f712f6 f4178093a43dcef3 74e5a39c4a51f05c 22e60da1aa08f42b 805b193d0454ced4
+Substitution S-box : 54eab02753a3d400 c442a88bdddee2dd ff14ccec15c7cb84 320d3d9251930450 46bb949f2a40382e
+Diffusion linéaire : 1457fabf4b0c3c01 f1ec511088a17162 9362f9a9af733168 a429a7dbabce4858 55a3c3aa0337e594
+-- Permutation (r=07)
+Addition constante : 1457fabf4b0c3c01 f1ec511088a17162 9362f9a9af7331ef a429a7dbabce4858 55a3c3aa0337e594
+Substitution S-box : 0274b5cd471054b6 363bc7ee6fc4a02a ccf31766d81c1af6 97515646cc2ffd40 4182247128798dae
+Diffusion linéaire : 79e73ee3f6e2a080 5b3a71dd458dd6f4 71b950882f7267e6 39d4c9bbf6bf90a8 25951cff1d09bfa7
+-- Permutation (r=08)
+Addition constante : 79e73ee3f6e2a080 5b3a71dd458dd6f4 71b950882f72679e 39d4c9bbf6bf90a8 25951cff1d09bfa7
+Substitution S-box : 63baa6992e2bd1f2 369d9b6b1014e859 d17dcaee9c006192 5764deb295091ee5 1f498485efb2efdf
+Diffusion linéaire : fb39f5c841529da5 545169e322de91a6 f286d8b2687050dd 6143ac3756f51626 e380cefb0be22ec2
+-- Permutation (r=09)
+Addition constante : fb39f5c841529da5 545169e322de91a6 f286d8b2687050b4 6143ac3756f51626 e380cefb0be22ec2
+Substitution S-box : 7cbc892f7fc9cb13 af6ecee6341f74f5 dba80c66bc53162d 5d2c469d17f97cf7 c683220c7d593864
+Diffusion linéaire : b942578f2524b61d 1870873e7fba0ec5 8112aa64788bd163 de80a31a93f20954 093088d457c0cb85
+-- Permutation (r=10)
+Addition constante : b942578f2524b61d 1870873e7fba0ec5 8112aa64788bd139 de80a31a93f20954 093088d457c0cb85
+Substitution S-box : eec0dcf1bbcd6c34 6f80f2259d9da265 67adda61bccee282 66905295e2072921 dfb02beac928c094
+Diffusion linéaire : ff9082674c5e9456 58bc584dbbafb0aa 5de58038e45aa849 ba5945c96e3559e8 036bdfdd56d54900
+-- Permutation (r=11)
+Addition constante : ff9082674c5e9456 58bc584dbbafb0aa 5de58038e45aa802 ba5945c96e3559e8 036bdfdd56d54900
+Substitution S-box : 408c47dbc71fe516 1b06804fc57424bc fb84bd9eb0cae757 faeb4202230b8c56 b9369a5199c43040
+Diffusion linéaire : cdd0deae4720e049 5cb86a7896e30c5c 59a8f1a7926cbf61 297e85a702825f30 1088157d1aab236d
+État ^ Texte P2    : a8aafeef1463af07 5cb86a7896e30c5c 59a8f1a7926cbf61 297e85a702825f30 1088157d1aab236d
+-- Texte chiffré C2 = 0x A8 AA FE EF 14 63 AF 07
+-- Permutation (r=06)
+Addition constante : a8aafeef1463af07 5cb86a7896e30c5c 59a8f1a7926cbff7 297e85a702825f30 1088157d1aab236d
+Substitution S-box : c44ceaa786ce4380 cdf4144d9a277f85 ea6f7478e3596c19 bcee652018e44cf4 7d6e90b2880a7c49
+Diffusion linéaire : 60d8ca225f541921 3960f8de40876b83 78f173957178bfa5 a7bb00ce62727995 b6d048adc9a4dff9
+-- Permutation (r=07)
+Addition constante : 60d8ca225f541921 3960f8de40876b83 78f173957178bf22 a7bb00ce62727995 b6d048adc9a4dff9
+Substitution S-box : ae92b1bd4c59dd97 09d379d4a50f106f ae2e3c954784ad36 306a4128ce296bcc 380b3033ebd18f6f
+Diffusion linéaire : 50bd9d15f3456fc8 ee02a951536435e4 23819a2db158e919 7680438da48e8682 ff8ece943b9a29e9
+-- Permutation (r=08)
+Addition constante : 50bd9d15f3456fc8 ee02a951536435e4 23819a2db158e961 7680438da48e8682 ff8ece943b9a29e9
+Substitution S-box : 67bc64e4e4f3108f 72b0a87d3f21b9c6 bb72409306d30a13 143cae611d69336e c90e25498c349eaf
+Diffusion linéaire : 4a9c80e513a9c25f 1d4ba8e74ac916a5 2826a9d8c9a1c332 560eab54d21ee796 325a234c48c87080
+-- Permutation (r=09)
+Addition constante : 4a9c80e513a9c25f 1d4ba8e74ac916a5 2826a9d8c9a1c35b 560eab54d21ee796 325a234c48c87080
+Substitution S-box : 39bf22ef401fe0b3 07aba016c09e4720 eac2fec874573a01 5bb189c2189702a1 615d805e9a5e9336
+Diffusion linéaire : c4574eeb3fb02644 17779c2e84632960 18088a576fadfbe9 72b7c878acf02b2a 22d21417bc5a80d0
+-- Permutation (r=10)
+Addition constante : c4574eeb3fb02644 17779c2e84632960 18088a576fadfbb3 72b7c878acf02b2a 22d21417bc5a80d0
+Substitution S-box : af9a00c0fccdd69d 897a0c836835744f f0c0fd81043badfc db08c896d4747d2d 4117586d14aba29a
+Diffusion linéaire : d994dce94575c50b c47a0270b68c222a 7b6380b7823695b5 aee8e720958a0a08 431f230c83a27e73
+-- Permutation (r=11)
+Addition constante : d994dce94575c50b c47a0270b68c222a 7b6380b7823695fe aee8e720958a0a08 431f230c83a27e73
+Substitution S-box : 080dbb5ee0c55ad5 65101832f169048e 01f17d34c9653c58 42ee5e2a63c742af a987c43c26207479
+Diffusion linéaire : af02b70fd7753323 28720bac66eb00cd 610e065a7ef23685 486944cac64a829c 44c7db8e62b8f773
+État ^ Texte P3    : 8f67d92fbb145d44 28720bac66eb00cd 610e065a7ef23685 486944cac64a829c 44c7db8e62b8f773
+-- Texte chiffré C3 = 0x 8F 67 D9 2F BB 14 5D 44
+-- Permutation (r=06)
+Addition constante : 8f67d92fbb145d44 28720bac66eb00cd 610e065a7ef23613 486944cac64a829c 44c7db8e62b8f773
+Substitution S-box : a65090bb430de902 a2df4d5761151ce8 b205690dc756bc42 c693d299a7ef4b31 2cfc964882b17527
+Diffusion linéaire : 2bae545b34138ad7 1ae70dd5b8f84537 e1cfc82f13e0b892 af7a9524e8ca6314 46e437de80226986
+-- Permutation (r=07)
+Addition constante : 2bae545b34138ad7 1ae70dd5b8f84537 e1cfc82f13e0b815 af7a9524e8ca6314 46e437de80226986
+Substitution S-box : 77790d05d71155e5 92f7be7e4f0b1c72 445318df54c70a5f 10963301d7e377f5 fb3baeaa60200eb4
+Diffusion linéaire : 2cd0fdbd81213f5a f9d45bb4d276109a 9b6bd8d383f79359 56289ec60e1664d9 c7fdc9f06e9dd37e
+-- Permutation (r=08)
+Addition constante : 2cd0fdbd81213f5a f9d45bb4d276109a 9b6bd8d383f79321 56289ec60e1664d9 c7fdc9f06e9dd37e
+Substitution S-box : 6803a8889ef4c838 04d2f33a325d1bdf 1c953da8cef7ef62 df6a7cd8b02a3c44 81051c8670c9a73d
+Diffusion linéaire : 1e48260e6bdf536f 5621d0dc1ebc60c1 9aadf78a0ab7c76e d07fc9f2b86a6ede b93f726ce2e8b6fd
+-- Permutation (r=09)
+Addition constante : 1e48260e6bdf536f 5621d0dc1ebc60c1 9aadf78a0ab7c707 d07fc9f2b86a6ede b93f726ce2e8b6fd
+Substitution S-box : 16bb4862c53ebaf6 69a96b1c3fe84a4d 1a73eaa5a974c818 b3c498c86fd47ca9 39403b024c0ad862
+Diffusion linéaire : 920e25d4c786647d 1c9de3695a794af0 7723d05deb6b7f34 a7fcb00c11abbe5c 7c14be18798e6dcf
+-- Permutation (r=10)
+Addition constante : 920e25d4c786647d 1c9de3695a794af0 7723d05deb6b7f6e a7fcb00c11abbe5c 7c14be18798e6dcf
+Substitution S-box : 4655e5ed375ead6f 15e5e8b945dafc0c cc41c2db26e98be2 b0501ce05eb5c261 cb6d6e35285491d3
+Diffusion linéaire : e612dbd3eebd5557 c841188b7326d7bd 215024bdd906e83c c90cd0cf68d2404b 766f9ea1abe18e47
+-- Permutation (r=11)
+Addition constante : e612dbd3eebd5557 c841188b7326d7bd 215024bdd906e877 c90cd0cf68d2404b 766f9ea1abe18e47
+Substitution S-box : 460e37a13c4d39f3 7920b904fea864ee 208dcde9d6fe4e31 1662e3c9459fe095 f76356e7f111caa1
+Diffusion linéaire : 25e3c0549a5a6469 b9d821ead71902ef 74491c2a9ada9011 c36df040c62a25a2 c77518af6e08589f
+État ^ Texte P4    : 25e3c0549a5a6469 b9d821ead71902ef 74491c2a9ada9011 c36df040c62a25a2 c77518af6e08589f
+-- Texte chiffré C4 = 0x 44 84 A5 74 CC 12 20
+*********************************************************************************************************
+Texte clair P      : 4484a574cc1220e9 b9d821ead71902ef 74491c2a9ada9011 c36df040c62a25a2 c77518af6e08589f
+*********************************************************************************************************
+État ^ (K & 0...0) : 4484a574cc1220e9 b9d923e9d31c04e8 7c40162196d79e1e c36df040c62a25a2 c77518af6e08589f
+-- Permutation (r=00)
+Addition constante : 4484a574cc1220e9 b9d923e9d31c04e8 7c40162196d79eee c36df040c62a25a2 c77518af6e08589f
+Substitution S-box : fbe143145fff9bc5 7c4c4a32f7e5c338 3e76c29892343de4 8105d837a9f9e7fb 3c10eacff92679b5
+Diffusion linéaire : f7604037c989217f fbc1d0233833426f b1b478deb966f3e1 8c1859c348084d7e 31945826bc4a3d33
+-- Permutation (r=01)
+Addition constante : f7604037c989217f fbc1d0233833426f b1b478deb966f300 8c1859c348084d7e 31945826bc4a3d33
+Substitution S-box : 424df10a08f59f22 b909b1ec84bca333 840e5726cae87e91 b599e90a7c9ec010 848dc1c7fc72326e
+Diffusion linéaire : 7ef04b67920bce9c a84d47cec62ba9cd 001945e934b7e023 d1bcd5bcca84d9ef ba7ae35d44c890ea
+-- Permutation (r=02)
+Addition constante : 7ef04b67920bce9c a84d47cec62ba9cd 001945e934b7e0f1 d1bcd5bcca84d9ef ba7ae35d44c890ea
+Substitution S-box : 8719d93e6833f6ca 3d7f3a4d287c2748 7de9df99092bb6c3 d7a27dc06cd386a1 438371258e64e88c
+Diffusion linéaire : 7affe5752289a82a 4cd6106afbe7e37d ceea972be99ac379 bc877e8e22288429 c9c345b38359e0e5
+-- Permutation (r=03)
+Addition constante : 7affe5752289a82a 4cd6106afbe7e37d ceea972be99ac3ba bc877e8e22288429 c9c345b38359e0e5
+Substitution S-box : 08920cd25a9e8fb1 41414f237a2f2f18 3c83798f6cd3bffc fdc3783cb184cc29 39862b15fb56c7fc
+Diffusion linéaire : 708cd6d0922409c7 0dbf68669bd4d544 d230c8aee7092efd 91a8f60302b6f5d8 4b088c202ebca966
+-- Permutation (r=04)
+Addition constante : 708cd6d0922409c7 0dbf68669bd4d544 d230c8aee7092e49 91a8f60302b6f5d8 4b088c202ebca966
+Substitution S-box : 371f805df7df8352 e41be41d41675b3c 6a705717af2a0cd4 25235e3bc2f3a6f2 de9b5a252f4e09fa
+Diffusion linéaire : ba8df39d762c3876 fe460a413395b513 0ee1bdc02603a28d 4ad3047de31efb62 39b1cb95987fd844
+-- Permutation (r=05)
+Addition constante : ba8df39d762c3876 fe460a413395b513 0ee1bdc02603a228 4ad3047de31efb62 39b1cb95987fd844
+Substitution S-box : 8cbd402180b4d43d 778b87b53bccbf49 3e7883fef208e8c0 0b48487c6afb2c4d 0f20cda96ae53627
+Diffusion linéaire : 1d77b26ee364e633 a1a023627746520d 21bd200e70c4bf03 8e2c1fca51dfa7fb 958bfea92bb76c2d
+-- Permutation (r=06)
+Addition constante : 1d77b26ee364e633 a1a023627746520d 21bd200e70c4bf95 8e2c1fca51dfa7fb 958bfea92bb76c2d
+Substitution S-box : b2468e88853fbc59 2761732bef4877e0 6e611cb2d25d5a63 9feaf003fcee026f 3aa7c2434d6c9bd7
+Diffusion linéaire : 16367d5b70864476 4bb47a9b55450a07 54e81699703a823b 053ac54a8410c798 b5743b8a206b1101
+-- Permutation (r=07)
+Addition constante : 16367d5b70864476 4bb47a9b55450a07 54e81699703a82bc 053ac54a8410c798 b5743b8a206b1101
+Substitution S-box : 4ff0841bd1ac0956 fc9cb902a59298c8 50e7a97dfaeb6745 a92293d9d1805e44 f8fac6caa17bdc99
+Diffusion linéaire : d41ad8813e2732de 1d32542618ff67fd edd7e366f075797a 172a8fec6e18d693 ae5b8ea978c55643
+-- Permutation (r=08)
+Addition constante : d41ad8813e2732de 1d32542618ff67fd edd7e366f0757902 172a8fec6e18d693 ae5b8ea978c55643
+Substitution S-box : 26c7f42ba822ff2f 80bca9e2b80ddb62 a74b48be07b0e140 0d9e6e85d675ac21 bc4301430ec083b0
+Diffusion linéaire : fb0de2013ad8c891 4029fd41bd627925 f673c1c3fc765265 d3cd8fd14042da70 7cbce70050832337
+-- Permutation (r=09)
+Addition constante : fb0de2013ad8c891 4029fd41bd627925 f673c1c3fc76520c d3cd8fd14042da70 7cbce70050832337
+Substitution S-box : de9a9512afae00e8 304f7b93976f40db 6595a37dae6af5d1 4927d6537bcdd2fe ef79909185e1e946
+Diffusion linéaire : e467804c14a50437 951a798e9a75d8f5 92c9244e8fe624ee 1fcabb35043a9c6c 2a659344059d965c
+-- Permutation (r=10)
+Addition constante : e467804c14a50437 951a798e9a75d8f5 92c9244e8fe624b4 1fcabb35043a9c6c 2a659344059d965c
+Substitution S-box : e87457bf9f58f4cf 41d1ccf38ee76eb2 d809a27febe901ae f23cf5bd0034f276 24b740f78be242a4
+Diffusion linéaire : 0362e64f92ea7cdd a84265b29d5fb8b9 0f6d55c9e1b2257f 16bb039e15aa7f50 173bdf5736e7dd81
+-- Permutation (r=11)
+Addition constante : 0362e64f92ea7cdd a84265b29d5fb8b9 0f6d55c9e1b22534 16bb039e15aa7f50 173bdf5736e7dd81
+Substitution S-box : baf6b13afeb21e28 aba64f6758f07eb1 59d013c5a157e2f3 a4cdceb4cf026350 a982986b3a1fba70
+Diffusion linéaire : 121244ef87fe5251 3825d4a0fc24c7a2 385f5a6867794c01 414cafa1856bc449 7d4c9286d43f4448
+*********************************************************************************************************
+Finalisation       : 121244ef87fe5251 3825d4a0fc24c7a2 385f5a6867794c01 414dada2816ec24e 7545988dd8324a47
+*********************************************************************************************************
+key:        0x00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F (16 octets)
+nonce:      0x00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F (16 octets)
+plaintext:  0x44 65 76 65 6C 6F 70 70 65 7A 20 41 53 43 4F 4E 20 65 6E 20 6C 61 6E 67 61 67 65 20 56 48 44 (31 octets)
+ass.data:   0x32 30 32 32 (4 octets)
+ciphertext: 0x92 EA 1E 89 37 F7 12 F6 A8 AA FE EF 14 63 AF 07 8F 67 D9 2F BB 14 5D 44 44 84 A5 74 CC 12 20 (31 octets)
+tag:        0x41 4D AD A2 81 6E C2 4E 75 45 98 8D D8 32 4A 47 (16 octets)
