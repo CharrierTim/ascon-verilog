@@ -63,7 +63,7 @@ class DiffusionLayerModel:
             The updated state after the linear diffusion layer.
 
         """
-        rotations = [
+        rotations: list[tuple[int, list[int]]] = [
             (state[0], [19, 28]),
             (state[1], [61, 39]),
             (state[2], [1, 6]),
@@ -71,7 +71,15 @@ class DiffusionLayerModel:
             (state[4], [7, 41]),
         ]
         return [
-            s ^ self.rotate_right(s, r1) ^ self.rotate_right(s, r2)
+            s
+            ^ self.rotate_right(
+                value=s,
+                num_bits=r1,
+            )
+            ^ self.rotate_right(
+                value=s,
+                num_bits=r2,
+            )
             for s, (r1, r2) in rotations
         ]
 
@@ -92,19 +100,19 @@ class DiffusionLayerModel:
 
         """
         # Compute the expected output
-        self.o_state = self._linear_diffusion_layer(state)
+        self.o_state = self._linear_diffusion_layer(state=state)
 
         # Get the output state from the DUT
-        o_state = [int(x) for x in dut.o_state.value]
+        o_state: list[int] = [int(x) for x in dut.o_state.value]
 
         # Convert the output to a list of integers
-        input_str = "{:016X} {:016X} {:016X} {:016X} {:016X}".format(
+        input_str: str = "{:016X} {:016X} {:016X} {:016X} {:016X}".format(
             *tuple(x & 0xFFFFFFFFFFFFFFFF for x in state),
         )
-        expected_str = "{:016X} {:016X} {:016X} {:016X} {:016X}".format(
+        expected_str: str = "{:016X} {:016X} {:016X} {:016X} {:016X}".format(
             *tuple(x & 0xFFFFFFFFFFFFFFFF for x in self.o_state),
         )
-        output_dut_str = "{:016X} {:016X} {:016X} {:016X} {:016X}".format(
+        output_dut_str: str = "{:016X} {:016X} {:016X} {:016X} {:016X}".format(
             *tuple(x & 0xFFFFFFFFFFFFFFFF for x in o_state),
         )
 
@@ -115,5 +123,5 @@ class DiffusionLayerModel:
 
         # Check the output
         if expected_str != output_dut_str:
-            error_msg = f"Expected: {expected_str}\nReceived: {output_dut_str}"
+            error_msg: str = f"Expected: {expected_str}\nReceived: {output_dut_str}"
             raise ValueError(error_msg)

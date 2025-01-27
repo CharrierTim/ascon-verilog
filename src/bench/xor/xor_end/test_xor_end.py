@@ -18,7 +18,7 @@ from cocotb.triggers import Timer
 from xor_end_model import XorEndModel
 
 # Add the directory containing the utils.py file to the Python path
-sys.path.insert(0, str((Path(__file__).parent.parent.parent).resolve()))
+sys.path.insert(0, str(object=(Path(__file__).parent.parent.parent).resolve()))
 
 from cocotb_utils import get_dut_state, init_hierarchy
 

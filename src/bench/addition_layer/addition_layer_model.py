@@ -67,9 +67,9 @@ class AddLayerModel:
         Nothing, only updates the state array.
 
         """
-        self.i_round = i_round if i_round is not None else 0
+        self.i_round: int = i_round if i_round is not None else 0
         self.i_state = i_state if i_state is not None else [0] * 5
-        self.o_state = self.i_state.copy()
+        self.o_state: list[int] = self.i_state.copy()
 
         # Add the round constant to the state
         self.o_state[2] ^= 0xF0 - i_round * 0x10 + i_round * 0x1
@@ -95,17 +95,17 @@ class AddLayerModel:
         self.compute(i_state=inputs["i_state"], i_round=inputs["i_round"])
 
         # Get the output state from the DUT
-        o_state = [int(x) for x in dut.o_state.value]
+        o_state: list[int] = [int(x) for x in dut.o_state.value]
 
         # Convert the output to a list of integers
-        round_str = f"{self.i_round:02X}"
-        input_str = "{:016X} {:016X} {:016X} {:016X} {:016X}".format(
+        round_str: str = f"{self.i_round:02X}"
+        input_str: str = "{:016X} {:016X} {:016X} {:016X} {:016X}".format(
             *tuple(x & 0xFFFFFFFFFFFFFFFF for x in self.i_state),
         )
-        expected_str = "{:016X} {:016X} {:016X} {:016X} {:016X}".format(
+        expected_str: str = "{:016X} {:016X} {:016X} {:016X} {:016X}".format(
             *tuple(x & 0xFFFFFFFFFFFFFFFF for x in self.o_state),
         )
-        output_dut_str = "{:016X} {:016X} {:016X} {:016X} {:016X}".format(
+        output_dut_str: str = "{:016X} {:016X} {:016X} {:016X} {:016X}".format(
             *tuple(x & 0xFFFFFFFFFFFFFFFF for x in o_state),
         )
 
@@ -116,7 +116,7 @@ class AddLayerModel:
         dut._log.info("")
 
         # Define the error message
-        error_msg = f"Output mismatch for round {round_str}\n"
+        error_msg: str = f"Output mismatch for round {round_str}\n"
         error_msg += f"Expected: {expected_str}\n"
         error_msg += f"Received: {output_dut_str}"
 

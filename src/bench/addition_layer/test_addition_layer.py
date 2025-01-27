@@ -16,7 +16,7 @@ import cocotb
 from addition_layer_model import (
     AddLayerModel,
 )
-from cocotb.runner import get_runner
+from cocotb.runner import Simulator, get_runner
 from cocotb.triggers import Timer
 
 # Add the directory containing the utils.py file to the Python path
@@ -165,10 +165,10 @@ def test_addition_layer() -> None:
     library: str = "LIB_RTL"
 
     # Define rtl_path
-    rtl_path = (Path(__file__).parent.parent.parent / "rtl/").resolve()
+    rtl_path: Path = (Path(__file__).parent.parent.parent / "rtl/").resolve()
 
     # Define the sources
-    sources = [
+    sources: list[str] = [
         f"{rtl_path}/ascon_pkg.sv",
         f"{rtl_path}/addition_layer/addition_layer.sv",
     ]
@@ -178,10 +178,10 @@ def test_addition_layer() -> None:
 
     try:
         # Get simulator name from environment
-        simulator = os.environ.get("SIM", default_simulator)
+        simulator: str = os.environ.get("SIM", default=default_simulator)
 
         # Initialize the test runner
-        runner = get_runner(simulator_name=simulator)
+        runner: Simulator = get_runner(simulator_name=simulator)
 
         # Build HDL sources
         runner.build(

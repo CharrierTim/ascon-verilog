@@ -66,20 +66,20 @@ class XorEndModel:
             self.xor_lsb_end()
 
         # Get the output state from the DUT
-        o_state = [int(x) for x in dut.o_state.value]
+        o_state: list[int] = [int(x) for x in dut.o_state.value]
 
         # Convert the output to a list of integers
-        enable_str = (
+        enable_str: str = (
             f"Xor Key: {inputs['i_enable_xor_key']}, "
             f"Xor LSB: {inputs['i_enable_xor_lsb']}"
         )
-        input_str = "{:016X} {:016X} {:016X} {:016X} {:016X}".format(
+        input_str: str = "{:016X} {:016X} {:016X} {:016X} {:016X}".format(
             *tuple(x & 0xFFFFFFFFFFFFFFFF for x in inputs["i_state"]),
         )
-        expected_str = "{:016X} {:016X} {:016X} {:016X} {:016X}".format(
+        expected_str: str = "{:016X} {:016X} {:016X} {:016X} {:016X}".format(
             *tuple(x & 0xFFFFFFFFFFFFFFFF for x in self.o_state),
         )
-        output_dut_str = "{:016X} {:016X} {:016X} {:016X} {:016X}".format(
+        output_dut_str: str = "{:016X} {:016X} {:016X} {:016X} {:016X}".format(
             *tuple(x & 0xFFFFFFFFFFFFFFFF for x in o_state),
         )
 
@@ -92,5 +92,5 @@ class XorEndModel:
 
         # Check if the output is correct
         if expected_str != output_dut_str:
-            error_msg = f"Expected: {expected_str}\nReceived: {output_dut_str}"
+            error_msg: str = f"Expected: {expected_str}\nReceived: {output_dut_str}"
             raise ValueError(error_msg)
