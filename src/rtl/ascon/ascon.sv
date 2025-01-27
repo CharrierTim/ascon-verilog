@@ -37,29 +37,29 @@ module ascon
     // Signal definition
     //
 
-    // verilog_format: off              // my alignment is prettier than the tool's
+    // verilog_format: off                // my alignment is prettier than the tool's
     logic
-        s_mux_select,                   //! Mux select signal
-        s_enable_xor_data_begin,        //! Enable XOR with Data, active high
-        s_enable_xor_key_begin,         //! Enable XOR with Key, active high
-        s_enable_xor_key_end,           //! Enable XOR with Key, active high
-        s_enable_xor_lsb_end,           //! Enable XOR with LSB, active high
-        s_enable_state_reg,             //! Enable state register, active high
-        s_enable_cipher_reg,            //! Enable cipher register, active high
-        s_enable_tag_reg,               //! Enable tag register, active high
-        s_enable_round_counter,         //! Enable round counter signal
-        s_reset_round_counter_6,        //! Reset round counter to 6 for 6 rounds
-        s_reset_round_counter_12,       //! Reset round counter to 0 for 12 rounds
-        s_enable_block_counter,         //! Enable block counter signal
-        s_reset_block_counter,          //! Reset block counter signal
-        s_valid_cipher,                 //! Valid cipher signal
-        s_valid_cipher_reg,             //! Valid cipher register signal
-        s_done,                         //! Done signal
-        s_done_reg;                     //! Done register signal
+        s_mux_select,                     //! Mux select signal
+        s_enable_xor_data_begin,          //! Enable XOR with Data, active high
+        s_enable_xor_key_begin,           //! Enable XOR with Key, active high
+        s_enable_xor_key_end,             //! Enable XOR with Key, active high
+        s_enable_xor_lsb_end,             //! Enable XOR with LSB, active high
+        s_enable_state_reg,               //! Enable state register, active high
+        s_enable_cipher_reg,              //! Enable cipher register, active high
+        s_enable_tag_reg,                 //! Enable tag register, active high
+        s_enable_round_counter,           //! Enable round counter signal
+        s_reset_round_counter_to_6,       //! Reset round counter to 6 for 6 rounds
+        s_reset_round_counter_to_0,       //! Reset round counter to 0 for 12 rounds
+        s_enable_block_counter,           //! Enable block counter signal
+        s_reset_block_counter,            //! Reset block counter signal
+        s_valid_cipher,                   //! Valid cipher signal
+        s_valid_cipher_reg,               //! Valid cipher register signal
+        s_done,                           //! Done signal
+        s_done_reg;                       //! Done register signal
 
-    t_state_array       o_state;        //! Output state array
-    logic         [3:0] round_counter;  //! Round counter Signal
-    logic         [1:0] block_counter;  //! Block counter Signal
+    t_state_array       o_state;          //! Output state array
+    logic         [3:0] round_counter;    //! Round counter Signal
+    logic         [1:0] block_counter;    //! Block counter Signal
     // verilog_format: on
 
     //
@@ -67,28 +67,28 @@ module ascon
     //
 
     ascon_fsm ascon_fsm_inst (
-        .clock                   (clock),
-        .reset_n                 (reset_n),
-        .i_sys_enable            (i_sys_enable),
-        .i_start                 (i_start),
-        .i_data_valid            (i_data_valid),
-        .i_round_count           (round_counter),
-        .i_block_count           (block_counter),
-        .o_valid_cipher          (s_valid_cipher),
-        .o_done                  (s_done),
-        .o_mux_select            (s_mux_select),
-        .o_enable_xor_data_begin (s_enable_xor_data_begin),
-        .o_enable_xor_key_begin  (s_enable_xor_key_begin),
-        .o_enable_xor_key_end    (s_enable_xor_key_end),
-        .o_enable_xor_lsb_end    (s_enable_xor_lsb_end),
-        .o_enable_state_reg      (s_enable_state_reg),
-        .o_enable_cipher_reg     (s_enable_cipher_reg),
-        .o_enable_tag_reg        (s_enable_tag_reg),
-        .o_enable_round_counter  (s_enable_round_counter),
-        .o_reset_round_counter_6 (s_reset_round_counter_6),
-        .o_reset_round_counter_12(s_reset_round_counter_12),
-        .o_enable_block_counter  (s_enable_block_counter),
-        .o_reset_block_counter   (s_reset_block_counter)
+        .clock                     (clock),
+        .reset_n                   (reset_n),
+        .i_sys_enable              (i_sys_enable),
+        .i_start                   (i_start),
+        .i_data_valid              (i_data_valid),
+        .i_round_count             (round_counter),
+        .i_block_count             (block_counter),
+        .o_valid_cipher            (s_valid_cipher),
+        .o_done                    (s_done),
+        .o_mux_select              (s_mux_select),
+        .o_enable_xor_data_begin   (s_enable_xor_data_begin),
+        .o_enable_xor_key_begin    (s_enable_xor_key_begin),
+        .o_enable_xor_key_end      (s_enable_xor_key_end),
+        .o_enable_xor_lsb_end      (s_enable_xor_lsb_end),
+        .o_enable_state_reg        (s_enable_state_reg),
+        .o_enable_cipher_reg       (s_enable_cipher_reg),
+        .o_enable_tag_reg          (s_enable_tag_reg),
+        .o_enable_round_counter    (s_enable_round_counter),
+        .o_reset_round_counter_to_6(s_reset_round_counter_to_6),
+        .o_reset_round_counter_to_0(s_reset_round_counter_to_0),
+        .o_enable_block_counter    (s_enable_block_counter),
+        .o_reset_block_counter     (s_reset_block_counter)
     );
 
     permutation permutation_inst (
@@ -132,10 +132,10 @@ module ascon
             s_done_reg         <= s_done;
 
             // Round counter
-            if (s_reset_round_counter_6) begin
+            if (s_reset_round_counter_to_6) begin
                 round_counter <= 4'd6;
             end
-            else if (s_reset_round_counter_12) begin
+            else if (s_reset_round_counter_to_0) begin
                 round_counter <= 4'b0;
             end
             else if (s_enable_round_counter) begin
