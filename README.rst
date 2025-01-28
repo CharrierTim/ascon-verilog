@@ -40,8 +40,8 @@ Surfer
 ======
 
 `Surfer <https://surfer-project.org/>`_ is a waveform viewer used to
-visualize simulation results (``*.vcd`` or ``*.fst`` files). I used a VSCode
-workflow, so I used the `built-in extension
+visualize simulation results (``*.vcd`` or ``*.fst`` files). I used a
+VSCode workflow, so I used the `built-in extension
 <https://marketplace.visualstudio.com/items?itemName=surfer-project.surfer>`_.
 It can also be downloaded from the `Surfer Gitlab
 <https://gitlab.com/surfer-project/surfer>`_ or alternatively use
@@ -53,8 +53,8 @@ Cocotb
 `Cocotb <https://docs.cocotb.org/en/stable/#>`_ is a coroutine-based
 co-simulation testbench environment for verifying
 VHDL/Verilog/SystemVerilog RTL using Python. It is used to write
-testbenches for the VHDL modules and run simulations. ``Pytest`` framework
-or ``make`` is used to run the tests.
+testbenches for the VHDL modules and run simulations. ``Pytest``
+framework or ``make`` is used to run the tests.
 
 lcov
 ====
@@ -129,7 +129,8 @@ command at the root of the project:
 
    pytest
 
-Or alternatively, use the ``make`` command in the ``src/bench`` directory:
+Or alternatively, use the ``make`` command in the ``src/bench``
+directory:
 
 .. code:: bash
 
@@ -146,10 +147,14 @@ the ``make`` command in the specific test directory.
 **********
 
 To generate the coverage report, you need to run the "top level"
-testbench, which is the ``test_ascon.py`` file in the ``src/bench/ascon``
-directory. Both approach automatically generate the coverage report, in
-the ``sim_build/coverage`` folder. You can open the ``index.html`` file in
-your browser to see the coverage report.
+testbench, which is the ``test_ascon.py`` file in the
+``src/bench/ascon`` directory. Both approach automatically generate the
+coverage report, in the ``sim_build/coverage`` folder. The ``make``
+approach just requires one more command: ``make coverage`` after the
+``make`` command.
+
+You can open the ``index.html`` file in your browser to see the coverage
+report.
 
 ***********
  Synthesis
