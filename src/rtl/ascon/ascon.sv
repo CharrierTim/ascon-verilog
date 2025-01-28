@@ -104,7 +104,7 @@ module ascon
         .i_enable_cipher_reg    (s_enable_cipher_reg),
         .i_enable_tag_reg       (s_enable_tag_reg),
         .i_enable_state_reg     (s_enable_state_reg),
-        .i_state                (s_input),
+        .i_state                ({i_data, i_key[127:64], i_key[63:0], i_nonce[127:64], i_nonce[63:0]}),
         .i_round                (reg_round_counter),
         .i_data                 (i_data),
         .i_key                  (i_key),
