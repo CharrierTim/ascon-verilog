@@ -108,7 +108,8 @@ on any operating system that supports the tools mentioned above.
 
 #. Install Verilator following the instructions on the `Verilator Guide
    <https://verilator.org/guide/latest/install.html>`_. Project was
-   tested with Verilator 5.031 devel rev v5.030-153-gc7355b405.
+   tested with Verilator ``5.031`` (devel rev
+   ``v5.030-153-gc7355b405``).
 
 #. Install Surfer from the `Surfer Gitlab
    <https://gitlab.com/surfer-project/surfer>`_ or use `GTKWave
