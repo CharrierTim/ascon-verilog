@@ -5,7 +5,7 @@ SRC_DIR             := ../../rtl
 
 # Source Files
 VERILOG_SOURCES     := $(SRC_DIR)/ascon_pkg.sv \
-                    $(SRC_DIR)/add_layer/add_layer.sv \
+                    $(SRC_DIR)/addition_layer/addition_layer.sv \
                     $(SRC_DIR)/substitution_layer/sbox.sv \
                     $(SRC_DIR)/substitution_layer/substitution_layer.sv \
                     $(SRC_DIR)/diffusion_layer/diffusion_layer.sv \

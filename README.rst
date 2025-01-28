@@ -10,9 +10,9 @@ This project provides a synthesizable implementation of the Ascon 128
 algorithm in Verilog, using open-source tools. The project is divided
 into two main parts:
 
-#. The `src/rtl` directory contains the Verilog modules for the Ascon
+#. The ``src/rtl`` directory contains the Verilog modules for the Ascon
    128 algorithm.
-#. The `src/bench` directory contains the python testbenches for the
+#. The ``src/bench`` directory contains the python testbenches for the
    Ascon 128 algorithm.
 
 This project is an improvement of a project I did during my studies at
@@ -40,8 +40,8 @@ Surfer
 ======
 
 `Surfer <https://surfer-project.org/>`_ is a waveform viewer used to
-visualize simulation results (`*.vcd` or `*.fst` files). I used a VSCode
-workflow, so I used the `built-in extension
+visualize simulation results (``*.vcd`` or ``*.fst`` files). I used a
+VSCode workflow, so I used the `built-in extension
 <https://marketplace.visualstudio.com/items?itemName=surfer-project.surfer>`_.
 It can also be downloaded from the `Surfer Gitlab
 <https://gitlab.com/surfer-project/surfer>`_ or alternatively use
@@ -53,8 +53,8 @@ Cocotb
 `Cocotb <https://docs.cocotb.org/en/stable/#>`_ is a coroutine-based
 co-simulation testbench environment for verifying
 VHDL/Verilog/SystemVerilog RTL using Python. It is used to write
-testbenches for the VHDL modules and run simulations. `Pytest` framework
-or `make` is used to run the tests.
+testbenches for the VHDL modules and run simulations. ``Pytest``
+framework or ``make`` is used to run the tests.
 
 lcov
 ====
@@ -80,13 +80,13 @@ on any operating system that supports the tools mentioned above.
 
       .. code:: bash
 
-         git clone https://github.com/CharrierTim/PROJET_ASCON.git
+         git clone https://github.com/CharrierTim/ascon-verilog.git
 
 #. Change the directory to the project folder:
 
       .. code:: bash
 
-         cd PROJET_ASCON
+         cd ascon-verilog
 
 #. Create a virtual environment using the following command:
 
@@ -107,7 +107,9 @@ on any operating system that supports the tools mentioned above.
          pip install -r requirements.txt
 
 #. Install Verilator following the instructions on the `Verilator Guide
-   <https://verilator.org/guide/latest/install.html>`_.
+   <https://verilator.org/guide/latest/install.html>`_. Project was
+   tested with Verilator ``5.031`` (devel rev
+   ``v5.030-153-gc7355b405``).
 
 #. Install Surfer from the `Surfer Gitlab
    <https://gitlab.com/surfer-project/surfer>`_ or use `GTKWave
@@ -128,26 +130,32 @@ command at the root of the project:
 
    pytest
 
-Or alternatively, use the `make` command in the `src/bench` directory:
+Or alternatively, use the ``make`` command in the ``src/bench``
+directory:
 
 .. code:: bash
 
+   cd src/bench
    make
    make clean
 
 Then, you can use VSCode build-in python extension to run specific test,
-or `your-python-interpreter path/to/test.py` to run a specific test or
-the `make` command in the specific test directory.
+or ``your-python-interpreter path/to/test.py`` to run a specific test or
+the ``make`` command in the specific test directory.
 
 **********
  Coverage
 **********
 
 To generate the coverage report, you need to run the "top level"
-testbench, which is the `test_ascon.py` file in the `src/bench/ascon`
-directory. Both approach automatically generate the coverage report, in
-the `sim_build/coverage` folder. You can open the `index.html` file in
-your browser to see the coverage report.
+testbench, which is the ``test_ascon.py`` file in the
+``src/bench/ascon`` directory. Both approach automatically generate the
+coverage report, in the ``sim_build/coverage`` folder. The ``make``
+approach just requires one more command: ``make coverage`` after the
+``make`` command.
+
+You can open the ``index.html`` file in your browser to see the coverage
+report.
 
 ***********
  Synthesis
@@ -174,5 +182,5 @@ on GitHub.
  License
 *********
 
-This project is licensed under the MIT License. See the `LICENSE` file
+This project is licensed under the MIT License. See the ``LICENSE`` file
 for details.
