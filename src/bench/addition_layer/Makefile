@@ -5,13 +5,13 @@ SRC_DIR             := ../../rtl
 
 # Source Files
 VERILOG_SOURCES     := $(SRC_DIR)/ascon_pkg.sv \
-                    $(SRC_DIR)/add_layer/add_layer.sv
+                    $(SRC_DIR)/addition_layer/addition_layer.sv
 
 # Cocotb and Verilator configuration
 SIM                 := verilator
 TOPLEVEL_LANG       := verilog
-TOPLEVEL            := add_layer
-COCOTB_TEST_MODULES := test_add_layer
+TOPLEVEL            := addition_layer
+COCOTB_TEST_MODULES := test_addition_layer
 MODULE              := $(COCOTB_TEST_MODULES)
 COMPILE_ARGS        += -j 0
 EXTRA_ARGS          += --trace
