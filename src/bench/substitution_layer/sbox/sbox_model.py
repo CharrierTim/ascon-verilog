@@ -30,7 +30,7 @@ class SboxModel:
             The S-Box lookup table.
 
         """
-        self.s_table: list[int] | None0 = s_table
+        self.s_table: list[int] | None = s_table
 
     def compute(self, i_data: int) -> int:
         """
