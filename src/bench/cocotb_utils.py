@@ -322,8 +322,10 @@ async def toggle_signal(
 
             await RisingEdge(signal=dut.clock)
 
-        if verbose:
-            dut._log.info("Signal toggled successfully.")
+        if not verbose:
+            return
+
+        dut._log.info("Signal toggled successfully.")
 
     except Exception as e:
         error_message: str = (
