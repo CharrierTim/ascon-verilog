@@ -1,4 +1,4 @@
-// filepath         : ~/PROJET_ASCON/src/rtl/substitution_layer/sbox.sv
+// filepath         : ~/ascon-verilog/src/rtl/substitution_layer/sbox.sv
 //------------------------------------------------------------------------------
 // Module Name      : sbox
 // Author           : Timothée Charrier

@@ -1,4 +1,4 @@
-// filepath         : ~/PROJET_ASCON/src/rtl/addition_layer/addition_layer.sv
+// filepath         : ~/ascon-verilog/src/rtl/addition_layer/addition_layer.sv
 //------------------------------------------------------------------------------
 // Module Name      : addition_layer
 // Author           : Timothée Charrier

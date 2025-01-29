@@ -1,4 +1,4 @@
-// filepath         : ~/PROJET_ASCON/src/rtl/xor/xor_begin.sv
+// filepath         : ~/ascon-verilog/src/rtl/xor/xor_begin.sv
 //------------------------------------------------------------------------------
 // Module Name      : xor_begin
 // Author           : Timothée Charrier

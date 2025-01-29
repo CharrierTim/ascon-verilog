@@ -1,4 +1,4 @@
-// filepath         : ~/PROJET_ASCON/src/rtl/substitution_layer/substitution_layer.sv
+// filepath         : ~/ascon-verilog/src/rtl/substitution_layer/substitution_layer.sv
 //------------------------------------------------------------------------------
 // Module Name      : substitution_layer
 // Author           : Timothée Charrier

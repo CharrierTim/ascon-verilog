@@ -1,4 +1,4 @@
-// filepath: ~/PROJET_ASCON/src/rtl/ascon_pkg.sv
+// filepath: ~/ascon-verilog/src/rtl/ascon_pkg.sv
 //------------------------------------------------------------------------------
 // Module Name      : ascon_pkg
 // Author           : Timothée Charrier
