@@ -7,16 +7,24 @@ output of the Python implementation with the verilog implementation.
 @author: Timothée Charrier
 """
 
+from __future__ import annotations
+
 import os
 import random
 import subprocess
 import sys
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 import cocotb
 from ascon_model import AsconModel, convert_output_to_str
-from cocotb.runner import Simulator, get_runner
-from cocotb.triggers import ClockCycles, RisingEdge
+from cocotb.runner import get_runner
+from cocotb.triggers import ClockCycles, First, RisingEdge, Timer
+
+if TYPE_CHECKING:
+    from cocotb.runner import Simulator
+    from cocotb.triggers import Task
+
 
 # Add the directory containing the utils.py file to the Python path
 sys.path.insert(0, str(object=(Path(__file__).parent.parent).resolve()))
@@ -105,6 +113,43 @@ def generate_coverage_report(sim_build_dir: Path) -> None:
         raise SystemExit(error_message) from e
 
 
+async def parallel_clock_counter(
+    dut: cocotb.handle.HierarchyObject,
+    *,
+    timeout: int = 1000,
+) -> int:
+    """
+    Count and return the number of clock cycles until `o_done` goes high.
+
+    Parameters
+    ----------
+    dut : SimHandleBase
+        The device under test (DUT).
+    timeout : int, optional
+        Maximum time (in ns) to wait before timeout. Default is 1000 ns.
+
+    Returns
+    -------
+    int
+        The number of clock cycles counted before `o_done` is asserted.
+
+    """
+    count: int = 0
+
+    while True:
+        done_event = RisingEdge(dut.o_done)
+        clock_event = RisingEdge(dut.clock)
+
+        result = await First(clock_event, done_event, Timer(timeout, units="ns"))
+
+        if result is done_event or dut.o_done.value.integer == 1:
+            break
+
+        count += 1
+
+    return count
+
+
 @cocotb.test()
 async def reset_dut_test(dut: cocotb.handle.HierarchyObject) -> None:
     """
@@ -114,7 +159,7 @@ async def reset_dut_test(dut: cocotb.handle.HierarchyObject) -> None:
 
     Parameters
     ----------
-    dut : object
+    dut : SimHandleBase
         The device under test (DUT).
 
     """
@@ -176,6 +221,11 @@ async def ascon_top_test(dut: cocotb.handle.HierarchyObject) -> None:
         # Send the start signal
         await toggle_signal(dut=dut, signal_dict={"i_start": 1}, verbose=False)
 
+        # Start the parallel clock counter
+        clock_counter_task: Task = cocotb.start_soon(
+            coro=parallel_clock_counter(dut=dut),
+        )
+
         #
         # Initialisation phase
         #
@@ -209,7 +259,6 @@ async def ascon_top_test(dut: cocotb.handle.HierarchyObject) -> None:
         await toggle_signal(dut=dut, signal_dict={"i_data_valid": 1}, verbose=False)
 
         # Get the cipher
-        # The valid cipher is always set to 1 STATE_START_PLAIN_TEXT
         await RisingEdge(signal=dut.o_valid_cipher)
         output_cipher[0] = dut.o_cipher.value.integer
         assert dut.o_valid_cipher.value == 1, "Cipher is not valid"
@@ -288,6 +337,15 @@ async def ascon_top_test(dut: cocotb.handle.HierarchyObject) -> None:
         assert output_dict["o_state"] == output_dut_dict["o_state"]
         assert output_dict["o_tag"] == output_dut_dict["o_tag"]
         assert output_dict["o_cipher"] == output_dut_dict["o_cipher"]
+
+        # Await the result of the clock counter
+        clock_cycles_counted = await clock_counter_task
+        message = (
+            f"Number of clock cycles (start to done): {clock_cycles_counted}\n"
+            "Note: The number of clock cycles may vary between simulations,\n"
+            "as the waiting time between each phase is randomized."
+        )
+        dut._log.info(message)
 
     except Exception as e:
         dut_state = get_dut_state(dut=dut)
