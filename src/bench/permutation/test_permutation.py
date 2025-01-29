@@ -53,7 +53,7 @@ async def reset_dut_test(dut: cocotb.handle.HierarchyObject) -> None:
 
     Parameters
     ----------
-    dut : object
+    dut : SimHandleBase
         The device under test (DUT).
 
     """

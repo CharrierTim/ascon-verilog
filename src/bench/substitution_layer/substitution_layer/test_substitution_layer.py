@@ -38,7 +38,7 @@ def get_generics(dut: cocotb.handle.HierarchyObject) -> dict:
 
     Parameters
     ----------
-    dut : object
+    dut : SimHandleBase
         The device under test (DUT).
 
     Returns
@@ -58,7 +58,7 @@ async def initialize_dut(dut: cocotb.handle.HierarchyObject, inputs: dict) -> No
 
     Parameters
     ----------
-    dut : object
+    dut : SimHandleBase
         The device under test (DUT).
     inputs : dict
         The input dictionary.
@@ -78,7 +78,7 @@ async def reset_dut_test(dut: cocotb.handle.HierarchyObject) -> None:
 
     Parameters
     ----------
-    dut : object
+    dut : SimHandleBase
         The device under test (DUT).
 
     """

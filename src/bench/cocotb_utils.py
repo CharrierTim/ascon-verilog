@@ -190,7 +190,7 @@ async def sys_enable_dut(
 
     Parameters
     ----------
-    dut : object
+    dut : SimHandleBase
         The device under test.
     verbose : bool, optional
         If True, logs the enable operation (default is True).
@@ -226,7 +226,7 @@ async def initialize_dut(
 
     Parameters
     ----------
-    dut : object
+    dut : SimHandleBase
         The device under test (DUT).
     inputs : dict
         A dictionary containing the input names and values.
@@ -287,7 +287,7 @@ async def toggle_signal(
 
     Parameters
     ----------
-    dut : object
+    dut : SimHandleBase
         The device under test (DUT).
     signal_dict : dict
         A dictionary containing the signal name and value.
@@ -331,7 +331,7 @@ def log_generics(dut: cocotb.handle.HierarchyObject, generics: dict[str, int]) -
 
     Parameters
     ----------
-    dut : object
+    dut : SimHandleBase
         The device under test (DUT).
     generics : dict
         A dictionary of generic parameters.

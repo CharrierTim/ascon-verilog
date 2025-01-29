@@ -21,7 +21,7 @@ def convert_output_to_str(
 
     Parameters
     ----------
-    dut : object
+    dut : SimHandleBase
         The device under test (DUT).
     cipher : list[int]
         The cipher output.
