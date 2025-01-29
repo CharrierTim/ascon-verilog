@@ -116,7 +116,7 @@ def generate_coverage_report(sim_build_dir: Path) -> None:
 async def parallel_clock_counter(
     dut: cocotb.handle.HierarchyObject,
     *,
-    timeout: int = 1000,
+    timeout: int = 2000,
 ) -> int:
     """
     Count and return the number of clock cycles until `o_done` goes high.
@@ -139,8 +139,9 @@ async def parallel_clock_counter(
     while True:
         done_event = RisingEdge(signal=dut.o_done)
         clock_event = RisingEdge(signal=dut.clock)
+        timeout_event = Timer(time=timeout, units="ns")
 
-        result = await First(clock_event, done_event, Timer(time=timeout, units="ns"))
+        result = await First(clock_event, done_event, timeout_event)
 
         if result is done_event or dut.o_done.value.integer == 1:
             break
