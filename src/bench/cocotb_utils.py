@@ -167,10 +167,12 @@ async def reset_dut(
 
         await ClockCycles(signal=dut.clock, num_cycles=2)
 
-        if verbose:
-            dut._log.info(
-                f"DUT reset for {num_cycles} cycles with reset_high={reset_high}.",
-            )
+        if not verbose:
+            return
+
+        dut._log.info(
+            f"DUT reset for {num_cycles} cycles with reset_high={reset_high}.",
+        )
 
     except Exception as e:
         error_message: str = (
@@ -220,6 +222,7 @@ async def initialize_dut(
     *,
     clock_period_ns: int = 10,
     reset_high: int = 0,
+    verbose: bool = True,
 ) -> None:
     """
     Initialize the DUT with default values.
@@ -237,6 +240,8 @@ async def initialize_dut(
     reset_high : int, optional
         Indicates if the reset signal is active high (1) or active low (0).
         By default, the reset signal is active low (0).
+    verbose : bool, optional
+        If True, logs the initialization operation (default is True).
 
     Usage
     -----
@@ -248,10 +253,10 @@ async def initialize_dut(
     """
     try:
         # Setup the clock
-        await setup_clock(dut=dut, period_ns=clock_period_ns)
+        await setup_clock(dut=dut, period_ns=clock_period_ns, verbose=verbose)
 
         # Reset the DUT
-        await reset_dut(dut=dut, verbose=True, reset_high=reset_high)
+        await reset_dut(dut=dut, reset_high=reset_high, verbose=verbose)
 
         # Set the input values
         for key, value in inputs.items():
@@ -266,8 +271,11 @@ async def initialize_dut(
 
         # Check if i_sys_enable is present
         if hasattr(dut, "i_sys_enable"):
-            await sys_enable_dut(dut=dut, verbose=True)
+            await sys_enable_dut(dut=dut, verbose=verbose)
             await ClockCycles(signal=dut.clock, num_cycles=5)
+
+        if not verbose:
+            return
 
         dut._log.info("DUT initialized successfully.")
 
