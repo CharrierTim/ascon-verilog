@@ -137,10 +137,10 @@ async def parallel_clock_counter(
     count: int = 0
 
     while True:
-        done_event = RisingEdge(dut.o_done)
-        clock_event = RisingEdge(dut.clock)
+        done_event = RisingEdge(signal=dut.o_done)
+        clock_event = RisingEdge(signal=dut.clock)
 
-        result = await First(clock_event, done_event, Timer(timeout, units="ns"))
+        result = await First(clock_event, done_event, Timer(time=timeout, units="ns"))
 
         if result is done_event or dut.o_done.value.integer == 1:
             break
