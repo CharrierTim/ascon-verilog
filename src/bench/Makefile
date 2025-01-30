@@ -1,6 +1,7 @@
 # Makefile running all testbenches
 
-SUBDIRS := addition_layer \
+SUBDIRS := example/adder example/counter \
+           addition_layer \
            diffusion_layer \
            substitution_layer/sbox substitution_layer/substitution_layer \
            xor/xor_begin xor/xor_end \
@@ -15,6 +16,10 @@ $(SUBDIRS):
 	$(MAKE) -C $@
 
 clean:
+	# Clean current directory
+	@rm -r __pycache__
+
+	# Clean all subdirectories
 	@for dir in $(SUBDIRS); do \
 		$(MAKE) -C $$dir clean; \
 	done
