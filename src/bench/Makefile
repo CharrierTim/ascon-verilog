@@ -1,7 +1,7 @@
 # Makefile running all testbenches
 
-SUBDIRS := addition_layer/ \
-           diffusion_layer/ \
+SUBDIRS := addition_layer \
+           diffusion_layer \
            substitution_layer/sbox substitution_layer/substitution_layer \
            xor/xor_begin xor/xor_end \
            permutation \
