@@ -7,23 +7,26 @@ output of the Python implementation with the VHDL implementation.
 @author: Timothée Charrier
 """
 
+from __future__ import annotations
+
 import os
 import sys
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 import cocotb
-from cocotb.runner import Simulator, get_runner
 from cocotb.triggers import Timer
-from sbox_model import (
-    SboxModel,
-)
+from cocotb_tools.runner import get_runner
+from sbox_model import SboxModel
 
 # Add the directory containing the utils.py file to the Python path
 sys.path.insert(0, str(object=(Path(__file__).parent.parent.parent).resolve()))
 
-from cocotb_utils import (
-    get_dut_state,
-)
+from cocotb_utils import get_dut_state
+
+if TYPE_CHECKING:
+    from cocotb.handle import HierarchyObject
+    from cocotb_tools.runner import Runner
 
 S_TABLE: list[int] = [
     0x04,
@@ -62,7 +65,7 @@ S_TABLE: list[int] = [
 
 
 @cocotb.test()
-async def reset_dut_test(dut: cocotb.handle.HierarchyObject) -> None:
+async def reset_dut_test(dut: HierarchyObject) -> None:
     """
     Test the DUT's behavior during reset.
 
@@ -70,7 +73,7 @@ async def reset_dut_test(dut: cocotb.handle.HierarchyObject) -> None:
 
     Parameters
     ----------
-    dut : SimHandleBase
+    dut : HierarchyObject
         The device under test (DUT).
 
     """
@@ -88,7 +91,7 @@ async def reset_dut_test(dut: cocotb.handle.HierarchyObject) -> None:
         sbox_output: int = sbox_model.compute(i_data=0)
 
         # Assert the output
-        assert dut.o_data == sbox_output
+        assert int(dut.o_data.value) == sbox_output
 
     except Exception as e:
         dut_state = get_dut_state(dut=dut)
@@ -104,7 +107,7 @@ async def reset_dut_test(dut: cocotb.handle.HierarchyObject) -> None:
 
 
 @cocotb.test()
-async def sbox_test(dut: cocotb.handle.HierarchyObject) -> None:
+async def sbox_test(dut: HierarchyObject) -> None:
     """Test the DUT's behavior during normal computation."""
     try:
         # Define the model
@@ -134,7 +137,7 @@ async def sbox_test(dut: cocotb.handle.HierarchyObject) -> None:
             )
 
             # Assert the output
-            assert dut.o_data == sbox_output
+            assert int(dut.o_data.value) == sbox_output
 
     except Exception as e:
         dut_state = get_dut_state(dut=dut)
@@ -177,7 +180,7 @@ def test_sbox() -> None:
         simulator: str = os.environ.get("SIM", default=default_simulator)
 
         # Initialize the test runner
-        runner: Simulator = get_runner(simulator_name=simulator)
+        runner: Runner = get_runner(simulator_name=simulator)
 
         # Build HDL sources
         runner.build(

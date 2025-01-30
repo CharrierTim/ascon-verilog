@@ -11,7 +11,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    import cocotb
+    from cocotb.handle import HierarchyObject
 
 
 class DiffusionLayerModel:
@@ -85,7 +85,7 @@ class DiffusionLayerModel:
 
     def assert_output(
         self,
-        dut: cocotb.handle.HierarchyObject,
+        dut: HierarchyObject,
         state: list[int] | None = None,
     ) -> None:
         """
@@ -93,7 +93,7 @@ class DiffusionLayerModel:
 
         Parameters
         ----------
-        dut : cocotb.handle.HierarchyObject
+        dut : HierarchyObject
             The device under test (DUT).
         state : List[int], optional
             The input state, by default None.

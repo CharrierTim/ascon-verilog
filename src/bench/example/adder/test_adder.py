@@ -16,15 +16,16 @@ from random import randint
 from typing import TYPE_CHECKING
 
 import cocotb
-from cocotb.runner import get_runner
 from cocotb.triggers import Timer
+from cocotb_tools.runner import get_runner
 
 if TYPE_CHECKING:
-    from cocotb.runner import Simulator
+    from cocotb.handle import HierarchyObject
+    from cocotb_tools.runner import Runner
 
 
 @cocotb.test()
-async def adder_10_random_values_test(dut: cocotb.handle.HierarchyObject) -> None:
+async def adder_10_random_values_test(dut: HierarchyObject) -> None:
     """
     Test the adder module with 10 random values.
 
@@ -87,7 +88,7 @@ def test_counter_runner() -> None:
         simulator: str = os.environ.get("SIM", default=default_simulator)
 
         # Initialize the test runner
-        runner: Simulator = get_runner(simulator_name=simulator)
+        runner: Runner = get_runner(simulator_name=simulator)
 
         # Build HDL sources
         runner.build(

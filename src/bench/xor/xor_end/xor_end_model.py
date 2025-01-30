@@ -11,7 +11,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    import cocotb
+    from cocotb.handle import HierarchyObject
 
 
 class XorEndModel:
@@ -40,7 +40,7 @@ class XorEndModel:
 
     def assert_output(
         self,
-        dut: cocotb.handle.HierarchyObject,
+        dut: HierarchyObject,
         inputs: dict | None = None,
     ) -> None:
         """
@@ -48,7 +48,7 @@ class XorEndModel:
 
         Parameters
         ----------
-        dut : cocotb.handle.HierarchyObject
+        dut : HierarchyObject
             The device under test (DUT).
         inputs : dict, optional
             The input dictionary.

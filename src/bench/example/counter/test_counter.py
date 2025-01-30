@@ -16,30 +16,27 @@ from random import randint
 from typing import TYPE_CHECKING
 
 import cocotb
-from cocotb.runner import get_runner
 from cocotb.triggers import RisingEdge
+from cocotb_tools.runner import get_runner
 from tabulate import tabulate
 
 # Add the directory containing the utils.py file to the Python path
 sys.path.insert(0, str(object=(Path(__file__).parent.parent.parent).resolve()))
 
-from cocotb_utils import (
-    get_dut_state,
-    initialize_dut,
-    toggle_signal,
-)
+from cocotb_utils import get_dut_state, initialize_dut, toggle_signal
 
 if TYPE_CHECKING:
-    from cocotb.runner import Simulator
+    from cocotb.handle import HierarchyObject
+    from cocotb_tools.runner import Runner
 
 
-def get_generics(dut: cocotb.handle.HierarchyObject) -> dict:
+def get_generics(dut: HierarchyObject) -> dict:
     """
     Retrieve the generic parameters from the DUT.
 
     Parameters
     ----------
-    dut : object
+    dut : HierarchyObject
         The device under test (DUT).
 
     Returns
@@ -56,13 +53,13 @@ def get_generics(dut: cocotb.handle.HierarchyObject) -> dict:
     }
 
 
-def log_generics(dut: cocotb.handle.HierarchyObject, generics: dict[str, int]) -> None:
+def log_generics(dut: HierarchyObject, generics: dict[str, int]) -> None:
     """
     Log the generic parameters from the DUT in a table format.
 
     Parameters
     ----------
-    dut : object
+    dut : HierarchyObject
         The device under test (DUT).
     generics : dict
         A dictionary of generic parameters.
@@ -77,7 +74,7 @@ def log_generics(dut: cocotb.handle.HierarchyObject, generics: dict[str, int]) -
 
 
 @cocotb.test()
-async def reset_dut_test(dut: cocotb.handle.HierarchyObject) -> None:
+async def reset_dut_test(dut: HierarchyObject) -> None:
     """
     Test the DUT's behavior during reset.
 
@@ -85,7 +82,7 @@ async def reset_dut_test(dut: cocotb.handle.HierarchyObject) -> None:
 
     Parameters
     ----------
-    dut : object
+    dut : HierarchyObject
         The device under test (DUT).
 
     """
@@ -121,13 +118,13 @@ async def reset_dut_test(dut: cocotb.handle.HierarchyObject) -> None:
 
 
 @cocotb.test()
-async def counter_test(dut: cocotb.handle.HierarchyObject) -> None:
+async def counter_test(dut: HierarchyObject) -> None:
     """
     Test the counter functionality.
 
     Parameters
     ----------
-    dut : object
+    dut : HierarchyObject
         The device under test (DUT).
 
     """
@@ -224,7 +221,7 @@ def test_counter_runner() -> None:
         simulator: str = os.environ.get("SIM", default=default_simulator)
 
         # Initialize the test runner
-        runner: Simulator = get_runner(simulator_name=simulator)
+        runner: Runner = get_runner(simulator_name=simulator)
 
         # Build HDL sources
         runner.build(

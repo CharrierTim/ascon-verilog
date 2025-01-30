@@ -7,37 +7,39 @@ output of the Python implementation with the VHDL implementation.
 @author: Timothée Charrier
 """
 
+from __future__ import annotations
+
 import os
 import sys
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 import cocotb
-from cocotb.runner import Simulator, get_runner
 from cocotb.triggers import Timer
-from diffusion_layer_model import (
-    DiffusionLayerModel,
-)
+from cocotb_tools.runner import get_runner
+from diffusion_layer_model import DiffusionLayerModel
 
 # Add the directory containing the utils.py file to the Python path
 sys.path.insert(0, str(object=(Path(__file__).parent.parent).resolve()))
 
-from cocotb_utils import (
-    get_dut_state,
-    init_hierarchy,
-)
+from cocotb_utils import get_dut_state, init_hierarchy
+
+if TYPE_CHECKING:
+    from cocotb.handle import HierarchyObject
+    from cocotb_tools.runner import Runner
 
 INIT_INPUTS = {
     "i_state": init_hierarchy(dims=(5,), bitwidth=64, use_random=False),
 }
 
 
-async def initialize_dut(dut: cocotb.handle.HierarchyObject, inputs: dict) -> None:
+async def initialize_dut(dut: HierarchyObject, inputs: dict) -> None:
     """
     Initialize the DUT with the given inputs.
 
     Parameters
     ----------
-    dut : SimHandleBase
+    dut : HierarchyObject
         The device under test (DUT).
     inputs : dict
         The input dictionary.
@@ -49,7 +51,7 @@ async def initialize_dut(dut: cocotb.handle.HierarchyObject, inputs: dict) -> No
 
 
 @cocotb.test()
-async def reset_dut_test(dut: cocotb.handle.HierarchyObject) -> None:
+async def reset_dut_test(dut: HierarchyObject) -> None:
     """
     Test the DUT's behavior during reset.
 
@@ -57,7 +59,7 @@ async def reset_dut_test(dut: cocotb.handle.HierarchyObject) -> None:
 
     Parameters
     ----------
-    dut : SimHandleBase
+    dut : HierarchyObject
         The device under test (DUT).
 
     """
@@ -85,7 +87,7 @@ async def reset_dut_test(dut: cocotb.handle.HierarchyObject) -> None:
 
 
 @cocotb.test()
-async def diffusion_layer_test(dut: cocotb.handle.HierarchyObject) -> None:
+async def diffusion_layer_test(dut: HierarchyObject) -> None:
     """Test the DUT's behavior during normal computation."""
     try:
         # Define the model
@@ -169,7 +171,7 @@ def test_diffusion_layer() -> None:
         simulator: str = os.environ.get("SIM", default=default_simulator)
 
         # Initialize the test runner
-        runner: Simulator = get_runner(simulator_name=simulator)
+        runner: Runner = get_runner(simulator_name=simulator)
 
         # Build HDL sources
         runner.build(

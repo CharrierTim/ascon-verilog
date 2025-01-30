@@ -7,11 +7,16 @@ Library for utility functions used in the testbenches.
 from __future__ import annotations
 
 import random
+from typing import TYPE_CHECKING
 
 import cocotb
 from cocotb.clock import Clock
 from cocotb.triggers import ClockCycles, RisingEdge
+from cocotb.types import Array
 from tabulate import tabulate
+
+if TYPE_CHECKING:
+    from cocotb.handle import HierarchyObject
 
 
 def random_signed_value(bitwidth: int) -> int:
@@ -84,7 +89,7 @@ def init_hierarchy(
 
 
 async def setup_clock(
-    dut: cocotb.handle.HierarchyObject,
+    dut: HierarchyObject,
     period_ns: int = 10,
     *,
     verbose: bool = True,
@@ -94,7 +99,7 @@ async def setup_clock(
 
     Parameters
     ----------
-    dut : cocotb.handle.HierarchyObject
+    dut : HierarchyObject
         The Device Under Test (DUT).
     period_ns : int
         Clock period in nanoseconds (default is 10).
@@ -120,7 +125,7 @@ async def setup_clock(
 
 
 async def reset_dut(
-    dut: cocotb.handle.HierarchyObject,
+    dut: HierarchyObject,
     num_cycles: int = 5,
     *,
     reset_high: int = 0,
@@ -134,7 +139,7 @@ async def reset_dut(
 
     Parameters
     ----------
-    dut : cocotb.handle.HierarchyObject
+    dut : HierarchyObject
         The device under test.
     num_cycles : int, optional
         Number of clock cycles to assert the reset signal (default is 5).
@@ -183,7 +188,7 @@ async def reset_dut(
 
 
 async def sys_enable_dut(
-    dut: cocotb.handle.HierarchyObject,
+    dut: HierarchyObject,
     *,
     verbose: bool = True,
 ) -> None:
@@ -216,7 +221,7 @@ async def sys_enable_dut(
 
 
 async def initialize_dut(
-    dut: cocotb.handle.HierarchyObject,
+    dut: HierarchyObject,
     inputs: dict,
     outputs: dict,
     *,
@@ -285,7 +290,7 @@ async def initialize_dut(
 
 
 async def toggle_signal(
-    dut: cocotb.handle.HierarchyObject,
+    dut: HierarchyObject,
     signal_dict: dict,
     *,
     verbose: bool = True,
@@ -335,7 +340,7 @@ async def toggle_signal(
         raise RuntimeError(error_message) from e
 
 
-def log_generics(dut: cocotb.handle.HierarchyObject, generics: dict[str, int]) -> None:
+def log_generics(dut: HierarchyObject, generics: dict[str, int]) -> None:
     """
     Log the generic parameters from the DUT in a table format.
 
@@ -355,13 +360,13 @@ def log_generics(dut: cocotb.handle.HierarchyObject, generics: dict[str, int]) -
     dut._log.info(f"Running with generics:\n{table}")
 
 
-def get_dut_state(dut: cocotb.handle.HierarchyObject) -> dict:
+def get_dut_state(dut: HierarchyObject) -> dict:
     """
     Get the state of the DUT at a given time.
 
     Parameters
     ----------
-    dut : cocotb.handle.HierarchyObject
+    dut : HierarchyObject
         The device under test (DUT).
 
     Returns
@@ -375,7 +380,7 @@ def get_dut_state(dut: cocotb.handle.HierarchyObject) -> dict:
         if attr.startswith(("i_", "o_")):
             try:
                 value = getattr(dut, attr).value
-                if isinstance(value, list):
+                if isinstance(value, Array):
                     value = tuple(hex(x) for x in value)
                 else:
                     value = hex(int(value))

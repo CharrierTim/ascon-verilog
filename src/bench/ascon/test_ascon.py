@@ -18,22 +18,19 @@ from typing import TYPE_CHECKING
 
 import cocotb
 from ascon_model import AsconModel, convert_output_to_str
-from cocotb.runner import get_runner
 from cocotb.triggers import ClockCycles, First, RisingEdge, Timer
+from cocotb_tools.runner import get_runner
 
 if TYPE_CHECKING:
-    from cocotb.runner import Simulator
-    from cocotb.triggers import Task
+    from cocotb.handle import HierarchyObject
+    from cocotb.task import Task
+    from cocotb_tools.runner import Runner
 
 
 # Add the directory containing the utils.py file to the Python path
 sys.path.insert(0, str(object=(Path(__file__).parent.parent).resolve()))
 
-from cocotb_utils import (
-    get_dut_state,
-    initialize_dut,
-    toggle_signal,
-)
+from cocotb_utils import get_dut_state, initialize_dut, toggle_signal
 
 INIT_INPUTS: dict[str, int] = {
     "i_start": 0,
@@ -114,7 +111,7 @@ def generate_coverage_report(sim_build_dir: Path) -> None:
 
 
 async def parallel_clock_counter(
-    dut: cocotb.handle.HierarchyObject,
+    dut: HierarchyObject,
     *,
     timeout: int = 2000,
 ) -> int:
@@ -123,7 +120,7 @@ async def parallel_clock_counter(
 
     Parameters
     ----------
-    dut : SimHandleBase
+    dut : HierarchyObject
         The device under test (DUT).
     timeout : int, optional
         Maximum time (in ns) to wait before timeout. Default is 1000 ns.
@@ -143,7 +140,7 @@ async def parallel_clock_counter(
 
         result = await First(clock_event, done_event, timeout_event)
 
-        if result is done_event or dut.o_done.value.integer == 1:
+        if result is done_event or int(dut.o_done.value):
             break
 
         count += 1
@@ -152,7 +149,7 @@ async def parallel_clock_counter(
 
 
 @cocotb.test()
-async def reset_dut_test(dut: cocotb.handle.HierarchyObject) -> None:
+async def reset_dut_test(dut: HierarchyObject) -> None:
     """
     Test the DUT's behavior during reset.
 
@@ -160,7 +157,7 @@ async def reset_dut_test(dut: cocotb.handle.HierarchyObject) -> None:
 
     Parameters
     ----------
-    dut : SimHandleBase
+    dut : HierarchyObject
         The device under test (DUT).
 
     """
@@ -191,7 +188,7 @@ async def reset_dut_test(dut: cocotb.handle.HierarchyObject) -> None:
 
 
 @cocotb.test()
-async def ascon_top_test(dut: cocotb.handle.HierarchyObject) -> None:
+async def ascon_top_test(dut: HierarchyObject) -> None:
     """Test the DUT's behavior during normal computation."""
     try:
         # Reset the DUT
@@ -209,7 +206,7 @@ async def ascon_top_test(dut: cocotb.handle.HierarchyObject) -> None:
         output_cipher: list[int] = [0] * 4
 
         # Define the ASCON model
-        ascon_model = AsconModel(inputs=inputs, plaintext=PLAINTEXT)
+        ascon_model = AsconModel(dut=dut, inputs=inputs, plaintext=PLAINTEXT)
         output_dict: dict[str, str] = ascon_model.ascon128(inputs=inputs)
 
         # Set the inputs
@@ -261,7 +258,7 @@ async def ascon_top_test(dut: cocotb.handle.HierarchyObject) -> None:
 
         # Get the cipher
         await RisingEdge(signal=dut.o_valid_cipher)
-        output_cipher[0] = dut.o_cipher.value.integer
+        output_cipher[0] = int(dut.o_cipher.value)
         assert dut.o_valid_cipher.value == 1, "Cipher is not valid"
 
         # Wait at least 12 clock cycles (12 rounds permutation)
@@ -277,7 +274,7 @@ async def ascon_top_test(dut: cocotb.handle.HierarchyObject) -> None:
 
         # Get the cipher
         await RisingEdge(signal=dut.o_valid_cipher)
-        output_cipher[1] = dut.o_cipher.value.integer
+        output_cipher[1] = int(dut.o_cipher.value)
         assert dut.o_valid_cipher.value == 1, "Cipher is not valid"
 
         # Wait at least 12 clock cycles (12 rounds permutation)
@@ -293,7 +290,7 @@ async def ascon_top_test(dut: cocotb.handle.HierarchyObject) -> None:
 
         # Get the cipher
         await RisingEdge(signal=dut.o_valid_cipher)
-        output_cipher[2] = dut.o_cipher.value.integer
+        output_cipher[2] = int(dut.o_cipher.value)
         assert dut.o_valid_cipher.value == 1, "Cipher is not valid"
 
         # Wait at least 12 clock cycles (12 rounds permutation)
@@ -309,7 +306,7 @@ async def ascon_top_test(dut: cocotb.handle.HierarchyObject) -> None:
 
         # Get the cipher
         await RisingEdge(signal=dut.o_valid_cipher)
-        output_cipher[3] = dut.o_cipher.value.integer
+        output_cipher[3] = int(dut.o_cipher.value)
         assert dut.o_valid_cipher.value == 1, "Cipher is not valid"
 
         # Wait for the o_done signal
@@ -411,7 +408,7 @@ def test_permutation() -> None:
         simulator: str = os.environ.get("SIM", default=default_simulator)
 
         # Initialize the test runner
-        runner: Simulator = get_runner(simulator_name=simulator)
+        runner: Runner = get_runner(simulator_name=simulator)
 
         # Build HDL sources
         runner.build(

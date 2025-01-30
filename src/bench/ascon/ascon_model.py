@@ -8,12 +8,15 @@ Author: Timothée Charrier
 
 from __future__ import annotations
 
-import cocotb
-from cocotb import log
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from cocotb.handle import HierarchyObject
+    from cocotb.logging import SimBaseLog
 
 
 def convert_output_to_str(
-    dut: cocotb.handle.HierarchyObject,
+    dut: HierarchyObject,
     cipher: list[int],
 ) -> dict[str, str]:
     """
@@ -21,7 +24,7 @@ def convert_output_to_str(
 
     Parameters
     ----------
-    dut : SimHandleBase
+    dut : HierarchyObject
         The device under test (DUT).
     cipher : list[int]
         The cipher output.
@@ -33,7 +36,7 @@ def convert_output_to_str(
 
     """
     # Get the DUT outputs as integers
-    o_tag: list[cocotb.binary.BinaryValue] = dut.o_tag.value.integer
+    o_tag: int = int(dut.o_tag.value)
     o_state: list[int] = [int(x) for x in dut.o_state.value]
 
     # Convert the DUT outputs to strings
@@ -53,6 +56,7 @@ class AsconModel:
 
     def __init__(
         self,
+        dut: HierarchyObject,
         *,
         inputs: dict[str, int] | None = None,
         plaintext: list[int] | None = None,
@@ -62,12 +66,17 @@ class AsconModel:
 
         Parameters
         ----------
+        dut : HierarchyObject
+            The device under test (DUT).
         inputs : dict, optional
             The initial input dictionary. Default is None.
         plaintext : list, optional
             The plaintext data. Default is None.
 
         """
+        self.dut: HierarchyObject = dut
+        self.log: SimBaseLog = dut._log
+
         inputs = inputs or {}
 
         # Input parameters with default values
@@ -93,7 +102,7 @@ class AsconModel:
 
         # Check if the plaintext list contains only zeros
         if all(x == 0 for x in self.plaintext):
-            log.warning("The plaintext list contains only zeros.")
+            self.log.warning("The plaintext list contains only zeros.")
 
     def update_inputs(self, inputs: dict[str, int] | None = None) -> None:
         """
@@ -152,19 +161,19 @@ class AsconModel:
         state: list[int] = self.i_state.copy() if is_first else self.o_state.copy()
 
         for r in range(12 - i_round, 12):
-            log.info("-- Permutation (r=%d) --", r)
+            self.log.info("-- Permutation (r=%d) --", r)
 
             # Perform the Round Constants addition
             state[2] ^= 0xF0 - r * 0x10 + r * 0x1
-            log.info("Constant addition  : %016X %016X %016X %016X %016X", *state)
+            self.log.info("Constant addition  : %016X %016X %016X %016X %016X", *state)
 
             # Perform the Substitution Layer
             state = self._substitution_layer(state=state)
-            log.info("Substitution S-box : %016X %016X %016X %016X %016X", *state)
+            self.log.info("Substitution S-box : %016X %016X %016X %016X %016X", *state)
 
             # Perform the Linear Diffusion Layer
             state = self._linear_diffusion_layer(state=state)
-            log.info("Linear diffusion   : %016X %016X %016X %016X %016X", *state)
+            self.log.info("Linear diffusion   : %016X %016X %016X %016X %016X", *state)
 
         # Set the output state
         self.o_state = state
@@ -241,7 +250,10 @@ class AsconModel:
 
         """
         self.o_state[0] ^= data
-        log.info("State ^ Data       : %016X %016X %016X %016X %016X", *self.o_state)
+        self.log.info(
+            "State ^ Data       : %016X %016X %016X %016X %016X",
+            *self.o_state,
+        )
 
     def xor_key_begin(self, key: int) -> None:
         """
@@ -260,12 +272,18 @@ class AsconModel:
         """Perform XOR operation at the end with the key."""
         self.o_state[3] ^= self.i_key >> 64
         self.o_state[4] ^= self.i_key & 0xFFFFFFFFFFFFFFFF
-        log.info("State ^ Key        : %016X %016X %016X %016X %016X", *self.o_state)
+        self.log.info(
+            "State ^ Key        : %016X %016X %016X %016X %016X",
+            *self.o_state,
+        )
 
     def xor_lsb_end(self) -> None:
         """Perform XOR operation at the end with the least significant bit."""
         self.o_state[4] ^= 0x0000000000000001
-        log.info("State ^ LSB        : %016X %016X %016X %016X %016X", *self.o_state)
+        self.log.info(
+            "State ^ LSB        : %016X %016X %016X %016X %016X",
+            *self.o_state,
+        )
 
     def _process_finalization_phase(self) -> None:
         """Process the finalization phase."""
@@ -337,18 +355,21 @@ class AsconModel:
 
     def _log_initial_state(self) -> None:
         """Log the initial state."""
-        log.info(
-            f"{'*' * 105}\n"
-            "Initial State      : %016X %016X %016X %016X %016X\n"
-            f"{'*' * 105}",
+        self.log.info(
+            "%s\nInitial State      : %016X %016X %016X %016X %016X\n%s",
+            "*" * 105,
             *self.i_state,
+            "*" * 105,
         )
 
     def _log_state(self, phase: str) -> None:
         """Log the current state."""
-        log.info(
-            f"{'*' * 105}\n{phase}     : %016X %016X %016X %016X %016X\n{'*' * 105}",
+        self.log.info(
+            "%s\n%s     : %016X %016X %016X %016X %016X\n%s",
+            "*" * 105,
+            phase,
             *self.o_state,
+            "*" * 105,
         )
 
     def _get_output(self) -> dict[str, str]:
