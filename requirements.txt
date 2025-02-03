@@ -1,4 +1,4 @@
-cocotb @ git+https://github.com/cocotb/cocotb@09c268647a42087d45f95396381785cdf91253e1
+cocotb @ git+https://github.com/cocotb/cocotb.git@master
 find_libpython==0.4.0
 iniconfig==2.0.0
 packaging==24.2
