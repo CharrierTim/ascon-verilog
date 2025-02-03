@@ -159,7 +159,7 @@ async def counter_test(dut: HierarchyObject) -> None:
             expected_outputs["count"] += generics["STEP"]
 
             # Wait for the next clock cycle
-            await RisingEdge(signal=dut.clock)
+            await RisingEdge(dut.clock)
 
             # Verify if we overflowed
             if expected_outputs["count"] > generics["COUNT_TO"]:

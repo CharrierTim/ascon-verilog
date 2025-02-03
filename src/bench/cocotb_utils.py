@@ -205,7 +205,7 @@ async def sys_enable_dut(
     """
     try:
         dut.i_sys_enable.value = 1
-        await RisingEdge(signal=dut.clock)
+        await RisingEdge(dut.clock)
 
         if not verbose:
             return
@@ -318,14 +318,14 @@ async def toggle_signal(
     try:
         for key, value in signal_dict.items():
             getattr(dut, key).value = value
-            await RisingEdge(signal=dut.clock)
+            await RisingEdge(dut.clock)
 
             if value == 1:
                 getattr(dut, key).value = 0
             else:
                 getattr(dut, key).value = 1
 
-            await RisingEdge(signal=dut.clock)
+            await RisingEdge(dut.clock)
 
         if not verbose:
             return

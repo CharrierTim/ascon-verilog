@@ -120,7 +120,7 @@ async def permutation_test(dut: HierarchyObject) -> None:
         for key, value in dut_inputs.items():
             dut.__getattr__(key).value = value
 
-        await RisingEdge(signal=dut.clock)
+        await RisingEdge(dut.clock)
         dut_inputs["i_mux_select"] = 1
 
         for i_round in range(1, 13):
@@ -131,7 +131,7 @@ async def permutation_test(dut: HierarchyObject) -> None:
             for key, value in dut_inputs.items():
                 dut.__getattr__(key).value = value
 
-            await RisingEdge(signal=dut.clock)
+            await RisingEdge(dut.clock)
 
             # Update and Assert the output
             permutation_model.assert_output(
@@ -139,7 +139,7 @@ async def permutation_test(dut: HierarchyObject) -> None:
                 inputs=dut_inputs,
             )
 
-        await RisingEdge(signal=dut.clock)
+        await RisingEdge(dut.clock)
 
     except Exception as e:
         dut_state = get_dut_state(dut=dut)

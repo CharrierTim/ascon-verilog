@@ -134,8 +134,8 @@ async def parallel_clock_counter(
     count: int = 0
 
     while True:
-        done_event = RisingEdge(signal=dut.o_done)
-        clock_event = RisingEdge(signal=dut.clock)
+        done_event = RisingEdge(dut.o_done)
+        clock_event = RisingEdge(dut.clock)
         timeout_event = Timer(time=timeout, units="ns")
 
         result = await First(clock_event, done_event, timeout_event)
@@ -257,7 +257,7 @@ async def ascon_top_test(dut: HierarchyObject) -> None:
         await toggle_signal(dut=dut, signal_dict={"i_data_valid": 1}, verbose=False)
 
         # Get the cipher
-        await RisingEdge(signal=dut.o_valid_cipher)
+        await RisingEdge(dut.o_valid_cipher)
         output_cipher[0] = int(dut.o_cipher.value)
         assert dut.o_valid_cipher.value == 1, "Cipher is not valid"
 
@@ -273,7 +273,7 @@ async def ascon_top_test(dut: HierarchyObject) -> None:
         await toggle_signal(dut=dut, signal_dict={"i_data_valid": 1}, verbose=False)
 
         # Get the cipher
-        await RisingEdge(signal=dut.o_valid_cipher)
+        await RisingEdge(dut.o_valid_cipher)
         output_cipher[1] = int(dut.o_cipher.value)
         assert dut.o_valid_cipher.value == 1, "Cipher is not valid"
 
@@ -289,7 +289,7 @@ async def ascon_top_test(dut: HierarchyObject) -> None:
         await toggle_signal(dut=dut, signal_dict={"i_data_valid": 1}, verbose=False)
 
         # Get the cipher
-        await RisingEdge(signal=dut.o_valid_cipher)
+        await RisingEdge(dut.o_valid_cipher)
         output_cipher[2] = int(dut.o_cipher.value)
         assert dut.o_valid_cipher.value == 1, "Cipher is not valid"
 
@@ -305,12 +305,12 @@ async def ascon_top_test(dut: HierarchyObject) -> None:
         await toggle_signal(dut=dut, signal_dict={"i_data_valid": 1}, verbose=False)
 
         # Get the cipher
-        await RisingEdge(signal=dut.o_valid_cipher)
+        await RisingEdge(dut.o_valid_cipher)
         output_cipher[3] = int(dut.o_cipher.value)
         assert dut.o_valid_cipher.value == 1, "Cipher is not valid"
 
         # Wait for the o_done signal
-        await RisingEdge(signal=dut.o_done)
+        await RisingEdge(dut.o_done)
         await ClockCycles(signal=dut.clock, num_cycles=5)
 
         #
@@ -414,7 +414,7 @@ def test_permutation() -> None:
         runner.build(
             build_args=build_args + extra_args,
             build_dir="sim_build",
-            clean=True,
+            clean=False,
             hdl_library=library,
             hdl_toplevel=entity,
             sources=sources,
