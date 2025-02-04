@@ -1,6 +1,7 @@
 {
     "recommendations": [
         "charliermarsh.ruff",
+        "chipsalliance.verible",
         "teros-technology.teroshdl",
         "ms-python.vscode-pylance",
         "ms-python.python",
