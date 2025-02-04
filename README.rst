@@ -143,6 +143,20 @@ Then, you can use VSCode build-in python extension to run specific test,
 or ``your-python-interpreter path/to/test.py`` to run a specific test or
 the ``make`` command in the specific test directory.
 
+VSCode Workflow
+===============
+
+If you are using Visual Studio Code, this project includes a ``.vscode``
+directory with preconfigured settings:
+
+-  ``extensions.json`` - Lists recommended extensions for the project.
+
+-  ``settings.json`` - Contains workspace-specific settings:
+
+      -  Verible Language Server is used for linting and formatting.
+      -  Ruff Python linter and formatter is used for Python files.
+      -  Various other settings to improve the development experience.
+
 **********
  Coverage
 **********
@@ -164,12 +178,6 @@ report.
 Synthesis was only checked using Vivado, but we could use `Yosys
 <https://github.com/YosysHQ/yosys>`_ to synthesize the design for a full
 open-source flow.
-
-**************
- Architecture
-**************
-
-# Todo
 
 **************
  Contribution
