@@ -59,7 +59,7 @@ framework or ``make`` is used to run the tests.
 lcov
 ====
 
-`lcov <http://ltp.sourceforge.net/coverage/lcov.php>`_ is a tool used to
+`lcov <https://github.com/linux-test-project/lcov>`_ is a tool used to
 generate html coverage reports.
 
 Ruff
