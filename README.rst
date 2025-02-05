@@ -183,9 +183,9 @@ open-source flow.
  Documentation
 ***************
 
-.. image:: docs/ascon128-timing.svg
-   :target: docs/ascon128-timing.svg
-   :alt: Timing diagram of the Ascon 128 algorithm
+.. raw:: html
+
+   <object data="docs/ascon128-timing.svg" type="image/svg+xml"></object>
 
 **************
  Contribution
