@@ -92,13 +92,13 @@ on any operating system that supports the tools mentioned above.
 
       .. code:: bash
 
-         python3 -m venv venv
+         python3 -m venv .venv
 
 #. Activate the virtual environment using the following command:
 
       .. code:: bash
 
-         source venv/bin/activate
+         source .venv/bin/activate
 
 #. Install the Python dependencies using the following command:
 
@@ -178,6 +178,14 @@ report.
 Synthesis was only checked using Vivado, but we could use `Yosys
 <https://github.com/YosysHQ/yosys>`_ to synthesize the design for a full
 open-source flow.
+
+***************
+ Documentation
+***************
+
+.. image:: docs/ascon128-timing.svg
+   :target: docs/ascon128-timing.svg
+   :alt: Timing diagram of the Ascon 128 algorithm
 
 **************
  Contribution
