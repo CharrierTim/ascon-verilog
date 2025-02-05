@@ -184,8 +184,7 @@ open-source flow.
 ***************
 
 .. raw:: html
-
-   <object data="docs/ascon128-timing.svg" type="image/svg+xml"></object>
+   :file: docs/ascon128-timing.svg
 
 **************
  Contribution
