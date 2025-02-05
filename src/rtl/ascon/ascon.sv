@@ -11,10 +11,38 @@
 //                    - registers process
 //------------------------------------------------------------------------------
 // Revision History :
-//   - 2025-01-22
+//   - 2025-01-22: Initial version
+//   - 2025-02-05: Add timing diagram
 //------------------------------------------------------------------------------
 
 `timescale 1ns / 1ps
+
+//! Timing diagram for the ASCON-128 encryption with this implementation.
+//! One Permutation per clock cycle.
+//! { signal: [
+//! { name: "Clock & Control"},
+//! { name: "clock",           wave: "P.....|....|....|......|....|...." },
+//! { name: "reset_n",         wave: "0.1.0.|....|....|......|....|...." },
+//! { name: "i_sys_enable",    wave: "0...1.|....|....|......|....|...." },
+//! { name: "i_start",         wave: "0...10|....|....|......|....|...." },
+//! {},
+//! { name: "Input Signals"},
+//! { name: "i_data_valid",    wave: "0.....|.10.|.10.|.10d.0|.10.|...." },
+//! { name: "i_data",          wave: "2.....|3...|4...|x..d.x|6...|....", data: ["0x0000...0000", "Block1", "Block2", "           Block5"] },
+//! { name: "i_key",           wave: "9.....|....|....|......|....|....", data: ["                  Key  "] },
+//! { name: "i_nonce",         wave: "8.....|....|....|......|....|....", data: ["                  Nonce"] },
+//! {},
+//! { name: "Output Signals"},
+//! { name: "o_cipher",        wave: "x.2...|....|....|4..d.4|x...|6...", data: ["0x0000...0000", "Cipher1","", "Cipher4"] },
+//! { name: "o_valid_cipher",  wave: "x.0...|....|....|10.d.0|10..|10.." },
+//! { name: "o_tag",           wave: "x.2...|....|....|......|....|6...", data: ["0x0000...0000", "Tag"] },
+//! { name: "o_done",          wave: "x.0...|....|....|......|....|10.." }
+//! ],
+//! head:{
+//!     text: "ASCON-128 Encryption Timing Diagram",
+//!     tick: 0,
+//! },
+//! }
 
 module ascon
     import ascon_pkg::*;
