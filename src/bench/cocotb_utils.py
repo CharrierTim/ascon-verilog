@@ -11,7 +11,7 @@ from typing import TYPE_CHECKING
 
 import cocotb
 from cocotb.clock import Clock
-from cocotb.triggers import ClockCycles, RisingEdge
+from cocotb.triggers import ClockCycles
 from cocotb.types import Array
 from tabulate import tabulate
 
@@ -205,7 +205,7 @@ async def sys_enable_dut(
     """
     try:
         dut.i_sys_enable.value = 1
-        await RisingEdge(dut.clock)
+        await dut.clock.rising_edge
 
         if not verbose:
             return
@@ -318,14 +318,14 @@ async def toggle_signal(
     try:
         for key, value in signal_dict.items():
             getattr(dut, key).value = value
-            await RisingEdge(dut.clock)
+            await dut.clock.rising_edge
 
             if value == 1:
                 getattr(dut, key).value = 0
             else:
                 getattr(dut, key).value = 1
 
-            await RisingEdge(dut.clock)
+            await dut.clock.rising_edge
 
         if not verbose:
             return

@@ -15,7 +15,6 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 import cocotb
-from cocotb.triggers import RisingEdge
 from cocotb_tools.runner import get_runner
 from permutation_model import PermutationModel
 
@@ -118,9 +117,9 @@ async def permutation_test(dut: HierarchyObject) -> None:
 
         # Set dut inputs
         for key, value in dut_inputs.items():
-            dut.__getattr__(key).value = value
+            dut.__getattr__(name=key).value = value
 
-        await RisingEdge(dut.clock)
+        await dut.clock.rising_edge
         dut_inputs["i_mux_select"] = 1
 
         for i_round in range(1, 13):
@@ -129,9 +128,9 @@ async def permutation_test(dut: HierarchyObject) -> None:
 
             # Set dut inputs
             for key, value in dut_inputs.items():
-                dut.__getattr__(key).value = value
+                dut.__getattr__(name=key).value = value
 
-            await RisingEdge(dut.clock)
+            await dut.clock.rising_edge
 
             # Update and Assert the output
             permutation_model.assert_output(
@@ -139,7 +138,7 @@ async def permutation_test(dut: HierarchyObject) -> None:
                 inputs=dut_inputs,
             )
 
-        await RisingEdge(dut.clock)
+        await dut.clock.rising_edge
 
     except Exception as e:
         dut_state = get_dut_state(dut=dut)

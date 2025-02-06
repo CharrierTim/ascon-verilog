@@ -18,7 +18,7 @@ from typing import TYPE_CHECKING
 
 import cocotb
 from ascon_model import AsconModel, convert_output_to_str
-from cocotb.triggers import ClockCycles, First, RisingEdge, Timer
+from cocotb.triggers import ClockCycles, First, Timer
 from cocotb_tools.runner import get_runner
 
 if TYPE_CHECKING:
@@ -134,8 +134,8 @@ async def parallel_clock_counter(
     count: int = 0
 
     while True:
-        done_event = RisingEdge(dut.o_done)
-        clock_event = RisingEdge(dut.clock)
+        done_event = dut.o_done.rising_edge
+        clock_event = dut.clock.rising_edge
         timeout_event = Timer(time=timeout, units="ns")
 
         result = await First(clock_event, done_event, timeout_event)
@@ -211,7 +211,7 @@ async def ascon_top_test(dut: HierarchyObject) -> None:
 
         # Set the inputs
         for key, value in inputs.items():
-            dut.__getattr__(key).value = value
+            dut.__getattr__(name=key).value = value
 
         # Wait for few clock cycles
         await ClockCycles(signal=dut.clock, num_cycles=10)
@@ -257,7 +257,7 @@ async def ascon_top_test(dut: HierarchyObject) -> None:
             await toggle_signal(dut=dut, signal_dict={"i_data_valid": 1}, verbose=False)
 
             # Get the cipher
-            await RisingEdge(dut.o_valid_cipher)
+            await dut.o_valid_cipher.rising_edge
             output_cipher[i - 1] = int(dut.o_cipher.value)
             assert dut.o_valid_cipher.value == 1, "Cipher is not valid"
 
@@ -273,12 +273,12 @@ async def ascon_top_test(dut: HierarchyObject) -> None:
         await toggle_signal(dut=dut, signal_dict={"i_data_valid": 1}, verbose=False)
 
         # Get the cipher
-        await RisingEdge(dut.o_valid_cipher)
+        await dut.o_valid_cipher.rising_edge
         output_cipher[3] = int(dut.o_cipher.value)
         assert dut.o_valid_cipher.value == 1, "Cipher is not valid"
 
         # Wait for the o_done signal
-        await RisingEdge(dut.o_done)
+        await dut.o_done.rising_edge
         await ClockCycles(signal=dut.clock, num_cycles=5)
 
         #
@@ -306,7 +306,7 @@ async def ascon_top_test(dut: HierarchyObject) -> None:
 
         # Await the result of the clock counter
         clock_cycles_counted = await clock_counter_task
-        message = (
+        message: str = (
             f"Number of clock cycles (start to done): {clock_cycles_counted}\n"
             "Note: The number of clock cycles may vary between simulations,\n"
             "as the waiting time between each phase is randomized."
