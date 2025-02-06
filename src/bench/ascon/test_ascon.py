@@ -1,7 +1,7 @@
 """
-Testbench for the XOR Begin Layer.
+Testbench for the ascon module.
 
-This module tests the XOR Begin Layer function module by comparing the
+This module tests the ascon top level module by comparing the
 output of the Python implementation with the verilog implementation.
 
 @author: Timothée Charrier
@@ -248,53 +248,21 @@ async def ascon_top_test(dut: HierarchyObject) -> None:
         # Plaintext phase
         #
 
-        # Block 1
+        # Process blocks 1-3
+        for i in range(1, 4):
+            # Update i_data
+            dut.i_data.value = PLAINTEXT[i]
 
-        # # Update i_data
-        dut.i_data.value = PLAINTEXT[1]
+            # Set i_data_valid to 1
+            await toggle_signal(dut=dut, signal_dict={"i_data_valid": 1}, verbose=False)
 
-        # # Set i_data_valid to 1
-        await toggle_signal(dut=dut, signal_dict={"i_data_valid": 1}, verbose=False)
+            # Get the cipher
+            await RisingEdge(dut.o_valid_cipher)
+            output_cipher[i - 1] = int(dut.o_cipher.value)
+            assert dut.o_valid_cipher.value == 1, "Cipher is not valid"
 
-        # Get the cipher
-        await RisingEdge(dut.o_valid_cipher)
-        output_cipher[0] = int(dut.o_cipher.value)
-        assert dut.o_valid_cipher.value == 1, "Cipher is not valid"
-
-        # Wait at least 12 clock cycles (12 rounds permutation)
-        await ClockCycles(signal=dut.clock, num_cycles=random.randint(13, 20))
-
-        # Block 2
-
-        # Update i_data
-        dut.i_data.value = PLAINTEXT[2]
-
-        # Set i_data_valid to 1
-        await toggle_signal(dut=dut, signal_dict={"i_data_valid": 1}, verbose=False)
-
-        # Get the cipher
-        await RisingEdge(dut.o_valid_cipher)
-        output_cipher[1] = int(dut.o_cipher.value)
-        assert dut.o_valid_cipher.value == 1, "Cipher is not valid"
-
-        # Wait at least 12 clock cycles (12 rounds permutation)
-        await ClockCycles(signal=dut.clock, num_cycles=random.randint(13, 20))
-
-        # Block 3
-
-        # Update i_data
-        dut.i_data.value = PLAINTEXT[3]
-
-        # Set i_data_valid to 1
-        await toggle_signal(dut=dut, signal_dict={"i_data_valid": 1}, verbose=False)
-
-        # Get the cipher
-        await RisingEdge(dut.o_valid_cipher)
-        output_cipher[2] = int(dut.o_cipher.value)
-        assert dut.o_valid_cipher.value == 1, "Cipher is not valid"
-
-        # Wait at least 12 clock cycles (12 rounds permutation)
-        await ClockCycles(signal=dut.clock, num_cycles=random.randint(13, 20))
+            # Wait at least 12 clock cycles (12 rounds permutation)
+            await ClockCycles(signal=dut.clock, num_cycles=random.randint(13, 20))
 
         # Final phase
 
@@ -414,7 +382,7 @@ def test_permutation() -> None:
         runner.build(
             build_args=build_args + extra_args,
             build_dir="sim_build",
-            clean=False,
+            clean=True,
             hdl_library=library,
             hdl_toplevel=entity,
             sources=sources,
