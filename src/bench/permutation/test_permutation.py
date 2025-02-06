@@ -1,7 +1,7 @@
 """
-Testbench for the XOR Begin Layer.
+Testbench for the permutation module.
 
-This module tests the XOR Begin Layer function module by comparing the
+This module tests the permutation module by comparing the
 output of the Python implementation with the verilog implementation.
 
 @author: Timothée Charrier
