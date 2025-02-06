@@ -1,7 +1,7 @@
 """
-Testbench for the BatchNorm2d Layer.
+Testbench for the sbox module.
 
-This module tests the BatchNorm2d layer function module by comparing the
+This module tests the sbox module by comparing the
 output of the Python implementation with the VHDL implementation.
 
 @author: Timothée Charrier
