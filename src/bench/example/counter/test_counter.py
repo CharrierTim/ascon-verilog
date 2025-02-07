@@ -16,7 +16,6 @@ from random import randint
 from typing import TYPE_CHECKING
 
 import cocotb
-from cocotb.triggers import RisingEdge
 from cocotb_tools.runner import get_runner
 from tabulate import tabulate
 
