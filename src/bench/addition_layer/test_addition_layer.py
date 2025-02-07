@@ -212,7 +212,7 @@ def test_addition_layer() -> None:
         sys.stdout.write(f"Wave file: {wave_file}\n")
 
     except Exception as e:
-        error_message: str = f"Failed in test_xor_end with error: {e}"
+        error_message: str = f"Failed in test_addition_layer with error: {e}"
         raise RuntimeError(error_message) from e
 
 
