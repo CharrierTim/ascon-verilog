@@ -119,33 +119,28 @@ module permutation
             o_cipher_reg     <= 0;
             o_tag_reg        <= 0;
         end
+        else if (i_sys_enable) begin
+
+            // State output assignment
+            if (i_enable_state_reg) begin
+                state_output_reg <= state_xor_end_output;
+            end
+
+            // Cipher output assignment
+            if (i_enable_cipher_reg) begin
+                o_cipher_reg <= state_xor_begin_output[0];
+            end
+
+            // Tag output assignment
+            if (i_enable_tag_reg) begin
+                o_tag_reg <= {state_xor_end_output[3], state_xor_end_output[4]};
+            end
+        end
         else begin
-
-            // System enable
-            if (i_sys_enable) begin
-
-                // State output assignment
-                if (i_enable_state_reg) begin
-                    state_output_reg <= state_xor_end_output;
-                end
-
-                // Cipher output assignment
-                if (i_enable_cipher_reg) begin
-                    o_cipher_reg <= state_xor_begin_output[0];
-                end
-
-                // Tag output assignment
-                if (i_enable_tag_reg) begin
-                    o_tag_reg <= {state_xor_end_output[3], state_xor_end_output[4]};
-                end
-
-            end
-            else begin
-                // Soft reset
-                state_output_reg <= '{default: 0};
-                o_cipher_reg     <= 0;
-                o_tag_reg        <= 0;
-            end
+            // Soft reset
+            state_output_reg <= '{default: 0};
+            o_cipher_reg     <= 0;
+            o_tag_reg        <= 0;
         end
     end
 

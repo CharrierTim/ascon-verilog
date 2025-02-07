@@ -179,6 +179,13 @@ module ascon
                 reg_block_counter <= reg_block_counter + 2'b01;
             end
         end
+        else begin
+            // Soft reset
+            reg_round_counter <= 4'b0;
+            reg_block_counter <= 2'b0;
+            reg_valid_cipher  <= 1'b0;
+            reg_done          <= 1'b0;
+        end
     end
 
     //
