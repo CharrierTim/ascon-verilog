@@ -228,7 +228,7 @@ def test_substitution_layer() -> None:
         sys.stdout.write(f"Wave file: {wave_file}\n")
 
     except Exception as e:
-        error_message: str = f"Failed in test_substitution_layer with error: {e}"
+        error_message: str = f"Failed in {__file__} with error: {e}"
         raise RuntimeError(error_message) from e
 
 

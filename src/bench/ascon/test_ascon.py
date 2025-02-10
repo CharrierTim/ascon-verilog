@@ -406,7 +406,7 @@ def test_permutation() -> None:
         generate_coverage_report(sim_build_dir=Path("sim_build"))
 
     except Exception as e:
-        error_message: str = f"Failed in test_ascon with error: {e}"
+        error_message: str = f"Failed in {__file__} with error: {e}"
         raise RuntimeError(error_message) from e
 
 
