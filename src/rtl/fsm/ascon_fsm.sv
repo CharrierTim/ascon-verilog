@@ -80,16 +80,13 @@ module ascon_fsm (
         if (!reset_n) begin
             current_state <= STATE_IDLE;
         end
+        else if (i_sys_enable) begin
+            current_state <= next_state;
+        end
         else begin
-            if (i_sys_enable) begin
-                current_state <= next_state;
-            end
-            else begin
-                current_state <= STATE_IDLE;
-            end
+            current_state <= STATE_IDLE;
         end
     end
-
     //
     // State machine combinatorial process for next state
     //
