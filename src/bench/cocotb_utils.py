@@ -197,7 +197,7 @@ async def sys_enable_dut(
 
     Parameters
     ----------
-    dut : SimHandleBase
+    dut : HierarchyObject
         The device under test.
     verbose : bool, optional
         If True, logs the enable operation (default is True).
@@ -234,7 +234,7 @@ async def initialize_dut(
 
     Parameters
     ----------
-    dut : SimHandleBase
+    dut : HierarchyObject
         The device under test (DUT).
     inputs : dict
         A dictionary containing the input names and values.
@@ -250,7 +250,6 @@ async def initialize_dut(
 
     Usage
     -----
-
     >>> inputs = {"i_data": 0, "i_valid": 0}
     >>> outputs = {"o_data": 0, "o_valid": 0}
     >>> await initialize_dut(dut, inputs, outputs)
@@ -300,7 +299,7 @@ async def toggle_signal(
 
     Parameters
     ----------
-    dut : SimHandleBase
+    dut : HierarchyObject
         The device under test (DUT).
     signal_dict : dict
         A dictionary containing the signal name and value.
@@ -310,7 +309,6 @@ async def toggle_signal(
 
     Usage
     -----
-
     >>> signal_dict = {"i_valid": 0, "i_ready": 0}
     >>> await toggle_signal(dut, signal_dict)
 
@@ -346,7 +344,7 @@ def log_generics(dut: HierarchyObject, generics: dict[str, int]) -> None:
 
     Parameters
     ----------
-    dut : SimHandleBase
+    dut : HierarchyObject
         The device under test (DUT).
     generics : dict
         A dictionary of generic parameters.
