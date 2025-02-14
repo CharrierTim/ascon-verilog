@@ -108,7 +108,7 @@ async def setup_clock(
 
     """
     try:
-        clock = Clock(signal=dut.clock, period=period_ns, units="ns")
+        clock = Clock(signal=dut.clock, period=period_ns, unit="ns")
         await cocotb.start(clock.start(start_high=False))
 
         if not verbose:

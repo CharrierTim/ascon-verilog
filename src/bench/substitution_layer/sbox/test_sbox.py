@@ -85,7 +85,7 @@ async def reset_dut_test(dut: HierarchyObject) -> None:
         dut.i_data.value = 0
 
         # Wait for few ns (combinatorial logic only in the DUT)
-        await Timer(time=10, units="ns")
+        await Timer(time=10, unit="ns")
 
         # Check the output
         sbox_output: int = sbox_model.compute(i_data=0)
@@ -122,7 +122,7 @@ async def sbox_test(dut: HierarchyObject) -> None:
             dut.i_data.value = elem
 
             # Wait for few ns (combinatorial logic only in the DUT)
-            await Timer(time=10, units="ns")
+            await Timer(time=10, unit="ns")
 
             # Check the output
             sbox_output: int = sbox_model.compute(i_data=elem)

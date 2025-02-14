@@ -53,7 +53,7 @@ async def initialize_dut(dut: HierarchyObject, inputs: dict) -> None:
     """
     for key, value in inputs.items():
         getattr(dut, key).value = value
-    await Timer(time=10, units="ns")
+    await Timer(time=10, unit="ns")
 
 
 @cocotb.test()

@@ -136,7 +136,7 @@ async def parallel_clock_counter(
     while True:
         done_event = dut.o_done.rising_edge
         clock_event = dut.clock.rising_edge
-        timeout_event = Timer(time=timeout, units="ns")
+        timeout_event = Timer(time=timeout, unit="ns")
 
         result = await First(clock_event, done_event, timeout_event)
 

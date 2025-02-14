@@ -38,7 +38,7 @@ async def adder_10_random_values_test(dut: HierarchyObject) -> None:
     dut.X.value = 0
     dut.Y.value = 0
 
-    await Timer(2, units="ns")
+    await Timer(2, unit="ns")
     assert dut.SUM.value == 0, "Error: 0 + 0 != 0"
 
     # Get generic value for DATA_WIDTH
@@ -50,7 +50,7 @@ async def adder_10_random_values_test(dut: HierarchyObject) -> None:
         dut.X.value = x_rand
         dut.Y.value = y_rand
 
-        await Timer(2, units="ns")
+        await Timer(2, unit="ns")
         assert dut.SUM.value == x_rand + y_rand, (
             f"Error: {x_rand} + {y_rand} != {x_rand + y_rand}"
         )
