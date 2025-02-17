@@ -109,7 +109,7 @@ async def setup_clock(
     """
     try:
         clock = Clock(signal=dut.clock, period=period_ns, unit="ns")
-        await cocotb.start(clock.start(start_high=False))
+        await cocotb.start_soon(clock.start(start_high=False))
 
         if not verbose:
             return
@@ -248,8 +248,8 @@ async def initialize_dut(
     verbose : bool, optional
         If True, logs the initialization operation (default is True).
 
-    Usage
-    -----
+    Examples
+    --------
     >>> inputs = {"i_data": 0, "i_valid": 0}
     >>> outputs = {"o_data": 0, "o_valid": 0}
     >>> await initialize_dut(dut, inputs, outputs)
@@ -307,8 +307,8 @@ async def toggle_signal(
     verbose : bool, optional
         If True, logs the signal toggling operation (default is True).
 
-    Usage
-    -----
+    Examples
+    --------
     >>> signal_dict = {"i_valid": 0, "i_ready": 0}
     >>> await toggle_signal(dut, signal_dict)
 
