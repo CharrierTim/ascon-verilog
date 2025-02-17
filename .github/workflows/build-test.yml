@@ -19,7 +19,17 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
+      - name: Cache Verilator build
+        id: cache-verilator
+        uses: actions/cache@v3
+        with:
+          path: ~/verilator
+          key: ${{ runner.os }}-verilator-${{ hashFiles('verilator') }}
+          restore-keys: |
+            ${{ runner.os }}-verilator-
+
       - name: Install Verilator
+        if: steps.cache-verilator.outputs.cache-hit != 'true'
         run: |
           sudo apt-get update
           sudo apt-get install -y \
@@ -27,14 +37,18 @@ jobs:
             libgoogle-perftools-dev numactl perl-doc \
             libfl2 libfl-dev \
             zlib1g zlib1g-dev
-          git clone https://github.com/verilator/verilator.git
-          cd verilator
+          git clone https://github.com/verilator/verilator.git ~/verilator
+          cd ~/verilator
           git checkout stable
           autoconf
           ./configure
           make -j $(nproc)
           sudo make install
           verilator --version
+
+      - name: Install Lcov
+        run: |
+          sudo apt-get install lcov
 
       - name: Install Python dependencies
         run: |
