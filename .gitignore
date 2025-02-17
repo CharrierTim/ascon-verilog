@@ -3,3 +3,4 @@
 **/sim_build
 **/.pytest_cache
 **/.ruff_cache
+docs/build
