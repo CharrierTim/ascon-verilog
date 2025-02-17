@@ -56,6 +56,11 @@ async def reset_dut_test(dut: HierarchyObject) -> None:
     dut : HierarchyObject
         The device under test (DUT).
 
+    Raises
+    ------
+    RuntimeError
+        If the DUT fails to reset.
+
     """
     try:
         # Define the model
@@ -79,7 +84,22 @@ async def reset_dut_test(dut: HierarchyObject) -> None:
 
 @cocotb.test()
 async def permutation_test(dut: HierarchyObject) -> None:
-    """Test the DUT's behavior during normal computation."""
+    """
+    Test the DUT's behavior during normal computation.
+
+    Verifies that the output is correctly computed.
+
+    Parameters
+    ----------
+    dut : HierarchyObject
+        The device under test (DUT).
+
+    Raises
+    ------
+    RuntimeError
+        If the DUT fails to compute the correct output.
+
+    """
     try:
         # Define the model
         permutation_model = PermutationModel()
@@ -154,7 +174,15 @@ async def permutation_test(dut: HierarchyObject) -> None:
 
 
 def test_permutation() -> None:
-    """Function Invoked by the test runner to execute the tests."""
+    """
+    Function Invoked by the test runner to execute the tests.
+
+    Raises
+    ------
+    RuntimeError
+        If the test fails to build or run.
+
+    """
     # Define the simulator to use
     default_simulator: str = "verilator"
 

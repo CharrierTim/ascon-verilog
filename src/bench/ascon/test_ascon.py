@@ -62,6 +62,11 @@ def generate_coverage_report(sim_build_dir: Path) -> None:
     sim_build_dir : Path
         The simulation build directory
 
+    Raises
+    ------
+    SystemExit
+        If the coverage report generation fails.
+
     """
     try:
         # Create the coverage directory
@@ -130,6 +135,11 @@ async def parallel_clock_counter(
     int
         The number of clock cycles counted before `o_done` is asserted.
 
+    Raises
+    ------
+    RuntimeError
+        If the timeout is reached.
+
     """
     count: int = 0
 
@@ -160,6 +170,11 @@ async def reset_dut_test(dut: HierarchyObject) -> None:
     dut : HierarchyObject
         The device under test (DUT).
 
+    Raises
+    ------
+    RuntimeError
+        If the DUT fails to reset.
+
     """
     try:
         # Expected outputs
@@ -189,7 +204,22 @@ async def reset_dut_test(dut: HierarchyObject) -> None:
 
 @cocotb.test()
 async def ascon_top_test(dut: HierarchyObject) -> None:
-    """Test the DUT's behavior during normal computation."""
+    """
+    Test the ascon top module.
+
+    Verifies that the output is correctly computed.
+
+    Parameters
+    ----------
+    dut : HierarchyObject
+        The device under test (DUT).
+
+    Raises
+    ------
+    RuntimeError
+        If the DUT fails to compute the correct output.
+
+    """
     try:
         # Reset the DUT
         await reset_dut_test(dut=dut)
@@ -327,7 +357,15 @@ async def ascon_top_test(dut: HierarchyObject) -> None:
 
 
 def test_permutation() -> None:
-    """Function Invoked by the test runner to execute the tests."""
+    """
+    Function Invoked by the test runner to execute the tests.
+
+    Raises
+    ------
+    RuntimeError
+        If the test fails to build or run.
+
+    """
     # Define the simulator to use
     default_simulator: str = "verilator"
 
