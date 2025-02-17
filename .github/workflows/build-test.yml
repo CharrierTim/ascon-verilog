@@ -21,7 +21,15 @@ jobs:
 
       - name: Install Verilator
         run: |
-          sudo apt install -y --no-install-recommends verilator
+          git clone https://github.com/verilator/verilator.git
+          unset VERILATOR_ROOT
+          cd verilator
+          git checkout stable
+          autoconf
+          ./configure
+          make -j `nproc`
+          sudo make install
+          verilator --version
 
       - name: Install Python dependencies
         run: |
