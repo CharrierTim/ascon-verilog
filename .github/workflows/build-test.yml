@@ -55,5 +55,10 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      - name: Lint code with ruff
+        run: |
+          echo "Running Python Code Checks"
+          ruff check --config ruff.toml
+
       - name: Test with pytest
         run: pytest
