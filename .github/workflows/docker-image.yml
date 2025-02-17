@@ -1,25 +1,26 @@
-name: Docker Image CI
+name: Docker Image build
 
 on: [push, pull_request]
 
 jobs:
   build:
+    name: Build Docker image and push to repositories
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-
-      - name: Log in to GitHub Container Registry
+      - name: login to hub
         uses: docker/login-action@v2
         with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build and push Docker image
-        run: |
-          docker build ../../ci --file ../../ci/Dockerfile --tag ghcr.io/${{ github.repository }}/ascon-verilog:latest
-          docker push ghcr.io/${{ github.repository }}/ascon-verilog:latest
+      - name: Build and push
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: ../../ci/Dockerfile
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/my-image:latest
