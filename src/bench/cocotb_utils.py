@@ -106,6 +106,11 @@ async def setup_clock(
     verbose : bool, optional
         If True, logs the clock operation (default is True).
 
+    Raises
+    ------
+    RuntimeError
+        If there is an error setting up the clock.
+
     """
     try:
         clock = Clock(signal=dut.clock, period=period_ns, unit="ns")
@@ -148,6 +153,13 @@ async def reset_dut(
         By default, the reset signal is active low (0).
     verbose : bool, optional
         If True, logs the reset operation (default is True).
+
+    Raises
+    ------
+    ValueError
+        If the reset_high value is not 0 or 1.
+    RuntimeError
+        If there is an error resetting the DUT.
 
     """
     if reset_high not in [0, 1]:
@@ -202,6 +214,11 @@ async def sys_enable_dut(
     verbose : bool, optional
         If True, logs the enable operation (default is True).
 
+    Raises
+    ------
+    RuntimeError
+        If there is an error enabling the DUT.
+
     """
     try:
         dut.i_sys_enable.value = 1
@@ -248,8 +265,13 @@ async def initialize_dut(
     verbose : bool, optional
         If True, logs the initialization operation (default is True).
 
-    Usage
-    -----
+    Raises
+    ------
+    RuntimeError
+        If there is an error initializing the DUT.
+
+    Examples
+    --------
     >>> inputs = {"i_data": 0, "i_valid": 0}
     >>> outputs = {"o_data": 0, "o_valid": 0}
     >>> await initialize_dut(dut, inputs, outputs)
@@ -307,8 +329,13 @@ async def toggle_signal(
     verbose : bool, optional
         If True, logs the signal toggling operation (default is True).
 
-    Usage
-    -----
+    Raises
+    ------
+    RuntimeError
+        If there is an error toggling the signal.
+
+    Examples
+    --------
     >>> signal_dict = {"i_valid": 0, "i_ready": 0}
     >>> await toggle_signal(dut, signal_dict)
 
@@ -371,6 +398,16 @@ def get_dut_state(dut: HierarchyObject) -> dict:
     -------
     state : dict
         The state of the DUT ports.
+
+    Raises
+    ------
+    RuntimeError
+        If there is an error getting the value of a port.
+
+    Examples
+    --------
+    >>> state = get_dut_state(dut)
+    >>> print(state)
 
     """
     state = {}

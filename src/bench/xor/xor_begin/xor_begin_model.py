@@ -19,6 +19,21 @@ class XorBeginModel:
     Model for the XorBegin module.
 
     This class defines the model used to verify the XorBegin module.
+
+    Attributes
+    ----------
+    o_state : list[int]
+        The output state.
+
+    Methods
+    -------
+    xor_data_begin(data: int) -> None
+        Perform XOR operation at the beginning with the data.
+    xor_key_begin(key: int) -> None
+        Perform XOR operation at the beginning with the key.
+    assert_output(dut: HierarchyObject, inputs: dict) -> None
+        Assert the output of the DUT and log the input and output values.
+
     """
 
     def __init__(

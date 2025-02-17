@@ -1,0 +1,54 @@
+name: Regression Tests
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    name: Python ${{matrix.python-version}}
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        python-version: ["3.12"]
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install Verilator
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            git help2man perl python3 make autoconf g++ flex bison ccache \
+            libgoogle-perftools-dev numactl perl-doc \
+            libfl2 libfl-dev \
+            zlib1g zlib1g-dev
+          git clone https://github.com/verilator/verilator.git ~/verilator
+          cd ~/verilator
+          git checkout stable
+          autoconf
+          ./configure
+          make -j $(nproc)
+          sudo make install
+          verilator --version
+
+      - name: Install Lcov
+        run: |
+          sudo apt-get install lcov
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Lint code with ruff
+        run: |
+          echo "Running Python Code Checks"
+          ruff check --config ruff.toml
+
+      - name: Test with pytest
+        run: pytest
