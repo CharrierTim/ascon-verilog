@@ -14,6 +14,12 @@ class SboxModel:
     Model for the SBOX module.
 
     This class defines the model used to verify the SBOX module.
+
+    Methods
+    -------
+    compute(i_data: int) -> int
+        Compute the output data based on the input data.
+
     """
 
     def __init__(

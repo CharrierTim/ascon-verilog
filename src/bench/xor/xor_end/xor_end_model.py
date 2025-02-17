@@ -19,6 +19,23 @@ class XorEndModel:
     Model for the XorEnd module.
 
     This class defines the model used to verify the XorEnd module.
+
+    Attributes
+    ----------
+    i_key : int
+        The input key.
+    o_state : list[int]
+        The output state.
+
+    Methods
+    -------
+    xor_key_end() -> None
+        Perform XOR operation at the end with the key.
+    xor_lsb_end() -> None
+        Perform XOR operation at the end with the least significant bit.
+    assert_output(dut: HierarchyObject, inputs: dict) -> None
+        Assert the output of the DUT and log the input and output values.
+
     """
 
     def __init__(

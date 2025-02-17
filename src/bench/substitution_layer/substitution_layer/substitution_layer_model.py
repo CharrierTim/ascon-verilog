@@ -19,6 +19,19 @@ class SubstitutionLayerModel:
     Model for the Substitution Layer module.
 
     This class defines the model used to verify the Substitution Layer module.
+
+    Attributes
+    ----------
+    o_state : list[int]
+        The output state.
+
+    Methods
+    -------
+    _substitution_layer(state: list[int]) -> list[int]
+        Apply the substitution layer (S-box).
+    assert_output(dut: HierarchyObject, inputs: dict | None = None) -> None
+        Assert the output of the DUT and log the input and output values.
+
     """
 
     def __init__(
