@@ -28,6 +28,10 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-verilator-
 
+      - name: Set Verilator PATH
+        if: steps.cache-verilator.outputs.cache-hit == 'true'
+        run: echo "${{ github.workspace }}/verilator/bin" >> $GITHUB_PATH
+
       - name: Install Verilator
         if: steps.cache-verilator.outputs.cache-hit != 'true'
         run: |
