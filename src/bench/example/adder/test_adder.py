@@ -57,7 +57,7 @@ async def adder_10_random_values_test(dut: HierarchyObject) -> None:
 
 
 def test_counter_runner() -> None:
-        """
+    """
     Function Invoked by the test runner to execute the tests.
 
     Raises
