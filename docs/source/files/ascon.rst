@@ -307,7 +307,7 @@ Where each :math:`\Sigma_{i}^{} S_i` is defined as:
    :label: ascon-linear-diffusion-sum
 
    \begin{aligned}
-   \Sigma_{2}(S_2) &= S_2 \oplus (S_2 \gg \phantom{0}1)  \oplus (S_2 \gg \phantom{0}6)  \\
+   \Sigma_{0}(S_0) &= S_0 \oplus (S_0 \gg 19) \oplus (S_0 \gg 28)  \\
    \Sigma_{1}(S_1) &= S_1 \oplus (S_1 \gg 61) \oplus (S_1 \gg 39) \\
    \Sigma_{2}(S_2) &= S_2 \oplus (S_2 \gg \phantom{0}1)  \oplus (S_2 \gg \phantom{0}6)  \\
    \Sigma_{3}(S_3) &= S_3 \oplus (S_3 \gg 10) \oplus (S_3 \gg 17) \\
