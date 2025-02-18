@@ -26,6 +26,8 @@ into two main parts:
 This project is an improvement of a project I did during my studies at
 the `École des Mines de Saint-Étienne`_.
 
+You can find a `Cocotb Presentation`_ at the root of the repository.
+
 *******************
  Table of Contents
 *******************
@@ -45,6 +47,8 @@ the `École des Mines de Saint-Étienne`_.
 
 To get started with the project, follow the installation instructions
 provided in the `Getting Started`_ guide.
+
+.. _cocotb presentation: https://github.com/CharrierTim/ascon-verilog/blob/master/cocotb-presentation.pdf
 
 .. _getting started: https://charriertim.github.io/ascon-verilog/files/getting_started.html
 
