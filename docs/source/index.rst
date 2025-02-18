@@ -2,6 +2,16 @@
  ascon-verilog Documentation
 #############################
 
+.. image:: https://github.com/CharrierTim/ascon-verilog/actions/workflows/build-test.yml/badge.svg?event=status
+   :target: https://github.com/CharrierTim/ascon-verilog/actions/workflows/build-test.yml
+   :alt: Regression Tests
+
+.. image:: https://github.com/CharrierTim/ascon-verilog/actions/workflows/build-deploy-docs.yml/badge.svg?branch=master&event=push
+   :target: https://github.com/CharrierTim/ascon-verilog/actions
+   :alt: Documentation Status
+
+Read the documentation online: https://charriertim.github.io/ascon-verilog/
+
 **************
  Introduction
 **************
@@ -38,6 +48,6 @@ the `École des Mines de Saint-Étienne`_.
 To get started with the project, follow the installation instructions
 provided in the `Getting Started`_ guide.
 
-.. _getting started: files/getting_started.html
+.. _getting started: https://charriertim.github.io/ascon-verilog/files/getting_started.html
 
 .. _école des mines de saint-étienne: https://www.mines-stetienne.fr/
