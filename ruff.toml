@@ -9,6 +9,7 @@ exclude = [
     ".ipynb_checkpoints",
     ".mypy_cache",
     ".nox",
+    "oss-cad-suite",
     ".pants.d",
     ".pyenv",
     ".pytest_cache",
