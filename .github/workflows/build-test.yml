@@ -22,10 +22,9 @@ jobs:
       - name: Install Verilator
         run: |
           current_date=$(date +'%Y-%m-%d')
-          wget https://github.com/YosysHQ/oss-cad-suite-build/releases/download/${current_date}/oss-cad-suite-linux-x64-${current_date//-/}.tgz
+          wget https://github.com/YosysHQ/oss-cad-suite-build/releases/download/${current_date}/oss-cad-suite-linux-x64-${current_date//-/}.tgz --progress=dot:mega
           tar -xvf oss-cad-suite-linux-x64-${current_date//-/}.tgz
           rm oss-cad-suite-linux-x64-${current_date//-/}.tgz
-          source oss-cad-suite/environment
 
       - name: Install Lcov
         run: |
@@ -42,4 +41,7 @@ jobs:
           ruff check --config ruff.toml
 
       - name: Test with pytest
-        run: pytest
+        run: |
+          echo "Running Python Tests"
+          source oss-cad-suite/environment
+          pytest
