@@ -30,6 +30,7 @@ extensions: list[str] = [
     "sphinx.ext.napoleon",
     "sphinx_copybutton",
     "sphinx.ext.autosummary",
+    "sphinxcontrib.bibtex",
     "numpydoc",
 ]
 
@@ -73,3 +74,8 @@ html_context = {
 
 html_title = f"{project} v{release} Manual"
 html_last_updated_fmt = "%b %d, %Y"
+
+# -- Options for bibtex ----------------------------------------------------
+
+bibtex_bibfiles = ["references.bib"]
+bibtex_encoding = "latin"
