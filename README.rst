@@ -2,11 +2,11 @@
  ascon-verilog Documentation
 #############################
 
-.. image:: https://github.com/CharrierTim/ascon-verilog/actions/workflows/build-test.yml/badge.svg?event=status
+.. image:: https://github.com/CharrierTim/ascon-verilog/actions/workflows/build-test.yml/badge.svg
    :target: https://github.com/CharrierTim/ascon-verilog/actions/workflows/build-test.yml
    :alt: Regression Tests
 
-.. image:: https://github.com/CharrierTim/ascon-verilog/actions/workflows/build-deploy-docs.yml/badge.svg?branch=master&event=push
+.. image:: https://github.com/CharrierTim/ascon-verilog/actions/workflows/build-deploy-docs.yml/badge.svg
    :target: https://github.com/CharrierTim/ascon-verilog/actions
    :alt: Documentation Status
 

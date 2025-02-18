@@ -10,8 +10,6 @@
    :target: https://github.com/CharrierTim/ascon-verilog/actions
    :alt: Documentation Status
 
-Read the documentation online: https://charriertim.github.io/ascon-verilog/
-
 **************
  Introduction
 **************
