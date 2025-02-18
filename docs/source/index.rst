@@ -40,6 +40,7 @@ You can find a `Cocotb Presentation`_ at the root of the repository.
    files/ascon
    files/hdl_modules
    files/python_modules
+   files/references
 
 **************
  Installation

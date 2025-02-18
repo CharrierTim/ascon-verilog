@@ -5,6 +5,9 @@
 This page contains some details about the SystemVerilog implementation
 of Ascon128.
 
+Most of the information is taken from the **Ascon-based lightweight
+cryptography standards for constrained devices** report :cite:`FIPS800-232`.
+
 **************
  Architecture
 **************
