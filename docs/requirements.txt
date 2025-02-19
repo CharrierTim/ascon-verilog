@@ -1,0 +1,5 @@
+sphinx
+sphinx_copybutton
+numpydoc
+pydata_sphinx_theme
+sphinxcontrib-bibtex
