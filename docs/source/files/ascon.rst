@@ -25,6 +25,9 @@ Key features of the current implementation:
  Block Diagram
 ***************
 
+Following is the block diagram of the Ascon128 hardware implementation.
+It is a high-level representation of the top-level module ``ascon.sv``.
+
 .. image:: ../_static/ascon/ascon128-block-diagram.svg
    :align: center
    :width: 100%
@@ -78,7 +81,7 @@ Key features of the current implementation:
       -  The authentication tag generated during encryption, used to
          verify the integrity and authenticity of the ciphertext.
 
-   -  -  **Permutation** (:math:`p^r`)
+   -  -  **Permutation** (:math:`p^r` or :math:`p[r]`)
       -  A cryptographic transformation applied to the state of the
          algorithm, consisting of multiple rounds.
 
@@ -93,6 +96,15 @@ outputs.
 ************
  Background
 ************
+
+The block diagram of the Ascon128 encryption algorithm implemented
+in this project is shown below.
+
+.. image:: ../_static/ascon/ascon128-encryption.svg
+   :align: center
+   :width: 100%
+   :alt: Ascon128 Encryption Algorithm
+   :target: ../_static/ascon/ascon128-encryption.svg
 
 Permutation :math:`p^6` and :math:`p^{12}`
 ==========================================
