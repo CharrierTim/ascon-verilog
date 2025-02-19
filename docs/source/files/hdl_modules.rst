@@ -4,6 +4,8 @@
 
 This page contains the HDL modules that are used in the Ascon implementation.
 
+Generated using `TerosHDL`_.
+
 *****************
 Top-level Module
 *****************
@@ -69,3 +71,5 @@ HDL Submodules
    <div style="width: 100%; height: 500px; overflow: hidden;">
        <iframe src="../_static/hdl_modules/xor_end.html" style="width: 100%; height: 100%; border: none;"></iframe>
    </div>
+
+.. _TerosHDL: https://terostechnology.github.io/terosHDLdoc/
