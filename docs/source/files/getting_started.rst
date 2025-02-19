@@ -175,6 +175,20 @@ Ruff
 Ruff_ is a linter and formatter for Python source code. It is used to
 ensure the code is clean and readable.
 
+Verible
+=======
+
+Verible_ is a suite of SystemVerilog tools that includes a linter and
+formatter. I used it as a linter and formatter for the SystemVerilog
+code. The tool is not required to run the project. The formatting rules
+are defined in the ``.vscode/settings.json`` file. If you want to use
+it, you can install the `Verible VSCode Extension`_.
+
+.. note::
+
+   My VSCode recommended extensions can be found in the
+   ``.vscode/extensions.json`` file.
+
 Verilator
 =========
 
@@ -197,6 +211,10 @@ Verilator_ is a free software Verilog/SystemVerilog simulator.
 .. _surfer gitlab: https://gitlab.com/surfer-project/surfer
 
 .. _surfer vscode extension: https://marketplace.visualstudio.com/items?itemName=surfer-project.surfer
+
+.. _verible: https://github.com/chipsalliance/verible
+
+.. _verible vscode extension: https://marketplace.visualstudio.com/items?itemName=chipsalliance.verible
 
 .. _verilator: https://github.com/verilator/verilator
 
