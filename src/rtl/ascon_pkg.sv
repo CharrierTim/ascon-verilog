@@ -8,6 +8,7 @@
 //------------------------------------------------------------------------------
 // Revision History :
 //   - 2025-01-22
+//   - 2025-02-19   : rename type definitions and constants for consistency
 //------------------------------------------------------------------------------
 
 `timescale 1ns / 1ps
@@ -25,10 +26,10 @@ package ascon_pkg;
     typedef logic [63:0] t_state_array[0:4];
 
     // Array for round constants
-    typedef logic [7:0] constant_array_t[0:11];
+    typedef logic [7:0] t_constant_addition[0:11];
 
     // Substitution table type
-    typedef logic [7:0] substitution_table_t[0:31];
+    typedef logic [7:0] t_substitution[0:31];
 
     //
     // CONSTANT DEFINITIONS
@@ -36,7 +37,7 @@ package ascon_pkg;
 
     // Round constants for ASCON
     /* verilator lint_off UNUSEDPARAM */
-    localparam constant_array_t ROUND_CONSTANTS = '{
+    localparam t_constant_addition LUT_ADDITION = '{
         8'hF0,
         8'hE1,
         8'hD2,
@@ -52,7 +53,7 @@ package ascon_pkg;
     };
 
     // Substitution table for ASCON
-    localparam substitution_table_t S_TABLE = '{
+    localparam t_substitution LUT_SBOX = '{
         8'h04,
         8'h0B,
         8'h1F,
