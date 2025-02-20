@@ -21,10 +21,6 @@ Key features of the current implementation:
 -  **1 round per cycle**: The hardware implementation processes one
    round of the algorithm per clock cycle.
 
-***************
- Block Diagram
-***************
-
 Following is the block diagram of the Ascon128 hardware implementation.
 It is a high-level representation of the top-level module ``ascon.sv``.
 
@@ -33,6 +29,14 @@ It is a high-level representation of the top-level module ``ascon.sv``.
    :width: 100%
    :alt: Ascon128 Block Diagram
    :target: ../_static/ascon/ascon128-block-diagram.svg
+
+Following Figure shows the timing diagram of this implementation.
+
+.. image:: ../_static/ascon/ascon128-timing-diagram.svg
+   :align: center
+   :width: 100%
+   :alt: Ascon128 Timing Diagram
+   :target: ../_static/ascon/ascon128-timing-diagram.svg
 
 **********
  Glossary
@@ -299,7 +303,7 @@ Here is the definition of the S-box lookup table:
       -  f
       -  17
 
-Note that 5-bit inputs are represented in hexadecimal, (e.g., 𝑥 =1
+Note that 5-bit inputs are represented in hexadecimal, (e.g., :math:`x=1`
 corresponds to (0, 0, 0, 0, 1)).
 
 The Linear Diffusion Layer :math:`p_L`
@@ -327,3 +331,4 @@ Where each :math:`\Sigma_{i}^{} S_i` is defined as:
    \end{aligned}
 
 Let's note that :math:`\gg` denotes a cyclic rotation to the right.
+
