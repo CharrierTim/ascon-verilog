@@ -11,14 +11,14 @@ import datetime
 import sys
 from pathlib import Path
 
-base_path = (Path(__file__).parent.parent.parent / "src/bench/").resolve()
+base_path: Path = (Path(__file__).parent.parent.parent / "src/bench/").resolve()
 sys.path.insert(0, str(base_path))
 for path in base_path.rglob("*"):
     if path.is_dir():
         sys.path.insert(0, str(path))
 
 project = "ascon-verilog"
-copyright = f"{datetime.datetime.now(tz=datetime.UTC).year}, Timothée Charrier"  # noqa: A001
+copyright: str = f"{datetime.datetime.now(tz=datetime.UTC).year}, Timothée Charrier"  # noqa: A001
 author = "Timothée Charrier"
 release = "1.0"
 
@@ -36,7 +36,6 @@ extensions: list[str] = [
 ]
 
 templates_path: list[str] = ["_templates"]
-exclude_patterns = []
 
 
 # -- Options for HTML output -------------------------------------------------
@@ -69,14 +68,14 @@ html_theme_options = {
 html_sidebars = {
     "**": [],
 }
-html_context = {
+html_context: dict[str, str] = {
     "default_mode": "light",
 }
 
-html_title = f"{project} v{release} Manual"
+html_title: sys.LiteralString = f"{project} v{release} Manual"
 html_last_updated_fmt = "%b %d, %Y"
 
 # -- Options for bibtex ----------------------------------------------------
 
-bibtex_bibfiles = ["references.bib"]
+bibtex_bibfiles: list[str] = ["references.bib"]
 bibtex_encoding = "latin"
