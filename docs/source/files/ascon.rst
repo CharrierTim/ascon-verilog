@@ -205,7 +205,7 @@ The constant :math:`c_r` is defined as:
 The Substitution Layer :math:`p_S`
 ==================================
 
-The substitution layer 𝑝 updates 𝑆 the state S with 64 parallel
+The substitution layer :math:`p_S` updates the state :math:`S` with 64 parallel
 applications of the 5-bit substitution box SBOX using a lookup table.
 The substitution layer can be expressed as:
 
@@ -214,8 +214,8 @@ The substitution layer can be expressed as:
 
    S_i \leftarrow SBOX(S_i) \quad \forall i \in \{0, 1, 2, 3, 4\}
 
-It applies the S-box to each of the 64-bit words in the state, in
-column-wise fashion.
+In this case, the state S can be interpreted as an array of 64 columns,
+where each column consists of 5 bits processed through the S-box.
 
 Here is the definition of the S-box lookup table:
 
