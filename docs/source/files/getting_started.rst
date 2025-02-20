@@ -54,46 +54,6 @@ Upgrade the System
 Install Verilator
 =================
 
-Verilator is the SystemVerilog Simulator used to compile and run the
-testbenches. Install Verilator using one of the following methods:
-
-#. Install Verilator from the Ubuntu repository:
-
-   .. code:: bash
-
-      sudo apt install verilator
-
-#. Install Verilator from source (see `Verilator Installation Guide`_):
-
-   .. code:: bash
-
-      sudo apt-get install -y \
-            git help2man perl python3 make autoconf g++ flex bison ccache \
-            libgoogle-perftools-dev numactl perl-doc \
-            libfl2 libfl-dev \
-            zlib1g zlib1g-dev
-
-      unset VERILATOR_ROOT
-      git clone https://github.com/verilator/verilator.git
-      cd verilator
-      git checkout stable
-
-      autoconf         # Create ./configure script
-      ./configure      # Configure and create Makefile
-      make -j `nproc`  # Build Verilator itself (if error, try just 'make')
-      sudo make install
-
-#. Download and install the latest OSS-CAD-Suite_ releases, which
-   includes Verilator binaries:
-
-   .. code:: bash
-
-      # Example for the 2025-02-13 release
-      wget https://github.com/YosysHQ/oss-cad-suite-build/releases/download/2025-02-13/oss-cad-suite-linux-x64-20250213.tgz
-
-      tar -xzf oss-cad-suite-linux-x64-20250213.tgz
-      source oss-cad-suite/environment
-
 .. note::
 
    **Verilator Version Information**
@@ -104,6 +64,55 @@ testbenches. Install Verilator using one of the following methods:
    -  Minimum recommended version: 5.030
 
    If you encounter issues, ensure your Verilator version is up to date.
+
+Verilator is the SystemVerilog Simulator used to compile and run the
+testbenches. Choose one of the following methods to install Verilator:
+
+OSS CAD Suite (Recommended)
+---------------------------
+
+Download and install the latest OSS-CAD-Suite_ release, which includes
+Verilator and other useful tools:
+
+.. code:: bash
+
+   # Example for the 2025-02-13 release
+   wget https://github.com/YosysHQ/oss-cad-suite-build/releases/download/2025-02-13/oss-cad-suite-linux-x64-20250213.tgz
+   tar -xzf oss-cad-suite-linux-x64-20250213.tgz
+   source oss-cad-suite/environment
+
+Build from Source
+-----------------
+
+For the latest version, you can build Verilator from source (see
+`Verilator Installation Guide`_):
+
+.. code:: bash
+
+   sudo apt-get install -y \
+         git help2man perl python3 make autoconf g++ flex bison ccache \
+         libgoogle-perftools-dev numactl perl-doc \
+         libfl2 libfl-dev \
+         zlib1g zlib1g-dev
+
+   unset VERILATOR_ROOT
+   git clone https://github.com/verilator/verilator.git
+   cd verilator
+   git checkout stable
+
+   autoconf         # Create ./configure script
+   ./configure      # Configure and create Makefile
+   make -j `nproc`  # Build Verilator itself (if error, try just 'make')
+   sudo make install
+
+Ubuntu Repository (Not Recommended)
+-----------------------------------
+
+The version in Ubuntu's repository might be outdated:
+
+.. code:: bash
+
+   sudo apt install verilator
 
 Install Python
 ==============
