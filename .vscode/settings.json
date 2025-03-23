@@ -42,5 +42,8 @@
         "--named_port_indentation=wrap",
         "--port_declarations_indentation=wrap",
         "--try_wrap_long_lines=true"
-    ]
+    ],
+    "[systemverilog]": {
+        "editor.defaultFormatter": "chipsalliance.verible",
+    }
 }
