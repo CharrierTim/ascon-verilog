@@ -13,6 +13,8 @@
 //                    - registers process
 //------------------------------------------------------------------------------
 // Revision History :
+//   - 2025-03-23   : Changed the generic names prefix from nothing to G_ in
+//                    substitution_layer instantiation
 //   - 2025-01-22
 //------------------------------------------------------------------------------
 
@@ -88,7 +90,7 @@ module permutation
 
     // Instantiate substitution_layer_generic
     substitution_layer #(
-        .NUM_SBOXES(64)
+        .G_NUM_SBOXES(64)
     ) substitution_layer_1 (
         .i_state(state_adder_output),
         .o_state(state_substitution_layer_output)

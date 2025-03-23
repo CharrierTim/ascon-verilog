@@ -49,8 +49,8 @@ async def adder_10_random_values_test(dut: HierarchyObject) -> None:
     await Timer(2, unit="ns")
     assert dut.SUM.value == 0, "Error: 0 + 0 != 0"
 
-    # Get generic value for DATA_WIDTH
-    data_width = int(dut.DATA_WIDTH.value)
+    # Get generic value for G_DATA_WIDTH
+    data_width = int(dut.G_DATA_WIDTH.value)
 
     for _ in range(10):
         x_rand = randint(0, 2**data_width - 1)
@@ -82,7 +82,7 @@ def test_counter_runner() -> None:
     entity: str = "adder"
 
     # Default Generics Configuration
-    generics: dict[str, str] = {"DATA_WIDTH": 8}
+    generics: dict[str, str] = {"G_DATA_WIDTH": 8}
 
     # Define paths
     rtl_path: Path = (Path(__file__).parent.parent.parent.parent / "rtl/").resolve()
@@ -124,8 +124,6 @@ def test_counter_runner() -> None:
             "0",
             "-Wall",
             "--coverage",
-            "--coverage-max-width",
-            "320",
         ]
         test_args: list[str] = []
         pre_cmd = None

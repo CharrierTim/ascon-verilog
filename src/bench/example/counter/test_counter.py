@@ -51,10 +51,10 @@ def get_generics(dut: HierarchyObject) -> dict:
 
     """
     return {
-        "DATA_WIDTH": int(dut.DATA_WIDTH.value),
-        "COUNT_FROM": int(dut.COUNT_FROM.value),
-        "COUNT_TO": int(dut.COUNT_TO.value),
-        "STEP": int(dut.STEP.value),
+        "DATA_WIDTH": int(dut.G_DATA_WIDTH.value),
+        "COUNT_FROM": int(dut.G_COUNT_FROM.value),
+        "COUNT_TO": int(dut.G_COUNT_TO.value),
+        "STEP": int(dut.G_STEP.value),
     }
 
 
@@ -210,10 +210,10 @@ def test_counter_runner() -> None:
 
     # Default Generics Configuration
     generics: dict[str, str] = {
-        "DATA_WIDTH": 8,
-        "COUNT_FROM": 13,
-        "COUNT_TO": (2**8 - 1),
-        "STEP": 1,
+        "G_DATA_WIDTH": 8,
+        "G_COUNT_FROM": 13,
+        "G_COUNT_TO": (2**8 - 1),
+        "G_STEP": 1,
     }
 
     # Define paths
@@ -256,8 +256,6 @@ def test_counter_runner() -> None:
             "0",
             "-Wall",
             "--coverage",
-            "--coverage-max-width",
-            "320",
         ]
         test_args: list[str] = []
         pre_cmd = None

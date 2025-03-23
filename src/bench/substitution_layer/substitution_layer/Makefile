@@ -15,7 +15,7 @@ TOPLEVEL            := substitution_layer
 COCOTB_TEST_MODULES := test_substitution_layer
 MODULE              := $(COCOTB_TEST_MODULES)
 COMPILE_ARGS        += -j 0
-EXTRA_ARGS          += --trace -GNUM_SBOXES=64
+EXTRA_ARGS          += --trace -GG_NUM_SBOXES=64
 
 # Calling cocotb
 PWD                 := $(shell pwd)

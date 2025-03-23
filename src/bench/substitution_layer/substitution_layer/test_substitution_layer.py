@@ -55,7 +55,7 @@ def get_generics(dut: HierarchyObject) -> dict:
 
     """
     return {
-        "NUM_SBOXES": int(dut.NUM_SBOXES.value),
+        "NUM_SBOXES": int(dut.G_NUM_SBOXES.value),
     }
 
 
@@ -209,7 +209,7 @@ def test_substitution_layer() -> None:
     entity: str = "substitution_layer"
 
     # Default Generics Configuration
-    generics: dict[str, str] = {"NUM_SBOXES": 64}
+    generics: dict[str, str] = {"G_NUM_SBOXES": 64}
 
     # Define paths
     rtl_path: Path = (Path(__file__).parent.parent.parent.parent / "rtl/").resolve()

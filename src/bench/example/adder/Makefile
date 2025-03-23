@@ -12,7 +12,7 @@ TOPLEVEL_LANG       := verilog
 TOPLEVEL            := adder
 COCOTB_TEST_MODULES := test_adder
 MODULE              := $(COCOTB_TEST_MODULES)
-EXTRA_ARGS          += --trace --trace-fst --trace-structs -GDATA_WIDTH=8
+EXTRA_ARGS          += --trace --trace-fst --trace-structs -GG_DATA_WIDTH=8
 
 # Calling cocotb
 PWD                 := $(shell pwd)
