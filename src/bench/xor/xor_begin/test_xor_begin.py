@@ -23,7 +23,12 @@ from xor_begin_model import XorBeginModel
 # Add the directory containing the utils.py file to the Python path
 sys.path.insert(0, str(object=(Path(__file__).parent.parent.parent).resolve()))
 
-from cocotb_utils import get_dut_state, init_hierarchy
+from cocotb_utils import (
+    generate_coverage_report_questa,
+    generate_coverage_report_verilator,
+    get_dut_state,
+    init_hierarchy,
+)
 
 if TYPE_CHECKING:
     from cocotb.handle import HierarchyObject
@@ -196,14 +201,25 @@ def test_xor_begin() -> None:
     # Define the simulator to use
     default_simulator: str = "verilator"
 
-    # Build Args
-    build_args: list[str] = ["-j", "0", "-Wall"]
+    # Define the top-level library and entity
+    library: str = "lib_rtl"
+    entity: str = "xor_begin"
 
-    # Define LIB_RTL
-    library: str = "LIB_RTL"
+    # Default Generics Configuration
+    generics: dict[str, str] = {}
 
-    # Define rtl_path
+    # Define paths
     rtl_path: Path = (Path(__file__).parent.parent.parent.parent / "rtl/").resolve()
+    build_dir: Path = Path("sim_build")
+
+    # Define the coverage file and output folder
+    output_folder: Path = build_dir / "coverage_report"
+
+    if default_simulator == "questa":
+        ucdb_file: Path = build_dir / f"{entity}_coverage.ucdb"
+
+    elif default_simulator == "verilator":
+        dat_file: Path = build_dir / "coverage.dat"
 
     # Define the sources
     sources: list[str] = [
@@ -211,8 +227,32 @@ def test_xor_begin() -> None:
         f"{rtl_path}/xor/xor_begin.sv",
     ]
 
-    # Top-level HDL entity
-    entity: str = "xor_begin"
+    # Define the build and test arguments
+    if default_simulator == "questa":
+        build_args: list[str] = [
+            "-svinputport=net",
+            "-O5",
+            "+cover=sbfec",
+        ]
+        test_args: list[str] = [
+            "-coverage",
+            "-no_autoacc",
+        ]
+        pre_cmd: list[str] = [
+            f"coverage save {entity}_coverage.ucdb -onexit",
+        ]
+
+    elif default_simulator == "verilator":
+        build_args: list[str] = [
+            "-j",
+            "0",
+            "-Wall",
+            "--coverage",
+            "--coverage-max-width",
+            "320",
+        ]
+        test_args: list[str] = []
+        pre_cmd = None
 
     try:
         # Get simulator name from environment
@@ -224,28 +264,45 @@ def test_xor_begin() -> None:
         # Build HDL sources
         runner.build(
             build_args=build_args,
-            build_dir="sim_build",
+            build_dir=str(build_dir),
             clean=True,
             hdl_library=library,
             hdl_toplevel=entity,
+            parameters=generics,
             sources=sources,
-            verbose=True,
             waves=True,
         )
 
         # Run tests
         runner.test(
-            build_dir="sim_build",
+            build_dir=str(build_dir),
             hdl_toplevel=entity,
             hdl_toplevel_library=library,
+            pre_cmd=pre_cmd,
+            test_args=test_args,
             test_module=f"test_{entity}",
-            verbose=True,
             waves=True,
         )
 
-        # Log the wave file path
-        wave_file: Path = (Path("sim_build") / "dump.vcd").resolve()
-        sys.stdout.write(f"Wave file: {wave_file}\n")
+        # Generate the coverage report
+        if simulator == "questa":
+            generate_coverage_report_questa(
+                ucdb_file=ucdb_file,
+                output_folder=output_folder,
+            )
+        elif simulator == "verilator":
+            generate_coverage_report_verilator(
+                dat_file=dat_file,
+                output_folder=output_folder,
+            )
+
+        # Log the wave file
+        wave_file: Path = (
+            build_dir / "dump.vcd"
+            if simulator == "verilator"
+            else build_dir / "vsim.wlf"
+        )
+        sys.stdout.write(f"Waveform file: {wave_file}\n")
 
     except Exception as e:
         error_message: str = f"Failed in {__file__} with error: {e}"
