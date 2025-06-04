@@ -1,15 +1,38 @@
-// filepath         : ~/ascon-verilog/src/rtl/fsm/ascon_fsm.sv
-//------------------------------------------------------------------------------
-// Module Name      : ascon_fsm
-// Author           : Timothée Charrier
-// Date             : 2025-01-22
-// Description      : This module implements the Finite State Machine of the
-//                    ASCON 128 cryptographic algorithm. It is implemented as a
-//                    Moore machine.
-//------------------------------------------------------------------------------
-// Revision History :
-//   - 2025-01-22
-//------------------------------------------------------------------------------
+/*
+ ***********************************************************************************************************************
+ *  MIT License
+ *
+ *  Copyright (c) 2025 Timothée Charrier
+ *  
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy
+ *  of this software and associated documentation files (the "Software"), to deal
+ *  in the Software without restriction, including without limitation the rights
+ *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *  copies of the Software, and to permit persons to whom the Software is
+ *  furnished to do so, subject to the following conditions:
+ *  
+ *  The above copyright notice and this permission notice shall be included in all
+ *  copies or substantial portions of the Software.
+ *  
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ *  SOFTWARE.
+ ***********************************************************************************************************************
+ * @file    ascon_fsm.sv
+ * @brief   Ascon FSM module
+ * @author  Timothée Charrier
+ * @date    2025-01-01
+ ***********************************************************************************************************************
+ * @version 1.0.0
+ * @note    This module implements the finite state machine (FSM) for the Ascon encryption algorithm.
+ *          It manages the different phases of the Ascon algorithm.
+ *          It is implemented using uncommon 4-processes FSM, two sequential processes and two combinatorial processes.
+ ***********************************************************************************************************************
+ */
 
 `timescale 1ns / 1ps
 
@@ -38,9 +61,9 @@ module ascon_fsm (
     output logic                o_reset_block_counter        //! Count block start signal, active high
 );
 
-    //
-    // FSM State definition
-    //
+    // *****************************************************************************************************************
+    // * TYPE(S)
+    // *****************************************************************************************************************
 
     typedef enum logic unsigned [4:0] {
         STATE_IDLE,                     //! Idle state
@@ -59,12 +82,29 @@ module ascon_fsm (
         STATE_IDLE_FINALIZATION,        //! Idle state for Finalization phase
         STATE_START_FINALIZATION,       //! Start Finalization phase
         STATE_PROCESS_FINALIZATION,     //! Process Finalization phase
-        STATE_END_FINALIZATION          //! End Finalization phase
+        STATE_END_FINALIZATION,         //! End Finalization phase
+        XXX = 'x                        //! Unused state (should never be reached)
     } type_state_e;
 
-    //
-    // Signal definition
-    //
+    // *****************************************************************************************************************
+    // * SIGNALS
+    // *****************************************************************************************************************
+
+    logic next_o_valid_cipher;              //! Next value for o_valid_cipher
+    logic next_o_done;                      //! Next value for o_done
+    logic next_o_mux_select;                //! Next value for o_mux_select
+    logic next_o_enable_xor_data_begin;     //! Next value for o_enable_xor_data_begin
+    logic next_o_enable_xor_key_begin;      //! Next value for o_enable_xor_key_begin
+    logic next_o_enable_xor_key_end;        //! Next value for o_enable_xor_key_end
+    logic next_o_enable_xor_lsb_end;        //! Next value for o_enable_xor_lsb_end
+    logic next_o_enable_state_reg;          //! Next value for o_enable_state_reg
+    logic next_o_enable_cipher_reg;         //! Next value for o_enable_cipher_reg  
+    logic next_o_enable_tag_reg;            //! Next value for o_enable_tag_reg
+    logic next_o_enable_round_counter;      //! Next value for o_enable_round_counter
+    logic next_o_reset_round_counter_to_6;  //! Next value for o_reset_round_counter_to_6
+    logic next_o_reset_round_counter_to_0;  //! Next value for o_reset_round_counter_to_0
+    logic next_o_enable_block_counter;      //! Next value for o_enable_block_counter
+    logic next_o_reset_block_counter;       //! Next value for o_reset_block_counter
 
     // verilog_format: off          // my alignment is prettier than the tool's
     type_state_e
@@ -72,9 +112,9 @@ module ascon_fsm (
         next_state;     //! Next state signal
     // verilog_format: on
 
-    //
-    // State macchine sequential process
-    //
+    // *****************************************************************************************************************
+    // * Clocked process for present state logic
+    // *****************************************************************************************************************
 
     always_ff @(posedge clock or negedge reset_n) begin
         if (!reset_n) begin
@@ -87,13 +127,14 @@ module ascon_fsm (
             current_state <= STATE_IDLE;
         end
     end
-    //
-    // State machine combinatorial process for next state
-    //
+
+    // *****************************************************************************************************************
+    // * Combinatorial process for next state logic
+    // *****************************************************************************************************************
 
     always_comb begin
-        // Set default value
-        next_state = STATE_IDLE;
+        // Set default value, should be overwritten by the state machine logic
+        next_state = XXX; 
 
         // State machine logic
         unique case (current_state)
@@ -113,7 +154,7 @@ module ascon_fsm (
             end
 
             STATE_PROCESS_INITIALIZATION: begin
-                if (i_round_count >= 4'hA) begin
+                if (i_round_count >= 4'h9) begin
                     next_state = STATE_END_INITIALIZATION;
                 end
                 else begin
@@ -140,7 +181,7 @@ module ascon_fsm (
             end
 
             STATE_PROCESS_ASSOCIATED_DATA: begin
-                if (i_round_count >= 4'hA) begin
+                if (i_round_count >= 4'h9) begin
                     next_state = STATE_END_ASSOCIATED_DATA;
                 end
                 else begin
@@ -167,7 +208,7 @@ module ascon_fsm (
             end
 
             STATE_PROCESS_PLAIN_TEXT: begin
-                if (i_round_count >= 4'hA) begin
+                if (i_round_count >= 4'h9) begin
                     next_state = STATE_END_PLAIN_TEXT;
                 end
                 else begin
@@ -198,7 +239,7 @@ module ascon_fsm (
             end
 
             STATE_PROCESS_FINALIZATION: begin
-                if (i_round_count >= 4'hA) begin
+                if (i_round_count >= 4'h9) begin
                     next_state = STATE_END_FINALIZATION;
                 end
                 else begin
@@ -220,27 +261,27 @@ module ascon_fsm (
         endcase
     end
 
-    //
-    // State machine combinatorial process for output signals
-    //
+    // *****************************************************************************************************************
+    // * Combinatorial process for output signals
+    // *****************************************************************************************************************
 
     always_comb begin
         // Default values
-        o_done                     = 0;
-        o_mux_select               = 1;
-        o_enable_xor_data_begin    = 0;
-        o_enable_xor_key_begin     = 0;
-        o_enable_xor_key_end       = 0;
-        o_enable_xor_lsb_end       = 0;
-        o_enable_state_reg         = 1;
-        o_enable_cipher_reg        = 0;
-        o_enable_tag_reg           = 0;
-        o_enable_round_counter     = 0;
-        o_reset_round_counter_to_6 = 0;
-        o_reset_round_counter_to_0 = 0;
-        o_enable_block_counter     = 0;
-        o_reset_block_counter      = 0;
-        o_valid_cipher             = 0;
+        next_o_valid_cipher             = 0;
+        next_o_done                     = 0;
+        next_o_mux_select               = 1;
+        next_o_enable_xor_data_begin    = 0;
+        next_o_enable_xor_key_begin     = 0;
+        next_o_enable_xor_key_end       = 0;
+        next_o_enable_xor_lsb_end       = 0;
+        next_o_enable_state_reg         = 1;
+        next_o_enable_cipher_reg        = 0;
+        next_o_enable_tag_reg           = 0;
+        next_o_enable_round_counter     = 0;
+        next_o_reset_round_counter_to_6 = 0;
+        next_o_reset_round_counter_to_0 = 0;
+        next_o_enable_block_counter     = 0;
+        next_o_reset_block_counter      = 0;
 
         unique case (current_state)
 
@@ -249,7 +290,7 @@ module ascon_fsm (
             //
 
             STATE_IDLE: begin
-                o_enable_state_reg = 0;
+                next_o_enable_state_reg = 0;
             end
 
             //
@@ -257,22 +298,22 @@ module ascon_fsm (
             //
 
             STATE_CONFIGURATION: begin
-                o_enable_state_reg         = 0;
-                o_mux_select               = 0;
-                o_reset_round_counter_to_0 = 1;
+                next_o_enable_state_reg         = 0;
+                next_o_mux_select               = 0;
+                next_o_reset_round_counter_to_0 = 1;
             end
 
             STATE_START_INITIALIZATION: begin
-                o_mux_select           = 0;
-                o_enable_round_counter = 1;
+                next_o_mux_select           = 0;
+                next_o_enable_round_counter = 1;
             end
 
             STATE_PROCESS_INITIALIZATION: begin
-                o_enable_round_counter = 1;
+                next_o_enable_round_counter = 1;
             end
 
             STATE_END_INITIALIZATION: begin
-                o_enable_xor_key_end = 1;
+                next_o_enable_xor_key_end = 1;
             end
 
             //
@@ -280,22 +321,22 @@ module ascon_fsm (
             //
 
             STATE_IDLE_ASSOCIATED_DATA: begin
-                o_enable_state_reg         = 0;
-                o_reset_round_counter_to_6 = 1;
+                next_o_enable_state_reg         = 0;
+                next_o_reset_round_counter_to_6 = 1;
             end
 
             STATE_START_ASSOCIATED_DATA: begin
-                o_enable_round_counter  = 1;
-                o_enable_xor_data_begin = 1;
+                next_o_enable_round_counter  = 1;
+                next_o_enable_xor_data_begin = 1;
             end
 
             STATE_PROCESS_ASSOCIATED_DATA: begin
-                o_enable_round_counter = 1;
+                next_o_enable_round_counter = 1;
             end
 
             STATE_END_ASSOCIATED_DATA: begin
-                o_enable_xor_lsb_end  = 1;
-                o_reset_block_counter = 1;
+                next_o_enable_xor_lsb_end  = 1;
+                next_o_reset_block_counter = 1;
             end
 
             //
@@ -303,24 +344,24 @@ module ascon_fsm (
             //
 
             STATE_IDLE_PLAIN_TEXT: begin
-                o_enable_state_reg         = 0;
-                o_reset_round_counter_to_6 = 1;
+                next_o_enable_state_reg         = 0;
+                next_o_reset_round_counter_to_6 = 1;
             end
 
             STATE_START_PLAIN_TEXT: begin
-                o_enable_round_counter  = 1;
-                o_enable_xor_data_begin = 1;
-                o_enable_block_counter  = 1;
-                o_enable_cipher_reg     = 1;
-                o_valid_cipher          = 1;
+                next_o_enable_round_counter  = 1;
+                next_o_enable_xor_data_begin = 1;
+                next_o_enable_block_counter  = 1;
+                next_o_enable_cipher_reg     = 1;
+                next_o_valid_cipher          = 1;
             end
 
             STATE_PROCESS_PLAIN_TEXT: begin
-                o_enable_round_counter = 1;
+                next_o_enable_round_counter = 1;
             end
 
             STATE_END_PLAIN_TEXT: begin
-                o_enable_round_counter = 1;
+                next_o_enable_round_counter = 1;
             end
 
             //
@@ -328,51 +369,93 @@ module ascon_fsm (
             //
 
             STATE_IDLE_FINALIZATION: begin
-                o_enable_round_counter     = 1;
-                o_enable_state_reg         = 0;
-                o_reset_round_counter_to_0 = 1;
+                next_o_enable_round_counter     = 1;
+                next_o_enable_state_reg         = 0;
+                next_o_reset_round_counter_to_0 = 1;
             end
 
             STATE_START_FINALIZATION: begin
-                o_enable_round_counter  = 1;
-                o_enable_xor_data_begin = 1;
-                o_enable_xor_key_begin  = 1;
-                o_enable_cipher_reg     = 1;
-                o_valid_cipher          = 1;
+                next_o_enable_round_counter  = 1;
+                next_o_enable_xor_data_begin = 1;
+                next_o_enable_xor_key_begin  = 1;
+                next_o_enable_cipher_reg     = 1;
+                next_o_valid_cipher          = 1;
             end
 
             STATE_PROCESS_FINALIZATION: begin
-                o_enable_round_counter = 1;
+                next_o_enable_round_counter = 1;
             end
 
             STATE_END_FINALIZATION: begin
-                o_enable_xor_key_end = 1;
-                o_enable_tag_reg     = 1;
-                o_done               = 1;
+                next_o_enable_xor_key_end = 1;
+                next_o_enable_tag_reg     = 1;
+                next_o_done               = 1;
             end
 
             /*verilator coverage_off*/
             default: begin
-                // Default values for unspecified states
-                // This should never happen
-                o_done                     = 0;
-                o_mux_select               = 1;
-                o_enable_xor_data_begin    = 0;
-                o_enable_xor_key_begin     = 0;
-                o_enable_xor_key_end       = 0;
-                o_enable_xor_lsb_end       = 0;
-                o_enable_state_reg         = 1;
-                o_enable_cipher_reg        = 0;
-                o_enable_tag_reg           = 0;
-                o_enable_round_counter     = 0;
-                o_reset_round_counter_to_6 = 0;
-                o_reset_round_counter_to_0 = 0;
-                o_enable_block_counter     = 0;
-                o_reset_block_counter      = 0;
-                o_valid_cipher             = 0;
+                // Default values for unspecified states, this should never happen
+                next_o_valid_cipher             = 0;
+                next_o_done                     = 0;
+                next_o_mux_select               = 1;
+                next_o_enable_xor_data_begin    = 0;
+                next_o_enable_xor_key_begin     = 0;
+                next_o_enable_xor_key_end       = 0;
+                next_o_enable_xor_lsb_end       = 0;
+                next_o_enable_state_reg         = 1;
+                next_o_enable_cipher_reg        = 0;
+                next_o_enable_tag_reg           = 0;
+                next_o_enable_round_counter     = 0;
+                next_o_reset_round_counter_to_6 = 0;
+                next_o_reset_round_counter_to_0 = 0;
+                next_o_enable_block_counter     = 0;
+                next_o_reset_block_counter      = 0;
             end
             /*verilator coverage_on*/
         endcase
+    end
+
+    // *****************************************************************************************************************
+    // * Clocked process for output signals
+    // *****************************************************************************************************************
+
+    always_ff @(posedge clock or negedge reset_n) begin
+        if (!reset_n) begin
+
+            o_valid_cipher             <= 0;
+            o_done                     <= 0;
+            o_mux_select               <= 1;
+            o_enable_xor_data_begin    <= 0;
+            o_enable_xor_key_begin     <= 0;
+            o_enable_xor_key_end       <= 0;
+            o_enable_xor_lsb_end       <= 0;
+            o_enable_state_reg         <= 0;
+            o_enable_cipher_reg        <= 0;
+            o_enable_tag_reg           <= 0;
+            o_enable_round_counter     <= 0;
+            o_reset_round_counter_to_6 <= 0;
+            o_reset_round_counter_to_0 <= 0;
+            o_enable_block_counter     <= 0;
+            o_reset_block_counter      <= 0;
+
+        end
+        else if (i_sys_enable) begin
+            o_valid_cipher             <= next_o_valid_cipher;
+            o_done                     <= next_o_done;
+            o_mux_select               <= next_o_mux_select;
+            o_enable_xor_data_begin    <= next_o_enable_xor_data_begin;
+            o_enable_xor_key_begin     <= next_o_enable_xor_key_begin;
+            o_enable_xor_key_end       <= next_o_enable_xor_key_end;
+            o_enable_xor_lsb_end       <= next_o_enable_xor_lsb_end;
+            o_enable_state_reg         <= next_o_enable_state_reg;
+            o_enable_cipher_reg        <= next_o_enable_cipher_reg;
+            o_enable_tag_reg           <= next_o_enable_tag_reg;
+            o_enable_round_counter     <= next_o_enable_round_counter;
+            o_reset_round_counter_to_6 <= next_o_reset_round_counter_to_6;
+            o_reset_round_counter_to_0 <= next_o_reset_round_counter_to_0;
+            o_enable_block_counter     <= next_o_enable_block_counter;
+            o_reset_block_counter      <= next_o_reset_block_counter;
+        end
     end
 
 endmodule
