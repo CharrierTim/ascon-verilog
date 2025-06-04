@@ -117,7 +117,15 @@ async def ascon_top_test(dut: HierarchyObject) -> None:
     """
     try:
         # Reset the DUT
-        await reset_dut_test(dut=dut)
+        expected_outputs = {
+            "o_state": [0] * 5,
+            "o_tag": 0,
+            "o_cipher": 0,
+            "o_valid_cipher": 0,
+            "o_done": 0,
+        }
+
+        await initialize_dut(dut=dut, inputs=INIT_INPUTS, outputs=expected_outputs)
 
         # Define the ASCON inputs
         inputs: dict[str, int] = {
