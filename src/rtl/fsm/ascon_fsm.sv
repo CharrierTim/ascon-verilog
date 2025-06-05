@@ -3,17 +3,17 @@
  *  MIT License
  *
  *  Copyright (c) 2025 Timothée Charrier
- *  
+ *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
  *  in the Software without restriction, including without limitation the rights
  *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  *  copies of the Software, and to permit persons to whom the Software is
  *  furnished to do so, subject to the following conditions:
- *  
+ *
  *  The above copyright notice and this permission notice shall be included in all
  *  copies or substantial portions of the Software.
- *  
+ *
  *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -29,13 +29,13 @@
  ***********************************************************************************************************************
  * @version 2.0.0
  * @date    2025-06-05
- * @note     
+ * @note
  *          Implementation now uses a 4-process FSM architecture:
  *          - Two sequential processes: state register and output register
  *          - Two combinatorial processes: next state logic and output logic
- *          
+ *
  *          Reference:
- *          [1] C. Cummings and H. Chambers, "Finite State Machine (FSM) Design & Synthesis using SystemVerilog 
+ *          [1] C. Cummings and H. Chambers, "Finite State Machine (FSM) Design & Synthesis using SystemVerilog
  *              - Part I," SNUG 2019, pp. 1-61. [Online].
  *              Available: https://www.sunburst-design.com/papers/CummingsSNUG2019SV_FSM1.pdf
  *
@@ -110,7 +110,7 @@ module ascon_fsm (
     logic next_o_enable_xor_key_end;        //! Next value for o_enable_xor_key_end
     logic next_o_enable_xor_lsb_end;        //! Next value for o_enable_xor_lsb_end
     logic next_o_enable_state_reg;          //! Next value for o_enable_state_reg
-    logic next_o_enable_cipher_reg;         //! Next value for o_enable_cipher_reg  
+    logic next_o_enable_cipher_reg;         //! Next value for o_enable_cipher_reg
     logic next_o_enable_tag_reg;            //! Next value for o_enable_tag_reg
     logic next_o_enable_round_counter;      //! Next value for o_enable_round_counter
     logic next_o_reset_round_counter_to_6;  //! Next value for o_reset_round_counter_to_6
@@ -146,7 +146,7 @@ module ascon_fsm (
 
     always_comb begin
         // Set default value, should be overwritten by the state machine logic
-        next_state = XXX; 
+        next_state = XXX;
 
         // State machine logic
         unique case (current_state)

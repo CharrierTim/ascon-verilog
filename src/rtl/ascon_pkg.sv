@@ -3,17 +3,17 @@
  *  MIT License
  *
  *  Copyright (c) 2025 Timothée Charrier
- *  
+ *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
  *  in the Software without restriction, including without limitation the rights
  *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  *  copies of the Software, and to permit persons to whom the Software is
  *  furnished to do so, subject to the following conditions:
- *  
+ *
  *  The above copyright notice and this permission notice shall be included in all
  *  copies or substantial portions of the Software.
- *  
+ *
  *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -36,6 +36,7 @@
  * @note    This package defines types and constants used in the ASCON algorithm.
  ***********************************************************************************************************************
  */
+
 `timescale 1ns / 1ps
 
 `ifndef ASCON_PKG_V
@@ -62,7 +63,7 @@ package ascon_pkg;
 
     // Round constants for ASCON
     /* verilator lint_off UNUSEDPARAM */
-    localparam t_constant_addition LUT_ADDITION = '{
+    localparam t_constant_addition C_LUT_ADDITION = '{
         8'hF0,
         8'hE1,
         8'hD2,
@@ -78,7 +79,7 @@ package ascon_pkg;
     };
 
     // Substitution table for ASCON
-    localparam t_substitution LUT_SBOX = '{
+    localparam t_substitution C_LUT_SBOX = '{
         8'h04,
         8'h0B,
         8'h1F,
