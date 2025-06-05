@@ -1,16 +1,41 @@
-// filepath         : ~/ascon-verilog/src/rtl/addition_layer/addition_layer.sv
-//------------------------------------------------------------------------------
-// Module Name      : addition_layer
-// Author           : Timothée Charrier
-// Date             : 2025-01-22
-// Description      : This module implements the addition layer of the ASCON 128
-//                    cryptographic algorithm.
-//------------------------------------------------------------------------------
-// Revision History :
-//   - 2025-01-22
-//   - 2025-02-19   : rename lookup table for consistency and remove non-used
-//                    assignment.
-//------------------------------------------------------------------------------
+/*
+ ***********************************************************************************************************************
+ *  MIT License
+ *
+ *  Copyright (c) 2025 Timothée Charrier
+ *  
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy
+ *  of this software and associated documentation files (the "Software"), to deal
+ *  in the Software without restriction, including without limitation the rights
+ *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *  copies of the Software, and to permit persons to whom the Software is
+ *  furnished to do so, subject to the following conditions:
+ *  
+ *  The above copyright notice and this permission notice shall be included in all
+ *  copies or substantial portions of the Software.
+ *  
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ *  SOFTWARE.
+ ***********************************************************************************************************************
+ * @file    addition_layer.sv
+ * @brief   This module implements the addition layer of the ASCON 128 cryptographic algorithm.
+ * @author  Timothée Charrier
+ * @date    2025-01-22
+ ***********************************************************************************************************************
+ * @version 1.1.0
+ * @date    2025-02-19
+ * @note    Changed the lookup table name for consistency and removed non-used assignment.
+ ***********************************************************************************************************************
+ * @version 1.0.0
+ * @date    2025-01-22
+ * @note    Initial version of the Addition Layer module.
+ ***********************************************************************************************************************
+ */
 
 `timescale 1ns / 1ps
 

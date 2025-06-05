@@ -1,24 +1,50 @@
-// filepath         : ~/ascon-verilog/src/rtl/permutation/permutation.sv
-//------------------------------------------------------------------------------
-// Module Name      : permutation
-// Author           : Timothée Charrier
-// Date             : 2025-01-22
-// Description      : This module implements the permutation layer of the ASCON 128
-//                    cryptographic algorithm. It is composed of the following modules:
-//                    - xor_begin
-//                    - addition_layer
-//                    - substitution_layer
-//                    - diffusion_layer
-//                    - xor_end
-//                    - registers process
-//------------------------------------------------------------------------------
-// Revision History :
-//   - 2025-03-23   : Changed the generic names prefix from nothing to G_ in
-//                    substitution_layer instantiation
-//   - 2025-01-22
-//------------------------------------------------------------------------------
+/*
+ ***********************************************************************************************************************
+ *  MIT License
+ *
+ *  Copyright (c) 2025 Timothée Charrier
+ *  
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy
+ *  of this software and associated documentation files (the "Software"), to deal
+ *  in the Software without restriction, including without limitation the rights
+ *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *  copies of the Software, and to permit persons to whom the Software is
+ *  furnished to do so, subject to the following conditions:
+ *  
+ *  The above copyright notice and this permission notice shall be included in all
+ *  copies or substantial portions of the Software.
+ *  
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ *  SOFTWARE.
+ ***********************************************************************************************************************
+ * @file    permutation.sv
+ * @brief   This module implements the permutation layer of the ASCON 128 cryptographic algorithm. It is composed of
+ *          the following modules:
+ *              - xor_begin
+ *              - addition_layer
+ *              - substitution_layer
+ *              - diffusion_layer
+ *              - xor_end
+ *              - registers process
+ * @author  Timothée Charrier
+ * @date    2025-01-22
+ ***********************************************************************************************************************
+ * @version 1.1.0
+ * @date    2025-03-23
+ * @note    Changed the generic names prefix from nothing to G_ in substitution_layer instantiation.
+ ***********************************************************************************************************************
+ * @version 1.0.0
+ * @date    2025-01-22
+ * @note    Initial version of the Permutation Layer module.
+ ***********************************************************************************************************************
+ */
 
-`timescale 1ns / 1ps
+ `timescale 1ns / 1ps
 
 module permutation
     import ascon_pkg::t_state_array;
