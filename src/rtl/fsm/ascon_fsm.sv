@@ -25,12 +25,24 @@
  * @file    ascon_fsm.sv
  * @brief   Ascon FSM module
  * @author  Timothée Charrier
- * @date    2025-01-01
+ * @date    2025-06-05
+ ***********************************************************************************************************************
+ * @version 2.0.0
+ * @date    2025-06-05
+ * @note     
+ *          Implementation now uses a 4-process FSM architecture:
+ *          - Two sequential processes: state register and output register
+ *          - Two combinatorial processes: next state logic and output logic
+ *          
+ *          Reference:
+ *          [1] C. Cummings and H. Chambers, "Finite State Machine (FSM) Design & Synthesis using SystemVerilog 
+ *              - Part I," SNUG 2019, pp. 1-61. [Online].
+ *              Available: https://www.sunburst-design.com/papers/CummingsSNUG2019SV_FSM1.pdf
+ *
  ***********************************************************************************************************************
  * @version 1.0.0
- * @note    This module implements the finite state machine (FSM) for the Ascon encryption algorithm.
- *          It manages the different phases of the Ascon algorithm.
- *          It is implemented using uncommon 4-processes FSM, two sequential processes and two combinatorial processes.
+ * @date    2025-01-22
+ * @note    Initial version of the Ascon FSM module.
  ***********************************************************************************************************************
  */
 
