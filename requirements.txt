@@ -1,8 +1,0 @@
-cocotb @ git+https://github.com/cocotb/cocotb.git@master
-find_libpython==0.4.0
-iniconfig==2.0.0
-packaging==24.2
-pluggy==1.5.0
-pytest==8.3.4
-ruff==0.9.3
-tabulate==0.9.0
