@@ -86,7 +86,7 @@ def test_counter_runner() -> None:
 
     # Define paths
     rtl_path: Path = (
-        Path(__file__).parent.parent.parent.parent.parent / "rtl" / "verilog"
+        Path(__file__).parent.parent.parent.parent.parent / "rtl" / "systemverilog"
     )
     build_dir: Path = Path("sim_build")
 

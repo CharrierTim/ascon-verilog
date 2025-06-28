@@ -78,10 +78,9 @@ def log_generics(dut: HierarchyObject, generics: dict[str, int]) -> None:
     dut._log.info(f"Running with generics:\n{table}")
 
 
-@cocotb.test()
 async def reset_dut_test(dut: HierarchyObject) -> None:
     """
-    Test the DUT's behavior during reset.
+    Reset the DUT and verify its initial state.
 
     Verifies that the output is correctly reset and remains stable.
 
@@ -218,7 +217,7 @@ def test_counter_runner() -> None:
 
     # Define paths
     rtl_path: Path = (
-        Path(__file__).parent.parent.parent.parent.parent / "rtl" / "verilog"
+        Path(__file__).parent.parent.parent.parent.parent / "rtl" / "systemverilog"
     )
     build_dir: Path = Path("sim_build")
 

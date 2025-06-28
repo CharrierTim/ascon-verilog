@@ -55,10 +55,9 @@ async def initialize_dut(dut: HierarchyObject, inputs: dict) -> None:
     await Timer(time=10, unit="ns")
 
 
-@cocotb.test()
 async def reset_dut_test(dut: HierarchyObject) -> None:
     """
-    Test the DUT's behavior during reset.
+    Reset the DUT and verify its initial state.
 
     Verifies that the output is correctly reset and remains stable.
 
@@ -187,7 +186,9 @@ def test_diffusion_layer() -> None:
     generics: dict[str, str] = {}
 
     # Define paths
-    rtl_path: Path = Path(__file__).parent.parent.parent.parent / "rtl" / "verilog"
+    rtl_path: Path = (
+        Path(__file__).parent.parent.parent.parent / "rtl" / "systemverilog"
+    )
     build_dir: Path = Path("sim_build")
 
     # Define the coverage file and output folder
