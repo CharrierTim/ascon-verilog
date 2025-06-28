@@ -7,7 +7,7 @@
    :alt: Regression Tests
 
 .. image:: https://github.com/CharrierTim/ascon-verilog/actions/workflows/build-deploy-docs.yml/badge.svg
-   :target: https://github.com/CharrierTim/ascon-verilog/actions
+   :target: https://github.com/CharrierTim/ascon-verilog/actions/workflows/build-deploy-docs.yml
    :alt: Documentation Status
 
 Read the documentation online: https://charriertim.github.io/ascon-verilog/
