@@ -52,20 +52,45 @@ line-length = 120
 indent-width = 4
 
 [tool.ruff.lint]
-select = ["ALL"]
-ignore = [
-    "D203",
-    "D212",
-    "INP001",
-    "PLR0913",
-    "PLR0915",
-    "S101",
-    "S311",
-    "SLF001",
+extend-select = [
+    "I",       # isort
+    "UP",      # pyupgrade
+    "PL",      # pylint
+    "E",       # pycodestyle errors
+    "W",       # pycodestyle warnings
+    "F",       # pyflakes
+    "C4",      # flake8-comprehension
+    "LOG",     # flake8-logging
+    "G",       # flake8-logging-format
+    "ISC",     # implicit string concat
+    "SIM103",  # return the condition directly
+    "SIM300",  # yoda conditions
+    "RUF100",  # unused noqa
+    "RUF101",  # redirected noqa
+    "RUF010",  # explicit type conversion in f-string
+    "RUF005",  # collection literal concatenation
+    "RUF022",  # unsorted __all__
+    "PERF101", # unnecessary list cast
+    "PERF102", # unnecessary dict.items()
+    "B007",    # unused loop variable
+    "PYI030",  # unnecessary literal union
 ]
-fixable = ["ALL"]
-unfixable = []
-dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+ignore = [
+
+    "E741",    # ambiguous variable name (preference)
+    "E501",    # line too long (preference)
+    "PLR0912", # Too many branches (>12) (preference)
+    "PLR0913", # Too many arguments to function call (>5) (preference)
+    "PLR0915", # Too many statements (>50) (preference)
+    "PLR2004", # Magic value used in comparison (preference)
+    "PLW0603", # Using the global statement (preference)
+    "PLR0911", # Too many return statements (preference)
+    "PLW1641", # __eq__ without __hash__ (mypy compatibility)
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["cocotb", "cocotb_tools", "pygpi"]
+known-third-party = ["pytest"]
 
 [tool.ruff.format]
 quote-style = "double"
