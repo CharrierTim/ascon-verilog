@@ -14,10 +14,11 @@ import sys
 from pathlib import Path
 from typing import TYPE_CHECKING
 
+from substitution_layer_model import SubstitutionLayerModel
+
 import cocotb
 from cocotb.triggers import Timer
 from cocotb_tools.runner import get_runner
-from substitution_layer_model import SubstitutionLayerModel
 
 # Add the directory containing the utils.py file to the Python path
 sys.path.insert(0, str(object=(Path(__file__).parent.parent.parent).resolve()))
@@ -112,11 +113,7 @@ async def reset_dut_test(dut: HierarchyObject) -> None:
         formatted_dut_state: str = "\n".join(
             [f"{key}: {value}" for key, value in dut_state.items()],
         )
-        error_message: str = (
-            f"Failed in reset_dut_test with error: {e}\n"
-            f"DUT state at error:\n"
-            f"{formatted_dut_state}"
-        )
+        error_message: str = f"Failed in reset_dut_test with error: {e}\nDUT state at error:\n{formatted_dut_state}"
         raise RuntimeError(error_message) from e
 
 
@@ -183,9 +180,7 @@ async def substitution_layer_test(dut: HierarchyObject) -> None:
             [f"{key}: {value}" for key, value in dut_state.items()],
         )
         error_message: str = (
-            f"Failed in substitution_layer_test with error: {e}\n"
-            f"DUT state at error:\n"
-            f"{formatted_dut_state}"
+            f"Failed in substitution_layer_test with error: {e}\nDUT state at error:\n{formatted_dut_state}"
         )
         raise RuntimeError(error_message) from e
 
@@ -211,9 +206,7 @@ def test_substitution_layer() -> None:
     generics: dict[str, str] = {"G_NUM_SBOXES": 64}
 
     # Define paths
-    rtl_path: Path = (
-        Path(__file__).parent.parent.parent.parent.parent / "rtl" / "systemverilog"
-    )
+    rtl_path: Path = Path(__file__).parent.parent.parent.parent.parent / "rtl" / "systemverilog"
     build_dir: Path = Path("sim_build")
 
     # Define the coverage file and output folder
@@ -303,11 +296,7 @@ def test_substitution_layer() -> None:
             )
 
         # Log the wave file
-        wave_file: Path = (
-            build_dir / "dump.vcd"
-            if simulator == "verilator"
-            else build_dir / "vsim.wlf"
-        )
+        wave_file: Path = build_dir / "dump.vcd" if simulator == "verilator" else build_dir / "vsim.wlf"
         sys.stdout.write(f"Waveform file: {wave_file}\n")
 
     except Exception as e:

@@ -18,7 +18,7 @@ for path in base_path.rglob("*"):
         sys.path.insert(0, str(path))
 
 project = "ascon-verilog"
-copyright: str = f"{datetime.datetime.now(tz=datetime.UTC).year}, Timothée Charrier"  # noqa: A001
+copyright: str = f"{datetime.datetime.now(tz=datetime.UTC).year}, Timothée Charrier"
 author = "Timothée Charrier"
 release = "1.0"
 
@@ -34,9 +34,6 @@ extensions: list[str] = [
     "sphinxcontrib.bibtex",
     "numpydoc",
 ]
-
-templates_path: list[str] = ["_templates"]
-
 
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output

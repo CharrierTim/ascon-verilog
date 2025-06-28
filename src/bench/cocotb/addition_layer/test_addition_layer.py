@@ -15,8 +15,9 @@ import sys
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-import cocotb
 from addition_layer_model import AddLayerModel
+
+import cocotb
 from cocotb.triggers import Timer
 from cocotb_tools.runner import get_runner
 
@@ -104,11 +105,7 @@ async def reset_dut_test(dut: HierarchyObject) -> None:
         formatted_dut_state: str = "\n".join(
             [f"{key}: {value}" for key, value in dut_state.items()],
         )
-        error_message: str = (
-            f"Failed in reset_dut_test with error: {e}\n"
-            f"DUT state at error:\n"
-            f"{formatted_dut_state}"
-        )
+        error_message: str = f"Failed in reset_dut_test with error: {e}\nDUT state at error:\n{formatted_dut_state}"
         raise RuntimeError(error_message) from e
 
 
@@ -172,9 +169,7 @@ async def addition_layer_test(dut: HierarchyObject) -> None:
             [f"{key}: {value}" for key, value in dut_state.items()],
         )
         error_message: str = (
-            f"Failed in addition_layer_test with error: {e}\n"
-            f"DUT state at error:\n"
-            f"{formatted_dut_state}"
+            f"Failed in addition_layer_test with error: {e}\nDUT state at error:\n{formatted_dut_state}"
         )
         raise RuntimeError(error_message) from e
 
@@ -200,9 +195,7 @@ def test_addition_layer() -> None:
     generics: dict[str, str] = {}
 
     # Define paths
-    rtl_path: Path = (
-        Path(__file__).parent.parent.parent.parent / "rtl" / "systemverilog"
-    ).resolve()
+    rtl_path: Path = (Path(__file__).parent.parent.parent.parent / "rtl" / "systemverilog").resolve()
     build_dir: Path = Path("sim_build")
 
     # Define the coverage file and output folder
@@ -290,11 +283,7 @@ def test_addition_layer() -> None:
             )
 
         # Log the wave file
-        wave_file: Path = (
-            build_dir / "dump.vcd"
-            if simulator == "verilator"
-            else build_dir / "vsim.wlf"
-        )
+        wave_file: Path = build_dir / "dump.vcd" if simulator == "verilator" else build_dir / "vsim.wlf"
         sys.stdout.write(f"Waveform file: {wave_file}\n")
 
     except Exception as e:

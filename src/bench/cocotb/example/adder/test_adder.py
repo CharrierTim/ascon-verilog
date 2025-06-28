@@ -59,9 +59,7 @@ async def adder_10_random_values_test(dut: HierarchyObject) -> None:
         dut.Y.value = y_rand
 
         await Timer(2, unit="ns")
-        assert dut.SUM.value == x_rand + y_rand, (
-            f"Error: {x_rand} + {y_rand} != {x_rand + y_rand}"
-        )
+        assert dut.SUM.value == x_rand + y_rand, f"Error: {x_rand} + {y_rand} != {x_rand + y_rand}"
 
 
 def test_counter_runner() -> None:
@@ -85,9 +83,7 @@ def test_counter_runner() -> None:
     generics: dict[str, str] = {"G_DATA_WIDTH": 8}
 
     # Define paths
-    rtl_path: Path = (
-        Path(__file__).parent.parent.parent.parent.parent / "rtl" / "systemverilog"
-    )
+    rtl_path: Path = Path(__file__).parent.parent.parent.parent.parent / "rtl" / "systemverilog"
     build_dir: Path = Path("sim_build")
 
     # Define the coverage file and output folder
@@ -173,11 +169,7 @@ def test_counter_runner() -> None:
             )
 
         # Log the wave file
-        wave_file: Path = (
-            build_dir / "dump.vcd"
-            if simulator == "verilator"
-            else build_dir / "vsim.wlf"
-        )
+        wave_file: Path = build_dir / "dump.vcd" if simulator == "verilator" else build_dir / "vsim.wlf"
         sys.stdout.write(f"Waveform file: {wave_file}\n")
 
     except Exception as e:

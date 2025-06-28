@@ -86,10 +86,7 @@ class XorEndModel:
         o_state: list[int] = [int(x) for x in dut.o_state.value]
 
         # Convert the output to a list of integers
-        enable_str: str = (
-            f"Xor Key: {inputs['i_enable_xor_key']}, "
-            f"Xor LSB: {inputs['i_enable_xor_lsb']}"
-        )
+        enable_str: str = f"Xor Key: {inputs['i_enable_xor_key']}, Xor LSB: {inputs['i_enable_xor_lsb']}"
         input_str: str = "{:016X} {:016X} {:016X} {:016X} {:016X}".format(
             *tuple(x & 0xFFFFFFFFFFFFFFFF for x in inputs["i_state"]),
         )

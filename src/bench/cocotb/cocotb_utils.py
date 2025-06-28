@@ -12,11 +12,12 @@ import subprocess
 import sys
 from typing import TYPE_CHECKING
 
+from tabulate import tabulate
+
 import cocotb
 from cocotb.clock import Clock
 from cocotb.triggers import ClockCycles
 from cocotb.types import Array
-from tabulate import tabulate
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -495,10 +496,7 @@ def get_dut_state(dut: HierarchyObject) -> dict:
         if attr.startswith(("i_", "o_")):
             try:
                 value = getattr(dut, attr).value
-                if isinstance(value, Array):
-                    value = tuple(hex(x) for x in value)
-                else:
-                    value = hex(int(value))
+                value = tuple(hex(x) for x in value) if isinstance(value, Array) else hex(int(value))
                 state[attr] = value
             except (TypeError, ValueError) as e:
                 error_message: str = f"Failed to get the value of {attr}.\nError: {e}"

@@ -190,8 +190,6 @@ class PermutationModel:
         # Check if the output is correct
         if expected_str != output_dut_str:
             error_msg: str = (
-                f"Output mismatch for round {round_str}\n"
-                f"Expected: {expected_str}\n"
-                f"Received: {output_dut_str}"
+                f"Output mismatch for round {round_str}\nExpected: {expected_str}\nReceived: {output_dut_str}"
             )
             raise ValueError(error_msg)

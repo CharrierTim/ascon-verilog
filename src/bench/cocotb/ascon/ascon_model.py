@@ -384,8 +384,7 @@ class AsconModel:
         """
         output_tag_str: str = f"{self.o_tag[0]:016X}{self.o_tag[1]:016X}"
         output_cipher_str: str = (
-            f"{self.o_cipher[0]:016X}{self.o_cipher[1]:016X}"
-            f"{self.o_cipher[2]:016X}{self.o_cipher[3]:016X}"
+            f"{self.o_cipher[0]:016X}{self.o_cipher[1]:016X}{self.o_cipher[2]:016X}{self.o_cipher[3]:016X}"
         )
         output_state_str: str = (
             f"{self.o_state[0]:016X} {self.o_state[1]:016X} {self.o_state[2]:016X} "

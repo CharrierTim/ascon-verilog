@@ -15,8 +15,9 @@ import sys
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-import cocotb
 from ascon_model import AsconModel, convert_output_to_str
+
+import cocotb
 from cocotb.triggers import ClockCycles
 from cocotb_tools.runner import get_runner
 
@@ -88,11 +89,7 @@ async def reset_dut_test(dut: HierarchyObject) -> None:
         formatted_dut_state: str = "\n".join(
             [f"{key}: {value}" for key, value in dut_state.items()],
         )
-        error_message: str = (
-            f"Failed in reset_dut_test with error: {e}\n"
-            f"DUT state at error:\n"
-            f"{formatted_dut_state}"
-        )
+        error_message: str = f"Failed in reset_dut_test with error: {e}\nDUT state at error:\n{formatted_dut_state}"
         raise RuntimeError(error_message) from e
 
 
@@ -249,11 +246,7 @@ async def ascon_top_test(dut: HierarchyObject) -> None:
         formatted_dut_state: str = "\n".join(
             [f"{key}: {value}" for key, value in dut_state.items()],
         )
-        error_message: str = (
-            f"Failed in ascon_top_test with error: {e}\n"
-            f"DUT state at error:\n"
-            f"{formatted_dut_state}"
-        )
+        error_message: str = f"Failed in ascon_top_test with error: {e}\nDUT state at error:\n{formatted_dut_state}"
         raise RuntimeError(error_message) from e
 
 
@@ -278,9 +271,7 @@ def test_ascon() -> None:
     generics: dict[str, str] = {}
 
     # Define paths
-    rtl_path: Path = (
-        Path(__file__).parent.parent.parent.parent / "rtl" / "systemverilog"
-    )
+    rtl_path: Path = Path(__file__).parent.parent.parent.parent / "rtl" / "systemverilog"
     build_dir: Path = Path("sim_build")
 
     # Define the coverage file and output folder
@@ -376,11 +367,7 @@ def test_ascon() -> None:
             )
 
         # Log the wave file
-        wave_file: Path = (
-            build_dir / "dump.vcd"
-            if simulator == "verilator"
-            else build_dir / "vsim.wlf"
-        )
+        wave_file: Path = build_dir / "dump.vcd" if simulator == "verilator" else build_dir / "vsim.wlf"
         sys.stdout.write(f"Waveform file: {wave_file}\n")
 
     except Exception as e:
