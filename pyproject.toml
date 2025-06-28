@@ -11,7 +11,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-doc = [
+docs = [
     "pydata_sphinx_theme",
     "sphinx",
     "sphinx_copybutton",
