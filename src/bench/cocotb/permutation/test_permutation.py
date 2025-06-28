@@ -1,8 +1,8 @@
 """
-Test the counter functionality.
+Testbench for the permutation module.
 
-Almost identical to the one in the slides, but
-with a few modifications to make it Ruff compliant.
+This module tests the permutation module by comparing the
+output of the Python implementation with the verilog implementation.
 
 @author: Timothée Charrier
 """
@@ -12,70 +12,42 @@ from __future__ import annotations
 import os
 import sys
 from pathlib import Path
-from random import randint
 from typing import TYPE_CHECKING
 
 import cocotb
 from cocotb_tools.runner import get_runner
-from tabulate import tabulate
+from permutation_model import PermutationModel
 
 # Add the directory containing the utils.py file to the Python path
-sys.path.insert(0, str(object=(Path(__file__).parent.parent.parent).resolve()))
+sys.path.insert(0, str(object=(Path(__file__).parent.parent).resolve()))
 
 from cocotb_utils import (
     generate_coverage_report_questa,
     generate_coverage_report_verilator,
     get_dut_state,
+    init_hierarchy,
     initialize_dut,
-    toggle_signal,
 )
 
 if TYPE_CHECKING:
     from cocotb.handle import HierarchyObject
     from cocotb_tools.runner import Runner
 
-
-def get_generics(dut: HierarchyObject) -> dict:
-    """
-    Retrieve the generic parameters from the DUT.
-
-    Parameters
-    ----------
-    dut : HierarchyObject
-        The device under test (DUT).
-
-    Returns
-    -------
-    dict
-        A dictionary containing the generic parameters.
-
-    """
-    return {
-        "DATA_WIDTH": int(dut.G_DATA_WIDTH.value),
-        "COUNT_FROM": int(dut.G_COUNT_FROM.value),
-        "COUNT_TO": int(dut.G_COUNT_TO.value),
-        "STEP": int(dut.G_STEP.value),
-    }
-
-
-def log_generics(dut: HierarchyObject, generics: dict[str, int]) -> None:
-    """
-    Log the generic parameters from the DUT in a table format.
-
-    Parameters
-    ----------
-    dut : HierarchyObject
-        The device under test (DUT).
-    generics : dict
-        A dictionary of generic parameters.
-
-    """
-    table: str = tabulate(
-        tabular_data=generics.items(),
-        headers=["Parameter", "Value"],
-        tablefmt="grid",
-    )
-    dut._log.info(f"Running with generics:\n{table}")
+INIT_INPUTS = {
+    "i_sys_enable": 0,
+    "i_mux_select": 0,
+    "i_enable_xor_key_begin": 0,
+    "i_enable_xor_data_begin": 0,
+    "i_enable_xor_key_end": 0,
+    "i_enable_xor_lsb_end": 0,
+    "i_enable_cipher_reg": 0,
+    "i_enable_tag_reg": 0,
+    "i_enable_state_reg": 0,
+    "i_state": init_hierarchy(dims=(5,), bitwidth=64, use_random=False),
+    "i_round": 0,
+    "i_data": 0x0000000000000000,
+    "i_key": 0x00000000000000000000000000000000,
+}
 
 
 @cocotb.test()
@@ -90,27 +62,21 @@ async def reset_dut_test(dut: HierarchyObject) -> None:
     dut : HierarchyObject
         The device under test (DUT).
 
+    Raises
+    ------
+    RuntimeError
+        If the DUT fails to reset.
+
     """
     try:
-        # Log generics
-        generics = get_generics(dut=dut)
-        log_generics(dut=dut, generics=generics)
-
-        # Define inputs
-        inputs: dict[str, int] = {
-            "count_enable": 0,
-        }
-
-        # Expected outputs at reset
-        expected_outputs: dict[str, int] = {
-            "count": generics["COUNT_FROM"],
-        }
+        # Define the model
+        _ = PermutationModel()
 
         # Initialize the DUT
-        await initialize_dut(dut=dut, inputs=inputs, outputs=expected_outputs)
+        await initialize_dut(dut=dut, inputs=INIT_INPUTS, outputs={})
 
     except Exception as e:
-        dut_state: dict = get_dut_state(dut=dut)
+        dut_state = get_dut_state(dut=dut)
         formatted_dut_state: str = "\n".join(
             [f"{key}: {value}" for key, value in dut_state.items()],
         )
@@ -123,75 +89,97 @@ async def reset_dut_test(dut: HierarchyObject) -> None:
 
 
 @cocotb.test()
-async def counter_test(dut: HierarchyObject) -> None:
+async def permutation_test(dut: HierarchyObject) -> None:
     """
-    Test the counter functionality.
+    Test the DUT's behavior during normal computation.
+
+    Verifies that the output is correctly computed.
 
     Parameters
     ----------
     dut : HierarchyObject
         The device under test (DUT).
 
+    Raises
+    ------
+    RuntimeError
+        If the DUT fails to compute the correct output.
+
     """
     try:
-        # Get the generics
-        generics = get_generics(dut=dut)
+        # Define the model
+        permutation_model = PermutationModel()
 
         # Reset the DUT
         await reset_dut_test(dut=dut)
 
-        # Define inputs
-        inputs: dict[str, int] = {
-            "count_enable": 1,
+        # Test with specific inputs
+        dut_inputs = {
+            "i_mux_select": 0,
+            "i_enable_xor_key_begin": 0,
+            "i_enable_xor_data_begin": 0,
+            "i_enable_xor_key_end": 0,
+            "i_enable_xor_lsb_end": 0,
+            "i_enable_cipher_reg": 0,
+            "i_enable_tag_reg": 0,
+            "i_enable_state_reg": 1,
+            "i_state": [
+                0x4484A574CC1220E9,
+                0xB9D923E9D31C04E8,
+                0x7C40162196D79E1E,
+                0xC36DF040C62A25A2,
+                0xC77518AF6E08589F,
+            ],
+            "i_round": 0,
+            "i_data": 0x6167652056484480,
+            "i_key": 0x000102030405060708090A0B0C0D0E0F,
         }
 
-        # Expected outputs
-        expected_outputs: dict[str, int] = {
-            "count": generics["COUNT_FROM"],
-        }
+        dut._log.info("Starting Permutation With the Last Permutation State")
 
-        # Let's count a random number of times, to overflow the counter
-        num_iterations: int = randint(
-            a=generics["COUNT_TO"] - generics["COUNT_FROM"],
-            b=2 ** generics["DATA_WIDTH"] + 5,
-        )
+        # Log the Key and Data
+        dut._log.info("Key            : 0x{:032X}".format(dut_inputs["i_key"]))
+        dut._log.info("Data           : 0x{:016X}".format(dut_inputs["i_data"]))
 
-        for _ in range(num_iterations):
-            # Toggle the enable signal
-            await toggle_signal(dut=dut, signal_dict=inputs, verbose=False)
+        # Set dut inputs
+        for key, value in dut_inputs.items():
+            dut.__getattr__(name=key).value = value
 
-            # Update the expected count
-            expected_outputs["count"] += generics["STEP"]
+        await dut.clock.rising_edge
+        dut_inputs["i_mux_select"] = 1
 
-            # Wait for the next clock cycle
+        for i_round in range(1, 13):
+            # Update the values
+            dut_inputs["i_round"] = i_round
+
+            # Set dut inputs
+            for key, value in dut_inputs.items():
+                dut.__getattr__(name=key).value = value
+
             await dut.clock.rising_edge
 
-            # Verify if we overflowed
-            if expected_outputs["count"] > generics["COUNT_TO"]:
-                expected_outputs["count"] = generics["COUNT_FROM"]
+            # Update and Assert the output
+            permutation_model.assert_output(
+                dut=dut,
+                inputs=dut_inputs,
+            )
 
-            # Verify the count
-            if int(dut.count.value) != expected_outputs["count"]:
-                error_message: str = (
-                    f"Counter value mismatch: Expected {expected_outputs['count']}, "
-                    f"Got {int(dut.count.value)}",
-                )
-                raise ValueError(error_message)  # noqa: TRY301
+        await dut.clock.rising_edge
 
     except Exception as e:
-        dut_state: dict = get_dut_state(dut=dut)
+        dut_state = get_dut_state(dut=dut)
         formatted_dut_state: str = "\n".join(
             [f"{key}: {value}" for key, value in dut_state.items()],
         )
         error_message: str = (
-            f"Failed in counter_test with error: {e}\n"
+            f"Failed in permutation_test with error: {e}\n"
             f"DUT state at error:\n"
             f"{formatted_dut_state}"
         )
         raise RuntimeError(error_message) from e
 
 
-def test_counter_runner() -> None:
+def test_permutation() -> None:
     """
     Function Invoked by the test runner to execute the tests.
 
@@ -206,18 +194,13 @@ def test_counter_runner() -> None:
 
     # Define the top-level library and entity
     library: str = "lib_rtl"
-    entity: str = "counter"
+    entity: str = "permutation"
 
     # Default Generics Configuration
-    generics: dict[str, str] = {
-        "G_DATA_WIDTH": 8,
-        "G_COUNT_FROM": 13,
-        "G_COUNT_TO": (2**8 - 1),
-        "G_STEP": 1,
-    }
+    generics: dict[str, str] = {}
 
     # Define paths
-    rtl_path: Path = (Path(__file__).parent.parent.parent.parent / "rtl/").resolve()
+    rtl_path: Path = Path(__file__).parent.parent.parent.parent / "rtl" / "verilog"
     build_dir: Path = Path("sim_build")
 
     # Define the coverage file and output folder
@@ -231,7 +214,14 @@ def test_counter_runner() -> None:
 
     # Define the sources
     sources: list[str] = [
-        f"{rtl_path}/example/counter.sv",
+        f"{rtl_path}/ascon_pkg.sv",
+        f"{rtl_path}/addition_layer/addition_layer.sv",
+        f"{rtl_path}/substitution_layer/sbox.sv",
+        f"{rtl_path}/substitution_layer/substitution_layer.sv",
+        f"{rtl_path}/diffusion_layer/diffusion_layer.sv",
+        f"{rtl_path}/xor/xor_begin.sv",
+        f"{rtl_path}/xor/xor_end.sv",
+        f"{rtl_path}/permutation/permutation.sv",
     ]
 
     # Define the build and test arguments
@@ -243,8 +233,7 @@ def test_counter_runner() -> None:
         ]
         test_args: list[str] = [
             "-coverage",
-            # We cant use the no_autoacc since we need to access the generics values
-            # It adds a cocotb warning but it is not an error
+            "-no_autoacc",
         ]
         pre_cmd: list[str] = [
             f"coverage save {entity}_coverage.ucdb -onexit",
@@ -256,6 +245,8 @@ def test_counter_runner() -> None:
             "0",
             "-Wall",
             "--coverage",
+            "--coverage-max-width",
+            "320",
         ]
         test_args: list[str] = []
         pre_cmd = None
@@ -316,4 +307,4 @@ def test_counter_runner() -> None:
 
 
 if __name__ == "__main__":
-    test_counter_runner()
+    test_permutation()

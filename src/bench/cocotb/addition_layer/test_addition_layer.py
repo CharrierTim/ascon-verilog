@@ -1,8 +1,8 @@
 """
-Testbench for the permutation module.
+Testbench for the Addition Layer module.
 
-This module tests the permutation module by comparing the
-output of the Python implementation with the verilog implementation.
+This module tests the Addition Layer module by comparing the
+output of the Python implementation with the VHDL implementation.
 
 @author: Timothée Charrier
 """
@@ -10,13 +10,15 @@ output of the Python implementation with the verilog implementation.
 from __future__ import annotations
 
 import os
+import random
 import sys
 from pathlib import Path
 from typing import TYPE_CHECKING
 
 import cocotb
+from addition_layer_model import AddLayerModel
+from cocotb.triggers import Timer
 from cocotb_tools.runner import get_runner
-from permutation_model import PermutationModel
 
 # Add the directory containing the utils.py file to the Python path
 sys.path.insert(0, str(object=(Path(__file__).parent.parent).resolve()))
@@ -26,28 +28,46 @@ from cocotb_utils import (
     generate_coverage_report_verilator,
     get_dut_state,
     init_hierarchy,
-    initialize_dut,
 )
 
 if TYPE_CHECKING:
     from cocotb.handle import HierarchyObject
     from cocotb_tools.runner import Runner
 
+# Define the IOs and their default values at reset
 INIT_INPUTS = {
-    "i_sys_enable": 0,
-    "i_mux_select": 0,
-    "i_enable_xor_key_begin": 0,
-    "i_enable_xor_data_begin": 0,
-    "i_enable_xor_key_end": 0,
-    "i_enable_xor_lsb_end": 0,
-    "i_enable_cipher_reg": 0,
-    "i_enable_tag_reg": 0,
-    "i_enable_state_reg": 0,
     "i_state": init_hierarchy(dims=(5,), bitwidth=64, use_random=False),
     "i_round": 0,
-    "i_data": 0x0000000000000000,
-    "i_key": 0x00000000000000000000000000000000,
 }
+
+# Define the inputs
+IV = 0x80400C0600000000
+KEY = 0x000102030405060708090A0B0C0D0E0F
+NONCE = 0x000102030405060708090A0B0C0D0E0F
+STATE: list[int] = [
+    IV,
+    (KEY >> 64) & 0xFFFFFFFFFFFFFFFF,  # Upper 64 bits of KEY
+    KEY & 0xFFFFFFFFFFFFFFFF,  # Lower 64 bits of KEY
+    (NONCE >> 64) & 0xFFFFFFFFFFFFFFFF,  # Upper 64 bits of NONCE
+    NONCE & 0xFFFFFFFFFFFFFFFF,  # Lower 64 bits of NONCE
+]
+
+
+async def initialize_dut(dut: HierarchyObject, inputs: dict) -> None:
+    """
+    Initialize the DUT with the given inputs.
+
+    Parameters
+    ----------
+    dut : HierarchyObject
+        The device under test (DUT).
+    inputs : dict
+        The input dictionary.
+
+    """
+    for key, value in inputs.items():
+        getattr(dut, key).value = value
+    await Timer(time=10, unit="ns")
 
 
 @cocotb.test()
@@ -70,10 +90,15 @@ async def reset_dut_test(dut: HierarchyObject) -> None:
     """
     try:
         # Define the model
-        _ = PermutationModel()
+        adder_model = AddLayerModel(
+            inputs=INIT_INPUTS,
+        )
 
         # Initialize the DUT
-        await initialize_dut(dut=dut, inputs=INIT_INPUTS, outputs={})
+        await initialize_dut(dut=dut, inputs=INIT_INPUTS)
+
+        # Assert the output
+        adder_model.assert_output(dut=dut, inputs=INIT_INPUTS)
 
     except Exception as e:
         dut_state = get_dut_state(dut=dut)
@@ -89,7 +114,7 @@ async def reset_dut_test(dut: HierarchyObject) -> None:
 
 
 @cocotb.test()
-async def permutation_test(dut: HierarchyObject) -> None:
+async def addition_layer_test(dut: HierarchyObject) -> None:
     """
     Test the DUT's behavior during normal computation.
 
@@ -108,63 +133,39 @@ async def permutation_test(dut: HierarchyObject) -> None:
     """
     try:
         # Define the model
-        permutation_model = PermutationModel()
+        adder_model = AddLayerModel(
+            inputs=INIT_INPUTS,
+        )
 
-        # Reset the DUT
         await reset_dut_test(dut=dut)
 
-        # Test with specific inputs
+        # Set dut inputs defined by i_state = [IV, P1, P2, P3, P4]
         dut_inputs = {
-            "i_mux_select": 0,
-            "i_enable_xor_key_begin": 0,
-            "i_enable_xor_data_begin": 0,
-            "i_enable_xor_key_end": 0,
-            "i_enable_xor_lsb_end": 0,
-            "i_enable_cipher_reg": 0,
-            "i_enable_tag_reg": 0,
-            "i_enable_state_reg": 1,
-            "i_state": [
-                0x4484A574CC1220E9,
-                0xB9D923E9D31C04E8,
-                0x7C40162196D79E1E,
-                0xC36DF040C62A25A2,
-                0xC77518AF6E08589F,
-            ],
+            "i_state": STATE,
             "i_round": 0,
-            "i_data": 0x6167652056484480,
-            "i_key": 0x000102030405060708090A0B0C0D0E0F,
         }
 
-        dut._log.info("Starting Permutation With the Last Permutation State")
+        # Initialize the DUT
+        await initialize_dut(dut=dut, inputs=dut_inputs)
 
-        # Log the Key and Data
-        dut._log.info("Key            : 0x{:032X}".format(dut_inputs["i_key"]))
-        dut._log.info("Data           : 0x{:016X}".format(dut_inputs["i_data"]))
+        # Assert the output
+        adder_model.assert_output(dut=dut, inputs=dut_inputs)
 
-        # Set dut inputs
-        for key, value in dut_inputs.items():
-            dut.__getattr__(name=key).value = value
+        dut._log.info("Starting random tests...")
 
-        await dut.clock.rising_edge
-        dut_inputs["i_mux_select"] = 1
+        # Try with random inputs
+        for _ in range(10):
+            # Generate random inputs
+            dut_inputs = {
+                "i_state": init_hierarchy(dims=(5,), bitwidth=64, use_random=True),
+                "i_round": random.randint(0, 10),
+            }
 
-        for i_round in range(1, 13):
-            # Update the values
-            dut_inputs["i_round"] = i_round
-
-            # Set dut inputs
-            for key, value in dut_inputs.items():
-                dut.__getattr__(name=key).value = value
-
-            await dut.clock.rising_edge
+            # Set the inputs
+            await initialize_dut(dut=dut, inputs=dut_inputs)
 
             # Update and Assert the output
-            permutation_model.assert_output(
-                dut=dut,
-                inputs=dut_inputs,
-            )
-
-        await dut.clock.rising_edge
+            adder_model.assert_output(dut=dut, inputs=dut_inputs)
 
     except Exception as e:
         dut_state = get_dut_state(dut=dut)
@@ -172,14 +173,14 @@ async def permutation_test(dut: HierarchyObject) -> None:
             [f"{key}: {value}" for key, value in dut_state.items()],
         )
         error_message: str = (
-            f"Failed in permutation_test with error: {e}\n"
+            f"Failed in addition_layer_test with error: {e}\n"
             f"DUT state at error:\n"
             f"{formatted_dut_state}"
         )
         raise RuntimeError(error_message) from e
 
 
-def test_permutation() -> None:
+def test_addition_layer() -> None:
     """
     Function Invoked by the test runner to execute the tests.
 
@@ -194,13 +195,15 @@ def test_permutation() -> None:
 
     # Define the top-level library and entity
     library: str = "lib_rtl"
-    entity: str = "permutation"
+    entity: str = "addition_layer"
 
     # Default Generics Configuration
     generics: dict[str, str] = {}
 
     # Define paths
-    rtl_path: Path = (Path(__file__).parent.parent.parent / "rtl/").resolve()
+    rtl_path: Path = (
+        Path(__file__).parent.parent.parent.parent / "rtl" / "verilog"
+    ).resolve()
     build_dir: Path = Path("sim_build")
 
     # Define the coverage file and output folder
@@ -216,12 +219,6 @@ def test_permutation() -> None:
     sources: list[str] = [
         f"{rtl_path}/ascon_pkg.sv",
         f"{rtl_path}/addition_layer/addition_layer.sv",
-        f"{rtl_path}/substitution_layer/sbox.sv",
-        f"{rtl_path}/substitution_layer/substitution_layer.sv",
-        f"{rtl_path}/diffusion_layer/diffusion_layer.sv",
-        f"{rtl_path}/xor/xor_begin.sv",
-        f"{rtl_path}/xor/xor_end.sv",
-        f"{rtl_path}/permutation/permutation.sv",
     ]
 
     # Define the build and test arguments
@@ -307,4 +304,4 @@ def test_permutation() -> None:
 
 
 if __name__ == "__main__":
-    test_permutation()
+    test_addition_layer()

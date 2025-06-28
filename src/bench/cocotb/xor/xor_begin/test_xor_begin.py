@@ -1,15 +1,16 @@
 """
-Testbench for the Diffusion Layer module.
+Testbench for the XOR Begin Layer.
 
-This module tests the Diffusion Layer module by comparing the
-output of the Python implementation with the VHDL implementation.
+This module tests the XOR Begin Layer function module by comparing the
+output of the Python implementation with the Verilog implementation.
 
-@author: Timothée Charrier
+Author: Timothée Charrier
 """
 
 from __future__ import annotations
 
 import os
+import random
 import sys
 from pathlib import Path
 from typing import TYPE_CHECKING
@@ -17,10 +18,10 @@ from typing import TYPE_CHECKING
 import cocotb
 from cocotb.triggers import Timer
 from cocotb_tools.runner import get_runner
-from diffusion_layer_model import DiffusionLayerModel
+from xor_begin_model import XorBeginModel
 
 # Add the directory containing the utils.py file to the Python path
-sys.path.insert(0, str(object=(Path(__file__).parent.parent).resolve()))
+sys.path.insert(0, str(object=(Path(__file__).parent.parent.parent).resolve()))
 
 from cocotb_utils import (
     generate_coverage_report_questa,
@@ -33,8 +34,13 @@ if TYPE_CHECKING:
     from cocotb.handle import HierarchyObject
     from cocotb_tools.runner import Runner
 
+
 INIT_INPUTS = {
     "i_state": init_hierarchy(dims=(5,), bitwidth=64, use_random=False),
+    "i_data": 0,
+    "i_key": 0,
+    "i_enable_xor_key": 0,
+    "i_enable_xor_data": 0,
 }
 
 
@@ -75,18 +81,18 @@ async def reset_dut_test(dut: HierarchyObject) -> None:
     """
     try:
         # Define the model
-        diffusion_layer_model = DiffusionLayerModel()
+        xor_begin_model = XorBeginModel()
 
         # Initialize the DUT
         await initialize_dut(dut=dut, inputs=INIT_INPUTS)
 
         # Verify the output
-        diffusion_layer_model.assert_output(dut=dut, state=INIT_INPUTS["i_state"])
+        xor_begin_model.assert_output(dut=dut, inputs=INIT_INPUTS)
 
     except Exception as e:
         dut_state = get_dut_state(dut=dut)
         formatted_dut_state: str = "\n".join(
-            [f"{key}: {value}" for key, value in dut_state.items()],
+            f"{key}: {value}" for key, value in dut_state.items()
         )
         error_message: str = (
             f"Failed in reset_dut_test with error: {e}\n"
@@ -97,9 +103,11 @@ async def reset_dut_test(dut: HierarchyObject) -> None:
 
 
 @cocotb.test()
-async def diffusion_layer_test(dut: HierarchyObject) -> None:
+async def xor_begin_test(dut: HierarchyObject) -> None:
     """
-    Test the Diffusion Layer module.
+    Test the DUT's behavior during normal computation.
+
+    Verifies that the output is correctly computed.
 
     Parameters
     ----------
@@ -114,59 +122,73 @@ async def diffusion_layer_test(dut: HierarchyObject) -> None:
     """
     try:
         # Define the model
-        diffusion_layer_model = DiffusionLayerModel()
+        xor_begin_model = XorBeginModel()
 
+        # Reset the DUT
         await reset_dut_test(dut=dut)
 
         # Test with specific inputs
-        dut_inputs: list[dict[str, list[int]]] = [
+        dut_inputs = [
             {
-                "i_state": [
-                    0x8849060F0C0D0EFF,
-                    0x80410E05040506F7,
-                    0xFFFFFFFFFFFFFF0F,
-                    0x80400406000000F0,
-                    0x0808080A08080808,
-                ],
+                "i_state": [0xFFFFFFFFFFFFFFFF] * 5,
+                "i_data": 0xFFFFFFFFFFFFFFFF,
+                "i_key": 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,
+                "i_enable_xor_key": 0,
+                "i_enable_xor_data": 0,
             },
             {
-                "i_state": [
-                    0x8CBD402180B4D43D,
-                    0x778B87B53BCCBF49,
-                    0x3E7883FEF208E8C0,
-                    0x0B48487C6AFB2C4D,
-                    0x0F20CDA96AE53627,
-                ],
+                "i_state": [0xFFFFFFFFFFFFFFFF] * 5,
+                "i_data": 0xFFFFFFFFFFFFFFFF,
+                "i_key": 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,
+                "i_enable_xor_key": 1,
+                "i_enable_xor_data": 0,
             },
             {
-                "i_state": [
-                    0xBAF6B13AFEB21E28,
-                    0xABA64F6758F07EB1,
-                    0x59D013C5A157E2F3,
-                    0xA4CDCEB4CF026350,
-                    0xA982986B3A1FBA70,
-                ],
+                "i_state": [0xFFFFFFFFFFFFFFFF] * 5,
+                "i_data": 0xFFFFFFFFFFFFFFFF,
+                "i_key": 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,
+                "i_enable_xor_key": 0,
+                "i_enable_xor_data": 1,
+            },
+            {
+                "i_state": [0xFFFFFFFFFFFFFFFF] * 5,
+                "i_data": 0xFFFFFFFFFFFFFFFF,
+                "i_key": 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,
+                "i_enable_xor_key": 1,
+                "i_enable_xor_data": 1,
             },
         ]
 
         for inputs in dut_inputs:
             await initialize_dut(dut=dut, inputs=inputs)
-            diffusion_layer_model.assert_output(dut=dut, state=inputs["i_state"])
+            xor_begin_model.assert_output(dut=dut, inputs=inputs)
+
+        # Test with random inputs
+        for _ in range(10):
+            random_inputs = {
+                "i_state": init_hierarchy(dims=(5,), bitwidth=64, use_random=True),
+                "i_data": random.randint(0, 2**64 - 1),
+                "i_key": random.randint(0, 2**128 - 1),
+                "i_enable_xor_key": random.randint(0, 1),
+                "i_enable_xor_data": random.randint(0, 1),
+            }
+            await initialize_dut(dut=dut, inputs=random_inputs)
+            xor_begin_model.assert_output(dut=dut, inputs=random_inputs)
 
     except Exception as e:
-        dut_state = get_dut_state(dut=dut)
+        dut_state: dict = get_dut_state(dut=dut)
         formatted_dut_state: str = "\n".join(
-            [f"{key}: {value}" for key, value in dut_state.items()],
+            f"{key}: {value}" for key, value in dut_state.items()
         )
         error_message: str = (
-            f"Failed in diffusion_layer_test with error: {e}\n"
+            f"Failed in xor_begin_test with error: {e}\n"
             f"DUT state at error:\n"
             f"{formatted_dut_state}"
         )
         raise RuntimeError(error_message) from e
 
 
-def test_diffusion_layer() -> None:
+def test_xor_begin() -> None:
     """
     Function Invoked by the test runner to execute the tests.
 
@@ -181,13 +203,15 @@ def test_diffusion_layer() -> None:
 
     # Define the top-level library and entity
     library: str = "lib_rtl"
-    entity: str = "diffusion_layer"
+    entity: str = "xor_begin"
 
     # Default Generics Configuration
     generics: dict[str, str] = {}
 
     # Define paths
-    rtl_path: Path = (Path(__file__).parent.parent.parent / "rtl/").resolve()
+    rtl_path: Path = (
+        Path(__file__).parent.parent.parent.parent.parent / "rtl" / "verilog"
+    )
     build_dir: Path = Path("sim_build")
 
     # Define the coverage file and output folder
@@ -202,7 +226,7 @@ def test_diffusion_layer() -> None:
     # Define the sources
     sources: list[str] = [
         f"{rtl_path}/ascon_pkg.sv",
-        f"{rtl_path}/diffusion_layer/diffusion_layer.sv",
+        f"{rtl_path}/xor/xor_begin.sv",
     ]
 
     # Define the build and test arguments
@@ -226,8 +250,6 @@ def test_diffusion_layer() -> None:
             "0",
             "-Wall",
             "--coverage",
-            "--coverage-max-width",
-            "320",
         ]
         test_args: list[str] = []
         pre_cmd = None
@@ -288,4 +310,4 @@ def test_diffusion_layer() -> None:
 
 
 if __name__ == "__main__":
-    test_diffusion_layer()
+    test_xor_begin()

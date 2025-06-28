@@ -1,8 +1,8 @@
 """
-Testbench for the Addition Layer module.
+Test the counter functionality.
 
-This module tests the Addition Layer module by comparing the
-output of the Python implementation with the VHDL implementation.
+Almost identical to the one in the slides, but
+with a few modifications to make it Ruff compliant.
 
 @author: Timothée Charrier
 """
@@ -10,64 +10,72 @@ output of the Python implementation with the VHDL implementation.
 from __future__ import annotations
 
 import os
-import random
 import sys
 from pathlib import Path
+from random import randint
 from typing import TYPE_CHECKING
 
 import cocotb
-from addition_layer_model import AddLayerModel
-from cocotb.triggers import Timer
 from cocotb_tools.runner import get_runner
+from tabulate import tabulate
 
 # Add the directory containing the utils.py file to the Python path
-sys.path.insert(0, str(object=(Path(__file__).parent.parent).resolve()))
+sys.path.insert(0, str(object=(Path(__file__).parent.parent.parent).resolve()))
 
 from cocotb_utils import (
     generate_coverage_report_questa,
     generate_coverage_report_verilator,
     get_dut_state,
-    init_hierarchy,
+    initialize_dut,
+    toggle_signal,
 )
 
 if TYPE_CHECKING:
     from cocotb.handle import HierarchyObject
     from cocotb_tools.runner import Runner
 
-# Define the IOs and their default values at reset
-INIT_INPUTS = {
-    "i_state": init_hierarchy(dims=(5,), bitwidth=64, use_random=False),
-    "i_round": 0,
-}
 
-# Define the inputs
-IV = 0x80400C0600000000
-KEY = 0x000102030405060708090A0B0C0D0E0F
-NONCE = 0x000102030405060708090A0B0C0D0E0F
-STATE: list[int] = [
-    IV,
-    (KEY >> 64) & 0xFFFFFFFFFFFFFFFF,  # Upper 64 bits of KEY
-    KEY & 0xFFFFFFFFFFFFFFFF,  # Lower 64 bits of KEY
-    (NONCE >> 64) & 0xFFFFFFFFFFFFFFFF,  # Upper 64 bits of NONCE
-    NONCE & 0xFFFFFFFFFFFFFFFF,  # Lower 64 bits of NONCE
-]
-
-
-async def initialize_dut(dut: HierarchyObject, inputs: dict) -> None:
+def get_generics(dut: HierarchyObject) -> dict:
     """
-    Initialize the DUT with the given inputs.
+    Retrieve the generic parameters from the DUT.
 
     Parameters
     ----------
     dut : HierarchyObject
         The device under test (DUT).
-    inputs : dict
-        The input dictionary.
+
+    Returns
+    -------
+    dict
+        A dictionary containing the generic parameters.
 
     """
-    for key, value in inputs.items():
-        getattr(dut, key).value = value
-    await Timer(time=10, unit="ns")
+    return {
+        "DATA_WIDTH": int(dut.G_DATA_WIDTH.value),
+        "COUNT_FROM": int(dut.G_COUNT_FROM.value),
+        "COUNT_TO": int(dut.G_COUNT_TO.value),
+        "STEP": int(dut.G_STEP.value),
+    }
+
+
+def log_generics(dut: HierarchyObject, generics: dict[str, int]) -> None:
+    """
+    Log the generic parameters from the DUT in a table format.
+
+    Parameters
+    ----------
+    dut : HierarchyObject
+        The device under test (DUT).
+    generics : dict
+        A dictionary of generic parameters.
+
+    """
+    table: str = tabulate(
+        tabular_data=generics.items(),
+        headers=["Parameter", "Value"],
+        tablefmt="grid",
+    )
+    dut._log.info(f"Running with generics:\n{table}")
 
 
 @cocotb.test()
@@ -82,26 +90,27 @@ async def reset_dut_test(dut: HierarchyObject) -> None:
     dut : HierarchyObject
         The device under test (DUT).
 
-    Raises
-    ------
-    RuntimeError
-        If the DUT fails to reset.
-
     """
     try:
-        # Define the model
-        adder_model = AddLayerModel(
-            inputs=INIT_INPUTS,
-        )
+        # Log generics
+        generics = get_generics(dut=dut)
+        log_generics(dut=dut, generics=generics)
+
+        # Define inputs
+        inputs: dict[str, int] = {
+            "count_enable": 0,
+        }
+
+        # Expected outputs at reset
+        expected_outputs: dict[str, int] = {
+            "count": generics["COUNT_FROM"],
+        }
 
         # Initialize the DUT
-        await initialize_dut(dut=dut, inputs=INIT_INPUTS)
-
-        # Assert the output
-        adder_model.assert_output(dut=dut, inputs=INIT_INPUTS)
+        await initialize_dut(dut=dut, inputs=inputs, outputs=expected_outputs)
 
     except Exception as e:
-        dut_state = get_dut_state(dut=dut)
+        dut_state: dict = get_dut_state(dut=dut)
         formatted_dut_state: str = "\n".join(
             [f"{key}: {value}" for key, value in dut_state.items()],
         )
@@ -114,73 +123,75 @@ async def reset_dut_test(dut: HierarchyObject) -> None:
 
 
 @cocotb.test()
-async def addition_layer_test(dut: HierarchyObject) -> None:
+async def counter_test(dut: HierarchyObject) -> None:
     """
-    Test the DUT's behavior during normal computation.
-
-    Verifies that the output is correctly computed.
+    Test the counter functionality.
 
     Parameters
     ----------
     dut : HierarchyObject
         The device under test (DUT).
 
-    Raises
-    ------
-    RuntimeError
-        If the DUT fails to compute the correct output.
-
     """
     try:
-        # Define the model
-        adder_model = AddLayerModel(
-            inputs=INIT_INPUTS,
-        )
+        # Get the generics
+        generics = get_generics(dut=dut)
 
+        # Reset the DUT
         await reset_dut_test(dut=dut)
 
-        # Set dut inputs defined by i_state = [IV, P1, P2, P3, P4]
-        dut_inputs = {
-            "i_state": STATE,
-            "i_round": 0,
+        # Define inputs
+        inputs: dict[str, int] = {
+            "count_enable": 1,
         }
 
-        # Initialize the DUT
-        await initialize_dut(dut=dut, inputs=dut_inputs)
+        # Expected outputs
+        expected_outputs: dict[str, int] = {
+            "count": generics["COUNT_FROM"],
+        }
 
-        # Assert the output
-        adder_model.assert_output(dut=dut, inputs=dut_inputs)
+        # Let's count a random number of times, to overflow the counter
+        num_iterations: int = randint(
+            a=generics["COUNT_TO"] - generics["COUNT_FROM"],
+            b=2 ** generics["DATA_WIDTH"] + 5,
+        )
 
-        dut._log.info("Starting random tests...")
+        for _ in range(num_iterations):
+            # Toggle the enable signal
+            await toggle_signal(dut=dut, signal_dict=inputs, verbose=False)
 
-        # Try with random inputs
-        for _ in range(10):
-            # Generate random inputs
-            dut_inputs = {
-                "i_state": init_hierarchy(dims=(5,), bitwidth=64, use_random=True),
-                "i_round": random.randint(0, 10),
-            }
+            # Update the expected count
+            expected_outputs["count"] += generics["STEP"]
 
-            # Set the inputs
-            await initialize_dut(dut=dut, inputs=dut_inputs)
+            # Wait for the next clock cycle
+            await dut.clock.rising_edge
 
-            # Update and Assert the output
-            adder_model.assert_output(dut=dut, inputs=dut_inputs)
+            # Verify if we overflowed
+            if expected_outputs["count"] > generics["COUNT_TO"]:
+                expected_outputs["count"] = generics["COUNT_FROM"]
+
+            # Verify the count
+            if int(dut.count.value) != expected_outputs["count"]:
+                error_message: str = (
+                    f"Counter value mismatch: Expected {expected_outputs['count']}, "
+                    f"Got {int(dut.count.value)}",
+                )
+                raise ValueError(error_message)  # noqa: TRY301
 
     except Exception as e:
-        dut_state = get_dut_state(dut=dut)
+        dut_state: dict = get_dut_state(dut=dut)
         formatted_dut_state: str = "\n".join(
             [f"{key}: {value}" for key, value in dut_state.items()],
         )
         error_message: str = (
-            f"Failed in addition_layer_test with error: {e}\n"
+            f"Failed in counter_test with error: {e}\n"
             f"DUT state at error:\n"
             f"{formatted_dut_state}"
         )
         raise RuntimeError(error_message) from e
 
 
-def test_addition_layer() -> None:
+def test_counter_runner() -> None:
     """
     Function Invoked by the test runner to execute the tests.
 
@@ -195,13 +206,20 @@ def test_addition_layer() -> None:
 
     # Define the top-level library and entity
     library: str = "lib_rtl"
-    entity: str = "addition_layer"
+    entity: str = "counter"
 
     # Default Generics Configuration
-    generics: dict[str, str] = {}
+    generics: dict[str, str] = {
+        "G_DATA_WIDTH": 8,
+        "G_COUNT_FROM": 13,
+        "G_COUNT_TO": (2**8 - 1),
+        "G_STEP": 1,
+    }
 
     # Define paths
-    rtl_path: Path = (Path(__file__).parent.parent.parent / "rtl/").resolve()
+    rtl_path: Path = (
+        Path(__file__).parent.parent.parent.parent.parent / "rtl" / "verilog"
+    )
     build_dir: Path = Path("sim_build")
 
     # Define the coverage file and output folder
@@ -215,8 +233,7 @@ def test_addition_layer() -> None:
 
     # Define the sources
     sources: list[str] = [
-        f"{rtl_path}/ascon_pkg.sv",
-        f"{rtl_path}/addition_layer/addition_layer.sv",
+        f"{rtl_path}/example/counter.sv",
     ]
 
     # Define the build and test arguments
@@ -228,7 +245,8 @@ def test_addition_layer() -> None:
         ]
         test_args: list[str] = [
             "-coverage",
-            "-no_autoacc",
+            # We cant use the no_autoacc since we need to access the generics values
+            # It adds a cocotb warning but it is not an error
         ]
         pre_cmd: list[str] = [
             f"coverage save {entity}_coverage.ucdb -onexit",
@@ -240,8 +258,6 @@ def test_addition_layer() -> None:
             "0",
             "-Wall",
             "--coverage",
-            "--coverage-max-width",
-            "320",
         ]
         test_args: list[str] = []
         pre_cmd = None
@@ -302,4 +318,4 @@ def test_addition_layer() -> None:
 
 
 if __name__ == "__main__":
-    test_addition_layer()
+    test_counter_runner()

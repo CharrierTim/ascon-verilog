@@ -279,7 +279,7 @@ def test_ascon() -> None:
     generics: dict[str, str] = {}
 
     # Define paths
-    rtl_path: Path = (Path(__file__).parent.parent.parent / "rtl/").resolve()
+    rtl_path: Path = Path(__file__).parent.parent.parent.parent / "rtl" / "verilog"
     build_dir: Path = Path("sim_build")
 
     # Define the coverage file and output folder

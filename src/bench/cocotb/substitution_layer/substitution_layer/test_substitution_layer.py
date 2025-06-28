@@ -212,7 +212,9 @@ def test_substitution_layer() -> None:
     generics: dict[str, str] = {"G_NUM_SBOXES": 64}
 
     # Define paths
-    rtl_path: Path = (Path(__file__).parent.parent.parent.parent / "rtl/").resolve()
+    rtl_path: Path = (
+        Path(__file__).parent.parent.parent.parent.parent / "rtl" / "verilog"
+    )
     build_dir: Path = Path("sim_build")
 
     # Define the coverage file and output folder
