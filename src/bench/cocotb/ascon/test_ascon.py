@@ -318,8 +318,6 @@ def test_ascon() -> None:
             "0",
             "-Wall",
             "--coverage",
-            "--coverage-max-width",
-            "320",
         ]
         test_args: list[str] = []
         pre_cmd = None
