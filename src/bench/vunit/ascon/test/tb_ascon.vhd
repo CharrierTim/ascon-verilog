@@ -268,7 +268,7 @@ begin
                 check(tb_o_done = '0',
                       "Done output should be '0' after reset.");
 
-            elsif(run("test_ascon_module")) then
+            elsif (run("test_ascon_module")) then
 
                 info("-----------------------------------------------------------------------------");
                 info("Running Ascon test.");

@@ -2442,7 +2442,6 @@ rule:
 
     if_005:
         # This rule checks for a single space after the elsif keyword.
-        fixable: false
         number_of_spaces: 1
 
     if_006:
@@ -3816,6 +3815,7 @@ rule:
     process_021:
         # This rule checks for blank lines above the begin keyword if there are no process declarative items.
         style: require_blank_line
+        disable: true
 
     process_022:
         # This rule checks for a blank line below the begin keyword.
