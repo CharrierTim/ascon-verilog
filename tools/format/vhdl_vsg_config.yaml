@@ -647,7 +647,7 @@ rule:
 
     architecture_025:
         # This rule checks for valid names for the architecture.
-        disable: false
+        disable: true
         fixable: false
         names: ["rtl"]
         severity: Warning
@@ -665,12 +665,12 @@ rule:
     architecture_027:
         # This rule checks the alignment of inline comments in the architecture declarative part.
         blank_line_ends_group: yes
-        comment_line_ends_group: no
-        compact_alignment: no
-        disable: false
-        fixable: true
-        include_lines_without_comments: yes
-        separate_generic_port_alignment: yes
+        case_control_statements_ends_group: yes
+        comment_line_ends_group: yes
+        compact_alignment: yes
+        if_control_statements_ends_group: yes
+        include_type_is_keyword: no
+        loop_control_statements_ends_group: yes
 
     architecture_028:
         # This rule checks the architecture keyword in the end architecture has proper case.
@@ -682,9 +682,8 @@ rule:
         case_control_statements_ends_group: yes
         comment_line_ends_group: yes
         compact_alignment: yes
-        disable: false
-        fixable: true
         if_control_statements_ends_group: yes
+        include_type_is_keyword: no
         loop_control_statements_ends_group: yes
 
     architecture_030:
@@ -1086,10 +1085,7 @@ rule:
 
     case_009:
         # This rule checks for blank lines or comments above the end keyword.
-        disable: false
-        fixable: false
-        severity: Error
-        style: no_code
+        style: require_blank_line
 
     case_010:
         # This rule checks for a blank line below the end case keywords.
@@ -1102,9 +1098,7 @@ rule:
 
     case_012:
         # This rule checks for code after the => operator.
-        disable: false
-        fixable: false
-        severity: Warning
+        style: require_blank_line
 
     case_014:
         # This rule checks the case keyword has proper case.
@@ -1136,9 +1130,6 @@ rule:
 
     case_201:
         # This rule checks for blank lines or comments above the when keyword.
-        disable: true
-        fixable: false
-        severity: Error
         style: allow_comment
 
     case_generate_alternative_500:
@@ -1322,7 +1313,7 @@ rule:
 
     concurrent_003:
         # This rule checks alignment of multiline concurrent simple signal assignments. Succesive lines should align to the space after the assignment operator. However, there is a special case if there are parenthesis in the assignment. If the parenthesis are not closed on the same line, then the next line will be aligned to the parenthesis. Aligning to the parenthesis improves readability.
-        align_left: yes
+        align_left: no
         align_paren: yes
         severity: Error
 
@@ -1423,7 +1414,7 @@ rule:
 
     conditional_waveforms_001:
         # This rule checks for code after the else keyword.
-        allow_single_line: yes
+        allow_single_line: no
 
     conditional_waveforms_100:
         # This rule checks for a single space before the when keyword.
@@ -1486,7 +1477,7 @@ rule:
         # This rule checks the alignment of multiline constants that contain arrays.
         align_left: no
         align_paren: yes
-        disable: true
+        disable: false
         phase: 5
         severity: Error
 
@@ -1511,13 +1502,13 @@ rule:
 
     constant_016:
         # This rule checks the structure of multiline constants that contain arrays.
-        first_paren_new_line: no
-        last_paren_new_line: ignore
-        open_paren_new_line: ignore
-        close_paren_new_line: no
-        new_line_after_comma: ignore
+        first_paren_new_line: yes
+        last_paren_new_line: yes
+        open_paren_new_line: yes
+        close_paren_new_line: yes
+        new_line_after_comma: yes
         assign_on_single_line: yes
-        ignore_single_line: yes
+        ignore_single_line: no
         severity: Error
 
     constant_017:
@@ -1549,7 +1540,7 @@ rule:
         blank_line_ends_group: yes
         comment_line_ends_group: yes
         compact_alignment: yes
-        disable: true
+        disable: false
         fixable: false
         ignore_single_line_aggregates: yes
         severity: Error
@@ -1565,6 +1556,145 @@ rule:
     constrained_array_definition_501:
         # This rule checks the of keyword has proper case.
         case: lower
+
+    # ---------------------------------------------------------------------------------------------
+    # Context Rules
+    # ---------------------------------------------------------------------------------------------
+
+    context_001:
+        # This rule checks the indent of the context keyword.
+        phase: 4
+
+    context_002:
+        # This rule checks for a single space between the context keyword and the context identifier.
+        number_of_spaces: 1
+
+    context_003:
+        # This rule checks for blank lines or comments above the context keyword.
+        style: no_code
+
+    context_004:
+        # This rule checks the context keyword has proper case.
+        case: lower
+
+    context_005:
+        # This rule checks the context identifier is on the same line as the context keyword.
+        action: same_line
+
+    context_006:
+        # This rule checks the is keyword is on the same line as the context identifier.
+        action: same_line
+
+    context_007:
+        # This rule checks for code after the is keyword.
+        style: no_code
+
+    context_008:
+        # This rule checks the end keyword is on its own line.
+        action: new_line
+
+    context_009:
+        # This rule checks the context keyword is on the same line as the end context keyword.
+        action: same_line
+
+    context_010:
+        # This rule checks the context identifier is on the same line as the end context keyword.
+        action: same_line
+
+    context_011:
+        # This rule checks the semicolon is on the same line as the end keyword.
+        action: same_line
+
+    context_012:
+        # This rule checks the context identifier has proper case in the context declaration.
+        case: lower
+
+    context_013:
+        # This rule checks the is keyword has proper case in the context declaration.
+        case: lower
+
+    context_014:
+        # This rule checks the end keyword has proper case.
+        case: lower
+
+    context_015:
+        # This rule checks the context keyword has proper case in the end context declaration.
+        case: lower
+
+    context_016:
+        # This rule checks the context identifier has proper case in the end context declaration.
+        case: lower
+
+    context_017:
+        # This rule checks for a single space between the context identifier and the is keyword.
+        number_of_spaces: 1
+
+    context_018:
+        # This rule checks for a single space between the end keyword and the context keyword.
+        number_of_spaces: 1
+
+    context_019:
+        # This rule checks for a single space between the context keyword and the context identifier.
+        number_of_spaces: 1
+
+    context_020:
+        # This rule checks the indent of the end keyword.
+        phase: 4
+
+    context_021:
+        # This rule checks for the keyword context in the end context statement.
+        action: add
+
+    context_022:
+        # This rule checks for the context name in the end context statement.
+        action: add
+
+    context_023:
+        # This rule adds a blank line below the is keyword.
+        style: require_blank_line
+
+    context_024:
+        # This rule checks for blank lines or comments above the end keyword.
+        style: no_code
+
+    context_025:
+        # This rule adds a blank line below the context semicolon.
+        style: require_blank_line
+
+    context_ref_001:
+        # This rule checks the indent of the context keyword.
+        phase: 4
+        severity: Error
+
+    context_ref_002:
+        # This rule checks for a single space between the context keyword and the context selected name.
+        number_of_spaces: 1
+        phase: 2
+        severity: Error
+
+    context_ref_003:
+        # This rule checks the context keyword has proper case.
+        case: lower
+        phase: 6
+        severity: Error
+
+    context_ref_005:
+        # This rule checks the context keyword is on its own line.
+        structure: own_line
+        phase: 1
+        severity: Error
+
+    context_ref_500:
+        # This rule checks the library name called out in the selected name has proper case.
+        case: lower
+        phase: 6
+        severity: Error
+
+    context_ref_501:
+        # This rule checks the context name called out in the selected name has proper case.
+        case: lower
+        phase: 6
+        severity: Error
 
     # ---------------------------------------------------------------------------------------------
     # Declarative Rule
@@ -1673,7 +1803,7 @@ rule:
         # This rule checks the alignment of the colon for each generic and port in the entity declaration.
         blank_line_ends_group: no
         comment_line_ends_group: no
-        compact_alignment: no
+        compact_alignment: yes
         separate_generic_port_alignment: yes
 
     entity_018:
@@ -1685,7 +1815,7 @@ rule:
 
     entity_019:
         # This rule checks for the entity name in the end entity statement.
-        action: keep
+        action: add
 
     entity_020:
         # This rule checks for alignment of inline comments in the entity declaration.
@@ -2225,6 +2355,7 @@ rule:
         # This rule checks for valid prefixes on generic identifiers. The default generic prefix is g_.
         disable: false
         prefixes: ["G_"]
+        exceptions: ["RUNNER_CFG"]
         severity: Error
 
     generic_021:
@@ -2311,7 +2442,6 @@ rule:
 
     if_005:
         # This rule checks for a single space after the elsif keyword.
-        disable: true
         fixable: false
         number_of_spaces: 1
 
@@ -2334,7 +2464,6 @@ rule:
         # This rule checks the alignment of multiline boolean expressions.
         align_left: no
         align_paren: yes
-        severity: Error
 
     if_010:
         # This rule checks for blank lines before the else keyword.
@@ -2499,7 +2628,7 @@ rule:
         # This rule checks the alignment of the => operator for each generic and port in the instantiation.
         blank_line_ends_group: no
         comment_line_ends_group: no
-        compact_alignment: no
+        compact_alignment: yes
         separate_generic_port_alignment: yes
 
     instantiation_012:
@@ -3174,7 +3303,17 @@ rule:
             ]
         fixable: false
         prefixes:
-            ["I_", "O_", "IO_", "PAD_I_", "PAD_O_", "PAD_IO_", "S_AXI", "M_AXI", "REG_"]
+            [
+                "I_",
+                "O_",
+                "IO_",
+                "PAD_I_",
+                "PAD_O_",
+                "PAD_IO_",
+                "S_AXI",
+                "M_AXI",
+                "REG_",
+            ]
         severity: Warning
 
     port_012:
@@ -3414,10 +3553,10 @@ rule:
     procedure_013:
         # This rule checks the structure of procedure specifications.
         first_open_paren: remove_new_line
-        ignore_single_line: yes
-        interface_element: add_new_line
-        interface_list_semicolon: remove_new_line
         last_close_paren: remove_new_line
+        interface_element: add_new_line
+        interface_list_semicolon: ignore
+        ignore_single_line: no
 
     procedure_014:
         # This rule checks the procedure designator exists in the closing of the procedure specification.
@@ -3433,7 +3572,7 @@ rule:
 
     procedure_200:
         # This rule checks for blank lines or comments above the procedure keyword.
-        style: allow_comment
+        style: no_blank_line_unless_different_library
         severity: Warning
 
     procedure_401:
@@ -3555,8 +3694,8 @@ rule:
 
     procedure_call_400:
         # This rule checks the alignment of multiline procedure calls.
-        disable: true
-        align_left: yes
+        disable: false
+        align_left: no
         align_paren: yes
         severity: Error
 
@@ -3676,7 +3815,7 @@ rule:
 
     process_021:
         # This rule checks for blank lines above the begin keyword if there are no process declarative items.
-        style: no_blank_line
+        style: require_blank_line
 
     process_022:
         # This rule checks for a blank line below the begin keyword.
@@ -3686,7 +3825,6 @@ rule:
 
     process_023:
         # This rule checks for a blank line above the end process keyword.
-        disable: true
         style: require_blank_line
         severity: Error
 
@@ -3700,11 +3838,11 @@ rule:
 
     process_026:
         # This rule checks for blank lines above the first declarative line, if it exists.
-        style: no_blank_line
+        style: require_blank_line
 
     process_027:
         # This rule checks for blank lines above the begin keyword if a declarative item exists.
-        style: no_blank_line
+        style: require_blank_line
         severity: Warning
 
     process_028:
@@ -3762,6 +3900,7 @@ rule:
     process_036:
         # This rule checks for valid prefixes on process labels.
         disable: false
+        severity: Error
         exceptions: []
         prefixes: ["p_"]
 
@@ -4154,29 +4293,36 @@ rule:
 
     sequential_009:
         # This rule checks the structure of multiline simple sequential signal assignments that contain arrays.
-        first_paren_new_line: no
-        last_paren_new_line: ignore
-        open_paren_new_line: no
-        close_paren_new_line: no
-        new_line_after_comma: ignore
-        assign_on_single_line: yes
-        ignore_single_line: yes
+        compact_alignment: yes
+        blank_line_ends_group: no
+        comment_line_ends_group: yes
+        if_control_statements_ends_group: yes
+        generate_statements_ends_group: yes
+        loop_control_generic_port_alignment: yes
+        include_type_is_keyword: yes
+        aggregate_parens_ends_group: no
+        ignore_single_line_aggregates: no
+        align_to: keyword
 
     sequential_400:
         # This rule checks the alignment the => operator in record aggregates.
-        aggregate_parens_ends_group: no
-        blank_line_ends_group: no
-        comment_line_ends_group: no
         compact_alignment: yes
-        ignore_single_line_aggregates: yes
+        blank_line_ends_group: no
+        comment_line_ends_group: yes
+        if_control_statements_ends_group: yes
+        generate_statements_ends_group: yes
+        loop_control_generic_port_alignment: yes
+        aggregate_parens_ends_group: no
+        ignore_single_line_aggregates: no
+        align_to: keyword
 
     sequential_401:
         # This rule checks alignment of multiline sequential conditional signal assignments.
-        align_else_keywords: yes
         align_left: no
         align_paren: yes
         align_when_keywords: yes
         wrap_at_when: yes
+        align_else_keywords: yes
 
     sequential_402:
         # This rule checks the alignment of multiline simple sequential signal assignments that contain arrays.
