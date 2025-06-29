@@ -103,4 +103,4 @@ docstring-code-line-length = 120
 [tool.pytest.ini_options]
 minversion = "6.0"
 addopts = "-ra -q -v --tb=short"
-testpaths = ["src/bench/cocotb"]
+testpaths = ["src/bench/cocotb", "src/bench/vunit"]
