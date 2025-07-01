@@ -6,14 +6,13 @@ and runs the tests for the xor end implementation.
 """
 
 import os
+import sys
 from pathlib import Path
 
 from vunit import VUnit
 from vunit.ui.library import Library
 from vunit.ui.source import SourceFileList
 
-# Define the arguments for VUnit
-argv: list[str] = ["-v", "-p 0"]
 # Define the simulation tool
 VUNIT_SIMULATOR: str = "nvc"
 os.environ["VUNIT_SIMULATOR"] = os.environ.get("VUNIT_SIMULATOR", default=VUNIT_SIMULATOR)
@@ -27,6 +26,7 @@ src_library_name: str = "lib_rtl"
 bench_library_name: str = "lib_bench"
 
 # Initialize VUnit
+argv: list[str] = sys.argv if len(sys.argv) > 1 else ["-v", "-p", "0"]
 VU: VUnit = VUnit.from_argv(argv=argv)
 VU.add_vhdl_builtins()
 
