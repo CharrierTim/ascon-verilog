@@ -3161,7 +3161,7 @@ rule:
 
     package_016:
         # This rule checks for valid suffixes on package identifiers. The default package suffix is _pkg.
-        disable: False
+        disable: true
         exceptions: []
         fixable: false
         severity: Warning
@@ -3169,10 +3169,10 @@ rule:
 
     package_017:
         # This rule checks for valid prefixes on package identifiers. The default package prefix is pkg_.
-        disable: True
+        disable: false
         exceptions: []
         fixable: false
-        prefixes: [pkg_]
+        prefixes: ["pkg_"]
         severity: Warning
 
     package_018:
