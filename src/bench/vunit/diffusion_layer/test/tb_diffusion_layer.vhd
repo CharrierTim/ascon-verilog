@@ -134,9 +134,9 @@ begin
 
                 -- Check if the current state matches the reference state
                 check(
-                      i_state(i) = i_ref_state(i),
-                      i_msg & " at index " & integer'image(i) & ": expected 0x" &
-                      to_hstring(i_ref_state(i)) & ", got 0x" & to_hstring(i_state(i)));
+                    i_state(i) = i_ref_state(i),
+                    i_msg & " at index " & integer'image(i) & ": expected 0x" &
+                    to_hstring(i_ref_state(i)) & ", got 0x" & to_hstring(i_state(i)));
 
             end loop;
 

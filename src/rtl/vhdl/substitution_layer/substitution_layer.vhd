@@ -72,7 +72,7 @@ begin
     -- Generate and instantiate SBOXES
     gen_sboxes : for i in 0 to G_NUM_SBOXES - 1 generate
 
-        sbox_i : entity lib_rtl.sbox
+        inst_sbox_i : entity lib_rtl.sbox
             port map (
                 -- Input mapping: MSB to LSB
                 I_DATA(4) => I_STATE(0)(i),

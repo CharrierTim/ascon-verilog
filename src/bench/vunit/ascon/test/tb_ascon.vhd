@@ -260,13 +260,13 @@ begin
 
                 -- Check that the DUT is in a reset state
                 check(tb_o_cipher = x"0000000000000000",
-                      "Cipher output should be all zeros after reset.");
+                    "Cipher output should be all zeros after reset.");
                 check(tb_o_tag = x"00000000000000000000000000000000",
-                      "Tag output should be all zeros after reset.");
+                    "Tag output should be all zeros after reset.");
                 check(tb_o_valid_cipher = '0',
-                      "Valid cipher output should be '0' after reset.");
+                    "Valid cipher output should be '0' after reset.");
                 check(tb_o_done = '0',
-                      "Done output should be '0' after reset.");
+                    "Done output should be '0' after reset.");
 
             elsif (run("test_ascon_module")) then
 
@@ -300,7 +300,9 @@ begin
                 for i in C_PLAINTEXT_LIST'range loop
 
                     info("-----------------------------------------------------------------------------");
-                    info("Processing plaintext block " & integer'image(i) & " of " & integer'image(C_PLAINTEXT_LIST'length - 1));
+                    info(
+                        "Processing plaintext block " & integer'image(i) & " of " &
+                        integer'image(C_PLAINTEXT_LIST'length - 1));
                     info("Plaintext data: 0x" & to_hstring(C_PLAINTEXT_LIST(i)));
                     if (i > 0) then
                         info("Previous cipher output: 0x" & to_hstring(tb_o_cipher));
@@ -339,22 +341,22 @@ begin
                 -- Check for cipher outputs
                 -- Check for cipher outputs
                 check(tb_cipher_out_list(0) = C_CIPHER_OUT_0,
-                      "Cipher output [0]: expected 0x" & to_hstring(C_CIPHER_OUT_0) &
-                      ", got 0x" & to_hstring(tb_cipher_out_list(0)));
+                    "Cipher output [0]: expected 0x" & to_hstring(C_CIPHER_OUT_0) &
+                    ", got 0x" & to_hstring(tb_cipher_out_list(0)));
                 check(tb_cipher_out_list(1) = C_CIPHER_OUT_1,
-                      "Cipher output [1]: expected 0x" & to_hstring(C_CIPHER_OUT_1) &
-                      ", got 0x" & to_hstring(tb_cipher_out_list(1)));
+                    "Cipher output [1]: expected 0x" & to_hstring(C_CIPHER_OUT_1) &
+                    ", got 0x" & to_hstring(tb_cipher_out_list(1)));
                 check(tb_cipher_out_list(2) = C_CIPHER_OUT_2,
-                      "Cipher output [2]: expected 0x" & to_hstring(C_CIPHER_OUT_2) &
-                      ", got 0x" & to_hstring(tb_cipher_out_list(2)));
+                    "Cipher output [2]: expected 0x" & to_hstring(C_CIPHER_OUT_2) &
+                    ", got 0x" & to_hstring(tb_cipher_out_list(2)));
                 check(tb_cipher_out_list(3) = C_CIPHER_OUT_3,
-                      "Cipher output [3]: expected 0x" & to_hstring(C_CIPHER_OUT_3) &
-                      ", got 0x" & to_hstring(tb_cipher_out_list(3)));
+                    "Cipher output [3]: expected 0x" & to_hstring(C_CIPHER_OUT_3) &
+                    ", got 0x" & to_hstring(tb_cipher_out_list(3)));
 
                 -- Check for tag
                 check(tb_o_tag = C_TAG_OUT,
-                      "Tag output       : expected 0x" & to_hstring(C_TAG_OUT) &
-                      ", got 0x" & to_hstring(tb_o_tag));
+                    "Tag output       : expected 0x" & to_hstring(C_TAG_OUT) &
+                    ", got 0x" & to_hstring(tb_o_tag));
 
                 -- Log the input and output values in a grouped, readable format
                 info("");
@@ -362,14 +364,14 @@ begin
                 info("Key         : 0x" & to_hstring(tb_i_key));
                 info("Nonce       : 0x" & to_hstring(tb_i_nonce));
                 info("Plaintext   : 0x" & to_hstring(C_PLAINTEXT_LIST(1))  &
-                     to_hstring(C_PLAINTEXT_LIST(2)) &
-                     to_hstring(C_PLAINTEXT_LIST(3)) &
-                     to_hstring(C_PLAINTEXT_LIST(4)));
+                    to_hstring(C_PLAINTEXT_LIST(2)) &
+                    to_hstring(C_PLAINTEXT_LIST(3)) &
+                    to_hstring(C_PLAINTEXT_LIST(4)));
                 info("Assoc. Data : 0x" & to_hstring(C_PLAINTEXT_LIST(0)));
                 info("Ciphertext  : 0x" & to_hstring(tb_cipher_out_list(0)) &
-                     to_hstring(tb_cipher_out_list(1)) &
-                     to_hstring(tb_cipher_out_list(2)) &
-                     to_hstring(tb_cipher_out_list(3)));
+                    to_hstring(tb_cipher_out_list(1)) &
+                    to_hstring(tb_cipher_out_list(2)) &
+                    to_hstring(tb_cipher_out_list(3)));
                 info("Tag         : 0x" & to_hstring(tb_o_tag));
                 info("-----------------------------------------------------------------------------");
 

@@ -59,7 +59,7 @@ entity ASCON_FSM is
         I_BLOCK_COUNT              : in    std_logic_vector(1 downto 0); -- Block Counter value
         O_VALID_CIPHER             : out   std_logic;                    -- Cipher valid signal
         O_DONE                     : out   std_logic;                    -- End of Ascon signal
-        O_MUX_SELECT               : out   std_logic;                    -- Mux select signal (low=input, high=outputreg)
+        O_MUX_SELECT               : out   std_logic;                    -- Mux select signal: low=input, high=outputreg
         O_ENABLE_XOR_DATA_BEGIN    : out   std_logic;                    -- Enable XOR with Data, active high
         O_ENABLE_XOR_KEY_BEGIN     : out   std_logic;                    -- Enable XOR with Key, active high
         O_ENABLE_XOR_KEY_END       : out   std_logic;                    -- Enable XOR with Key, active high

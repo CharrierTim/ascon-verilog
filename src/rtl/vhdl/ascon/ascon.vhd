@@ -140,11 +140,14 @@ begin
     -- =================================================================================================================
 
     -- Initialize the state array
-    i_state <= (0    => I_DATA,
-                   1 => I_KEY(127 downto 64),
-                   2 => I_KEY(63 downto 0),
-                   3 => I_NONCE(127 downto 64),
-                   4 => I_NONCE(63 downto 0));
+    i_state <=
+    (
+        0 => I_DATA,
+        1 => I_KEY(127 downto 64),
+        2 => I_KEY(63 downto 0),
+        3 => I_NONCE(127 downto 64),
+        4 => I_NONCE(63 downto 0)
+    );
 
     INST_PERMUTATION : entity lib_rtl.permutation
         port map (
