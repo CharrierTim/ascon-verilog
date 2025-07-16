@@ -1,41 +1,125 @@
 {
-    "version": "2.0.0",
-    "tasks": [
-        {
-            "label": "Run VSG on current file",
-            "type": "shell",
-            "command": "${workspaceFolder}/.venv/bin/vsg",
-            "args": [
-                "--config",
-                "tools/format/vhdl_vsg_config.yaml",
-                "--fix",
-                "${file}"
-            ],
-            "group": "build",
-            "presentation": {
-                "reveal": "always",
-                "panel": "new"
-            },
-            "problemMatcher": []
-        },
-        {
-            "label": "Run VSG on ALL *.vhd files",
-            "type": "shell",
-            "command": "${workspaceFolder}/.venv/bin/vsg",
-            "args": [
-                "--config",
-                "tools/format/vhdl_vsg_config.yaml",
-                "--fix",
-                "-f",
-                "${workspaceFolder}/src/rtl/vhdl/**/*.vhd",
-                "${workspaceFolder}/src/bench/vunit/**/*.vhd"
-            ],
-            "group": "build",
-            "presentation": {
-                "reveal": "always",
-                "panel": "new"
-            },
-            "problemMatcher": []
-        }
-    ]
+  // From: https://github.com/jeremiah-c-leary/vhdl-style-guide
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "vsg-check",
+      "type": "shell",
+      "command": "${workspaceFolder}/.venv/bin/vsg",
+      "args": [
+        "-f",
+        "${relativeFile}",
+        "--jobs=4",
+        "--configuration=tools/vsg/.vsg.yaml"
+      ],
+      "problemMatcher": {
+        "owner": "vsg",
+        "fileLocation": [
+          "autoDetect",
+          "${workspaceFolder}"
+        ],
+        "pattern": [
+          {
+            "regexp": "^File:  ([^\\s]*)\\s*$",
+            "file": 1
+          },
+          { // match =======
+            "regexp": "^.*$"
+          },
+          { // match Phase
+            "regexp": "^.*$"
+          },
+          { // match Total Rules Checked
+            "regexp": "^.*$"
+          },
+          { // match Total Violations
+            "regexp": "^.*$"
+          },
+          { // match Error count
+            "regexp": "^.*$"
+          },
+          { // match Warning count
+            "regexp": "^.*$"
+          },
+          { // match ------
+            "regexp": "^.*$"
+          },
+          { // match Rule/severity/line/solution header
+            "regexp": "^.*$"
+          },
+          { // match ------
+            "regexp": "^.*$"
+          },
+          {
+            "regexp": "^  ([^\\s]*_\\d*)\\s*. ([^\\s]*)\\s*.\\s*([^\\s]*) . (.*)$",
+            "code": 1,
+            "severity": 2,
+            "location": 3,
+            "message": 4,
+            "loop": true
+          }
+        ]
+      }
+    },
+    {
+      "label": "vsg-fix",
+      "type": "shell",
+      "command": "${workspaceFolder}/.venv/bin/vsg",
+      "args": [
+        "-f",
+        "${relativeFile}",
+        "--fix",
+        "--jobs=4",
+        "--configuration=tools/vsg/.vsg.yaml",
+      ],
+      "problemMatcher": {
+        "owner": "vsg",
+        "fileLocation": [
+          "autoDetect",
+          "${workspaceFolder}"
+        ],
+        "pattern": [
+          {
+            "regexp": "^File:  ([^\\s]*)\\s*$",
+            "file": 1
+          },
+          { // match =======
+            "regexp": "^.*$"
+          },
+          { // match Phase
+            "regexp": "^.*$"
+          },
+          { // match Total Rules Checked
+            "regexp": "^.*$"
+          },
+          { // match Total Violations
+            "regexp": "^.*$"
+          },
+          { // match Error count
+            "regexp": "^.*$"
+          },
+          { // match Warning count
+            "regexp": "^.*$"
+          },
+          { // match ------
+            "regexp": "^.*$"
+          },
+          { // match Rule/severity/line/solution header
+            "regexp": "^.*$"
+          },
+          { // match ------
+            "regexp": "^.*$"
+          },
+          {
+            "regexp": "^  ([^\\s]*_\\d*)\\s*. ([^\\s]*)\\s*.\\s*([^\\s]*) . (.*)$",
+            "code": 1,
+            "severity": 2,
+            "location": 3,
+            "message": 4,
+            "loop": true
+          }
+        ]
+      }
+    }
+  ]
 }
