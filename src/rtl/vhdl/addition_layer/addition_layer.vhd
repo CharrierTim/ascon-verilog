@@ -40,8 +40,8 @@ library ieee;
     use ieee.numeric_std.all;
 
 library lib_rtl;
-    use lib_rtl.ascon_pkg.t_state_array;
-    use lib_rtl.ascon_pkg.c_lut_addition;
+    use lib_rtl.pkg_ascon.t_state_array;
+    use lib_rtl.pkg_ascon.c_lut_addition;
 
 -- =====================================================================================================================
 -- ENTITY

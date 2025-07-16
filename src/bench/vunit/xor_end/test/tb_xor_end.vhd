@@ -36,7 +36,7 @@ library ieee;
     use ieee.numeric_std.all;
 
 library lib_rtl;
-    use lib_rtl.ascon_pkg.t_state_array;
+    use lib_rtl.pkg_ascon.t_state_array;
 
 library vunit_lib;
     context vunit_lib.vunit_context;

@@ -41,7 +41,7 @@ library ieee;
     use ieee.numeric_std.all;
 
 library lib_rtl;
-    use lib_rtl.ascon_pkg.c_lut_sbox;
+    use lib_rtl.pkg_ascon.c_lut_sbox;
 
 -- =====================================================================================================================
 -- ENTITY

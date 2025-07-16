@@ -21,7 +21,7 @@
 --  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 --  SOFTWARE.
 -- =====================================================================================================================
--- @file    ascon_pkg.vhd
+-- @file    pkg_ascon.vhd
 -- @brief   ASCON package containing type definitions and constants
 -- @author  Timothée Charrier
 -- @date    2025-01-22
@@ -42,7 +42,7 @@ library ieee;
 -- PACKAGE
 -- =====================================================================================================================
 
-package ascon_pkg is
+package pkg_ascon is
 
     -- =================================================================================================================
     -- TYPES
@@ -113,4 +113,4 @@ package ascon_pkg is
         x"17"
     );
 
-end package ascon_pkg;
+end package pkg_ascon;

@@ -41,7 +41,7 @@ library ieee;
     use ieee.std_logic_1164.all;
 
 library lib_rtl;
-    use lib_rtl.ascon_pkg.t_state_array;
+    use lib_rtl.pkg_ascon.t_state_array;
 
 -- =====================================================================================================================
 -- ENTITY
