@@ -1,0 +1,18 @@
+repos:
+  # Python hooks
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.12.3
+    hooks:
+      - id: ruff-check
+        args: [--fix]
+      - id: ruff-format
+        args: [--config=pyproject.toml]
+
+  # VHDL hooks
+  - repo: https://github.com/jeremiah-c-leary/vhdl-style-guide
+    rev: 3.33.0
+    hooks:
+      - id: vsg
+        args:
+          - --jobs=4
+          - --configuration=tools/vsg/.vsg.yaml
