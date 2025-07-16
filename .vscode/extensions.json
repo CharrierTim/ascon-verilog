@@ -6,6 +6,7 @@
         "ms-python.vscode-pylance",
         "ms-python.python",
         "ms-python.debugpy",
-        "surfer-project.surfer"
+        "surfer-project.surfer",
+        "hbohlin.vhdl-ls"
     ]
 }
