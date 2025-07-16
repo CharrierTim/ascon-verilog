@@ -545,6 +545,81 @@ rule:
         indent_style: spaces
 
     # ---------------------------------------------------------------------------------------------
+    # After Rules
+    # ---------------------------------------------------------------------------------------------
+
+    after_001:
+        # This rule checks for after x in signal assignments in clock processes.
+        disable: true
+
+    after_002:
+        # This rule checks the after keywords are aligned in a clock process.
+        disable: true
+
+    after_003:
+        # This rule checks the after keywords do not exist in the reset portion of a clock process.
+        disable: true
+
+    after_500:
+        # This rule checks the after keyword has proper case.
+        case: lower
+
+    # ---------------------------------------------------------------------------------------------
+    # Alias Rules
+    # ---------------------------------------------------------------------------------------------
+
+    alias_declaration_001:
+        # This rule checks the alias keyword is on its own line.
+        phase: 4
+
+    alias_declaration_100:
+        # This rule checks for a single space after the colon for the subtype_indication.
+        number_of_spaces: 1
+
+    alias_declaration_101:
+        # This rule checks for a single space before the is keyword if the : is present.
+        number_of_spaces: ">=1"
+
+    alias_declaration_102:
+        # This rule checks for a single space after the is keyword.
+        number_of_spaces: 1
+
+    alias_declaration_103:
+        # This rule checks for a single space before the designator.
+        disable: true
+        number_of_spaces: 1
+
+    alias_declaration_300:
+        # This rule checks the indent of the alias keyword.
+        phase: 4
+
+    alias_declaration_500:
+        # This rule checks the alias keyword has proper case.
+        case: lower
+
+    alias_declaration_501:
+        # This rule checks the is keyword has proper case.
+        case: lower
+
+    alias_declaration_502:
+        # This rule checks the alias designator has proper case.
+        case: lower
+
+    alias_declaration_503:
+        # This rule checks for consistent capitalization of alias designators.
+        case: lower
+
+    alias_declaration_600:
+        # This rule checks for valid prefixes on alias designators.
+        disable: false
+        prefixes: ["a_"]
+
+    alias_declaration_601:
+        # This rule checks for valid suffixes on alias designators.
+        disable: true
+        suffixes: ["_a"]
+
+    # ---------------------------------------------------------------------------------------------
     # Architecture Rules
     # ---------------------------------------------------------------------------------------------
 
@@ -1099,6 +1174,7 @@ rule:
     case_012:
         # This rule checks for code after the => operator.
         style: require_blank_line
+        ignore_single_line: yes
 
     case_014:
         # This rule checks the case keyword has proper case.
@@ -1141,7 +1217,7 @@ rule:
         blank_line_ends_group: no
         comment_line_ends_group: no
         compact_alignment: yes
-        disable: true
+        disable: false
         fixable: false
         severity: Error
 
@@ -1360,13 +1436,13 @@ rule:
 
     concurrent_012:
         # This rule checks the structure of multiline concurrent simple signal assignments that contain arrays.
-        assign_on_single_line: no
-        close_paren_new_line: no
-        first_paren_new_line: no
-        ignore_single_line: yes
-        last_paren_new_line: no
+        first_paren_new_line: yes
+        last_paren_new_line: yes
+        open_paren_new_line: yes
+        close_paren_new_line: yes
         new_line_after_comma: yes
-        open_paren_new_line: no
+        assign_on_single_line: yes
+        ignore_single_line: yes
 
     concurrent_400:
         # This rule checks the alignment the => operator in record aggregates.
@@ -1475,11 +1551,8 @@ rule:
 
     constant_012:
         # This rule checks the alignment of multiline constants that contain arrays.
-        align_left: no
-        align_paren: yes
-        disable: false
-        phase: 5
-        severity: Error
+        align_left: yes
+        align_paren: no
 
     constant_013:
         # This rule checks for consistent capitalization of constant names.
@@ -1488,8 +1561,8 @@ rule:
     constant_014:
         # This rule checks the indent of multiline constants that do not contain arrays.
         disable: false
-        align_left: no
-        align_paren: yes
+        align_left: yes
+        align_paren: no
         severity: Error
 
     constant_015:
@@ -1507,9 +1580,8 @@ rule:
         open_paren_new_line: yes
         close_paren_new_line: yes
         new_line_after_comma: yes
-        assign_on_single_line: yes
-        ignore_single_line: no
-        severity: Error
+        assign_on_single_line: ignore
+        ignore_single_line: yes
 
     constant_017:
         # This rule checks the structure of constant constraints.
@@ -1536,14 +1608,17 @@ rule:
 
     constant_400:
         # This rule checks the alignment of assignment keywords in constant declarations.
-        aggregate_parens_ends_group: yes
+        compact_alignment: yes
         blank_line_ends_group: yes
         comment_line_ends_group: yes
-        compact_alignment: yes
-        disable: false
-        fixable: false
+        separate_generic_port_alignment: yes
+        if_control_statements_ends_group: yes
+        case_control_statements_ends_group: yes
+        generate_statements_ends_group: yes
+        loop_control_statements_ends_group: yes
+        aggregate_parens_ends_group: yes
         ignore_single_line_aggregates: yes
-        severity: Error
+        include_type_is_keyword: no
 
     # ---------------------------------------------------------------------------------------------
     # Constrained Array Definition Rules
@@ -1669,31 +1744,26 @@ rule:
     context_ref_002:
         # This rule checks for a single space between the context keyword and the context selected name.
         number_of_spaces: 1
-        phase: 2
         severity: Error
 
     context_ref_003:
         # This rule checks the context keyword has proper case.
         case: lower
-        phase: 6
         severity: Error
 
     context_ref_005:
         # This rule checks the context keyword is on its own line.
         structure: own_line
-        phase: 1
         severity: Error
 
     context_ref_500:
         # This rule checks the library name called out in the selected name has proper case.
         case: lower
-        phase: 6
         severity: Error
 
     context_ref_501:
         # This rule checks the context name called out in the selected name has proper case.
         case: lower
-        phase: 6
         severity: Error
 
     # ---------------------------------------------------------------------------------------------
@@ -1911,6 +1981,26 @@ rule:
         # This rule checks the entity_class has proper case.
         case: lower
         case_exceptions: []
+
+    # ---------------------------------------------------------------------------------------------
+    # Exit Rules
+    # ---------------------------------------------------------------------------------------------
+
+    exit_statement_300:
+        # Checks indentation of exit keyword
+        phase: 4
+
+    exit_statement_301:
+        # Checks indentation of label
+        phase: 4
+
+    exit_statement_500:
+        # Checks exit keyword has proper case
+        case: lower
+
+    exit_statement_501:
+        # Checks when keyword has proper case
+        case: lower
 
     # ---------------------------------------------------------------------------------------------
     # Exponent Rules
@@ -2399,9 +2489,29 @@ rule:
         new_line_after_assign: yes
         ignore_single_line: yes
 
+    generic_map_009:
+        # Checks for blank line below generic map
+        style: no_blank_line
+
     generic_map_100:
         # This rule checks for at least a single space before the **=>** keyword in generic maps.
         number_of_spaces: ">=1"
+
+    generic_map_101:
+        # Checks for single space after generic keyword
+        number_of_spaces: 1
+
+    generic_map_300:
+        # Checks indent of generic map keyword
+        phase: 4
+
+    generic_map_301:
+        # Checks indent of association elements
+        phase: 4
+
+    generic_map_302:
+        # Checks indent of closing parenthesis
+        phase: 4
 
     generic_map_600:
         # This rule checks for valid suffixes on generic identifiers in generic maps The default generic suffix is _g.
@@ -2414,7 +2524,6 @@ rule:
         # This rule checks for valid prefixes on generic identifiers in generic maps The default generic suffix is g_.
         exceptions: []
         disable: false
-        phase: 7
         prefixes: ["g_", ""]
         severity: Error
 
@@ -2674,12 +2783,16 @@ rule:
         # This rule checks for component versus direct instantiations.
         disable: true
         fixable: false
-        method: component
+        method: entity
         severity: Error
 
     instantiation_035:
         # This rule checks the semicolon is not on its own line.
         action: same_line
+
+    instantiation_036:
+        # This rule checks for the optional architecture specification in entity instantiations.
+        action: remove
 
     instantiation_600:
         # This rule checks for valid suffixes on instantiation labels. The default suffix is _inst.
@@ -2691,8 +2804,10 @@ rule:
 
     instantiation_601:
         # This rule checks for valid prefixes on instantiation labels. The default prefix is inst_.
+        disable: false
         exceptions: ["DUT"]
         prefixes: ["inst_"]
+        severity: Error
 
     # ---------------------------------------------------------------------------------------------
     # Iteration Scheme Rules
@@ -2734,6 +2849,7 @@ rule:
         # This rule checks the length of a file.
         length: 2000
         severity: Warning
+        disable: true
 
     length_003:
         # This rule checks the length of a process statement.
@@ -2837,7 +2953,6 @@ rule:
         # This rule checks the end loop_statement line has a label. The closing label will be added if the opening loop_statement label exists.
         action: add
         fixable: true
-        phase: 1
 
     loop_statement_100:
         # This rule checks that a single space exists between the end and loop keywords
@@ -3231,6 +3346,80 @@ rule:
         prefixes: ["pkg_"]
         severity: Error
 
+    package_instantiation_001:
+        # Checks indent of package instantiation
+        phase: 4
+
+    package_instantiation_002:
+        # Checks for single space after new keyword
+        number_of_spaces: 1
+
+    package_instantiation_003:
+        # Checks for single space before is keyword
+        number_of_spaces: ">=1"
+
+    package_instantiation_004:
+        # Checks for single space after is keyword
+        number_of_spaces: 1
+
+    package_instantiation_100:
+        # Checks for single space after package keyword
+        number_of_spaces: 1
+
+    package_instantiation_101:
+        # Checks for single space before identifier
+        number_of_spaces: 1
+
+    package_instantiation_102:
+        # Checks for single space after identifier
+        number_of_spaces: 1
+
+    package_instantiation_103:
+        # Checks for single space after is keyword
+        number_of_spaces: 1
+
+    package_instantiation_200:
+        # Checks for blank lines above package instantiation
+        style: allow_comment
+
+    package_instantiation_201:
+        # Checks for blank lines below package instantiation
+        style: require_blank_line
+
+    package_instantiation_300:
+        # Checks indent of package instantiation
+        phase: 4
+
+    package_instantiation_500:
+        # Checks package keyword has proper case
+        case: lower
+
+    package_instantiation_501:
+        # Checks identifier has proper case
+        case: lower
+
+    package_instantiation_502:
+        # Checks is keyword has proper case
+        case: lower
+
+    package_instantiation_503:
+        # Checks new keyword has proper case
+        case: lower
+
+    package_instantiation_504:
+        # Checks generic/actual designator has proper case
+        case: lower
+
+    package_instantiation_600:
+        # Checks for valid prefixes on package instantiation identifiers
+        disable: true
+        prefixes: []
+
+    package_instantiation_601:
+        # Checks for valid suffixes on package instantiation identifiers
+        disable: true
+        suffixes: []
+
     # ---------------------------------------------------------------------------------------------
     # Parameter Specification Rules
     # ---------------------------------------------------------------------------------------------
@@ -3289,28 +3478,18 @@ rule:
     port_011:
         # This rule checks for valid prefixes on port identifiers. The default port prefixes are: I_, O_, IO_.
         disable: false
-        exceptions:
-            [
-                "CLK",
-                "CLOCK",
-                "RST_N",
-                "RESET_N",
-                "RST_P",
-                "RESET_P",
-                "S_AXI",
-                "M_AXI",
-            ]
+        exceptions: ["CLK", SCL_", "SDA_"]
         fixable: false
         prefixes:
             [
                 "I_",
                 "O_",
                 "IO_",
-                "PAD_I_",
-                "PAD_O_",
-                "PAD_IO_",
-                "S_AXI",
-                "M_AXI",
+                "PAD_",
+                "CLK_",
+                "CLOCK",
+                "RST_",
+                "RESET_",
                 "REG_",
             ]
         severity: Warning
@@ -3384,7 +3563,7 @@ rule:
     port_600:
         # This rule checks for valid prefixes on port identifiers for input ports.
         disable: true
-        exceptions: [clk", "clock", "rst_n", "reset_n", "rst_p", "reset_p"]
+        exceptions: ["clk", "clock", "rst_n", "reset_n", "rst_p", "reset_p"]
         fixable: false
         prefixes: ["i_", "pad_i", "m_axi", "s_axi"]
         severity: Warning
@@ -3694,8 +3873,8 @@ rule:
     procedure_call_400:
         # This rule checks the alignment of multiline procedure calls.
         disable: false
-        align_left: no
-        align_paren: yes
+        align_left: yes
+        align_paren: no
         severity: Error
 
     procedure_call_401:
@@ -3784,7 +3963,6 @@ rule:
 
     process_016:
         # This rule checks the process has a label.
-        fixable: false
         severity: Error
 
     process_017:
@@ -3810,12 +3988,10 @@ rule:
         # This rule checks the indentation of multiline sensitivity lists.
         align_left: no
         align_paren: yes
-        severity: Error
 
     process_021:
         # This rule checks for blank lines above the begin keyword if there are no process declarative items.
-        style: require_blank_line
-        disable: true
+        style: no_blank_line
 
     process_022:
         # This rule checks for a blank line below the begin keyword.
@@ -3843,7 +4019,6 @@ rule:
     process_027:
         # This rule checks for blank lines above the begin keyword if a declarative item exists.
         style: require_blank_line
-        severity: Warning
 
     process_028:
         # This rule checks the alignment of the closing parenthesis of a sensitivity list. Parenthesis on multiple lines should be in the same column.
@@ -4142,6 +4317,12 @@ rule:
     # ---------------------------------------------------------------------------------------------
     # Return Statement Rules
     # ---------------------------------------------------------------------------------------------
+    reserved_001:
+        standard: "2008"
+
+    # ---------------------------------------------------------------------------------------------
+    # Return Statement Rules
+    # ---------------------------------------------------------------------------------------------
 
     return_statement_300:
         # This rule checks the indent of the return keyword.
@@ -4307,13 +4488,13 @@ rule:
     sequential_400:
         # This rule checks the alignment the => operator in record aggregates.
         compact_alignment: yes
-        blank_line_ends_group: no
+        blank_line_ends_group: yes
         comment_line_ends_group: yes
         if_control_statements_ends_group: yes
         generate_statements_ends_group: yes
         loop_control_generic_port_alignment: yes
-        aggregate_parens_ends_group: no
-        ignore_single_line_aggregates: no
+        aggregate_parens_ends_group: yes
+        ignore_single_line_aggregates: yes
         align_to: keyword
 
     sequential_401:
@@ -4409,7 +4590,7 @@ rule:
 
     signal_017:
         # This rule checks the structure of signal constraints.
-        array_constraint: ignore
+        array_constraint: array_constraint
         exceptions: ["keep_record_constraint_with_single_element_on_one_line"]
         record_constraint_close_paren: remove_new_line
         record_constraint_comma: remove_new_line
@@ -4513,6 +4694,76 @@ rule:
         case: lower
 
     # ---------------------------------------------------------------------------------------------
+    # Subtype Rules
+    # ---------------------------------------------------------------------------------------------
+
+    subtype_001:
+        # This rule checks for indentation of the subtype keyword.
+        phase: 4
+
+    subtype_002:
+        # This rule checks for consistent capitalization of subtype names.
+        case: lower
+
+    # subtype_003 was deprecated and replaced with other rules
+
+    subtype_004:
+        # This rule checks for valid prefixes in subtype identifiers.
+        disable: false
+        prefixes: ["st_"]
+
+    subtype_005:
+        # This rule checks the identifier is on the same line as the subtype keyword.
+        phase: 4
+
+    subtype_006:
+        # This rule checks the is keyword is on the same line as the identifier.
+        phase: 4
+
+    subtype_100:
+        # This rule checks for a single space before the identifier.
+        disable: true
+        number_of_spaces: 1
+
+    subtype_101:
+        # This rule checks for a single space before the is keyword.
+        number_of_spaces: ">=1"
+
+    subtype_102:
+        # This rule checks for a single space after the is keyword.
+        number_of_spaces: 1
+
+    subtype_200:
+        # This rule checks for a blank line below a subtype declaration unless there is another subtype declaration.
+        disable: true
+        style: allow_comment
+
+    subtype_201:
+        # This rule checks for blank lines or comments above the subtype declaration.
+        style: require_blank_line
+
+    subtype_202:
+        # This rule checks for a blank line below the subtype declaration.
+        style: require_blank_line
+
+    subtype_500:
+        # This rule checks the subtype keyword has proper case.
+        case: lower
+
+    subtype_501:
+        # This rule checks the identifier has proper case.
+        case: lower
+
+    subtype_502:
+        # This rule checks the is keyword has proper case.
+        case: lower
+
+    subtype_600:
+        # This rule checks for valid suffixes in subtype identifiers.
+        disable: true
+        suffixes: ["_st"]
+
+    # ---------------------------------------------------------------------------------------------
     # Type Rules
     # ---------------------------------------------------------------------------------------------
 
@@ -4557,7 +4808,6 @@ rule:
     type_010:
         # This rule checks for blank lines or comments above the type declaration.
         disable: true
-        phase: 3
         style: allow_comment
 
     type_011:
@@ -4583,7 +4833,6 @@ rule:
         disable: false
         exceptions: []
         fixable: false
-        phase: 7
         prefixes: ["t_", "type_"]
         severity: Error
 
@@ -4613,7 +4862,6 @@ rule:
         blank_line_ends_group: yes
         comment_line_ends_group: no
         compact_alignment: yes
-        phase: 5
         separate_generic_port_alignment: yes
 
     type_500:
@@ -4699,7 +4947,7 @@ rule:
 
     variable_007:
         # This rule checks for default assignments in variable declarations.
-        disable: false
+        disable: true
         fixable: false
         severity: Warning
 
@@ -4714,6 +4962,11 @@ rule:
         fixable: false
         prefixes: ["v_"]
         severity: Error
+
+    variable_015:
+        # This rule checks for multiple (shared) variable names defined in a single (shared) variable declaration.
+        # By default, this rule will only flag more than two (shared) variable declarations.
+        consecutive: 2
 
     variable_017:
         # This rule checks the structure of variable constraints.
@@ -4766,9 +5019,10 @@ rule:
 
     variable_assignment_004:
         # This rule checks the alignment of multiline variable assignments.
-        align_left: no
-        align_paren: yes
-        severity: Error
+        disable: true
+        align_left: yes
+        align_paren: no
+        severity: Warning # Must be conflicting with other rules
 
     variable_assignment_006:
         # This rule checks for comments in multiline variable assignments.
@@ -4782,13 +5036,16 @@ rule:
 
     variable_assignment_008:
         # This rule checks the structure of multiline variable assignments that contain arrays.
-        first_paren_new_line: no
-        last_paren_new_line: no
-        open_paren_new_line: no
-        close_paren_new_line: no
-        new_line_after_comma: yes
-        assign_on_single_line: yes
-        ignore_single_line: yes
+        compact_alignment: yes
+        blank_line_ends_group: no
+        comment_line_ends_group: yes
+        if_control_statements_ends_group: yes
+        generate_statements_ends_group: yes
+        loop_control_generic_port_alignment: yes
+        include_type_is_keyword: yes
+        aggregate_parens_ends_group: no
+        ignore_single_line_aggregates: no
+        align_to: keyword
 
     variable_assignment_400:
         # This rule checks alignment of multiline conditional variable assignments.
