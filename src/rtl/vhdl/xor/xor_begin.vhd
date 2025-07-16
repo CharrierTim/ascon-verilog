@@ -21,15 +21,15 @@
 --  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 --  SOFTWARE.
 -- =====================================================================================================================
--- @file    xor_begin.vhd
--- @brief   This module implements the XOR operation at the beginning of the permutation layer of the ASCON 128
---          cryptographic.
--- @author  Timothée Charrier
--- @date    2025-01-22
+--  @file    xor_begin.vhd
+--  @brief   This module implements the XOR operation at the beginning of the permutation layer of the ASCON 128
+--           cryptographic.
+--  @author  Timothée Charrier
+--  @date    2025-01-22
 -- =====================================================================================================================
--- @version 1.0.0
--- @date    2025-01-22
--- @note    Initial version of the XOR begin module.
+--  @version 1.0.0
+--  @date    2025-01-22
+--  @note    Initial version of the XOR begin module.
 -- =====================================================================================================================
 
 library ieee;

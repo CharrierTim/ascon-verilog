@@ -21,14 +21,14 @@
 --  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 --  SOFTWARE.
 -- =====================================================================================================================
--- @file    tb_addition_layer.vhd
--- @brief   This module implements the addition layer testbench using Vunit.
--- @author  Timothée Charrier
--- @date    2025-06-28
+--  @file    tb_addition_layer.vhd
+--  @brief   This module implements the addition layer testbench using Vunit.
+--  @author  Timothée Charrier
+--  @date    2025-06-28
 -- =====================================================================================================================
--- @version 1.0.0
--- @date    2025-06-28
--- @note    Initial version of the addition layer testbench using Vunit.
+--  @version 1.0.0
+--  @date    2025-06-28
+--  @note    Initial version of the addition layer testbench using Vunit.
 -- =====================================================================================================================
 
 library ieee;

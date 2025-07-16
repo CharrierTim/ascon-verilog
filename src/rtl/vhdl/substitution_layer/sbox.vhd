@@ -21,19 +21,19 @@
 --  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 --  SOFTWARE.
 -- =====================================================================================================================
--- @file    sbox.vhd
--- @brief   This module implements the substitution layer sub-module of the ASCON 128 cryptographic algorithm. It is
---          used to substitute the input data with the corresponding value in a lookup table.
--- @author  Timothée Charrier
--- @date    2025-01-22
+--  @file    sbox.vhd
+--  @brief   This module implements the substitution layer sub-module of the ASCON 128 cryptographic algorithm. It is
+--           used to substitute the input data with the corresponding value in a lookup table.
+--  @author  Timothée Charrier
+--  @date    2025-01-22
 -- =====================================================================================================================
--- @version 1.1.0
--- @date    2025-02-19
--- @note    Rename the lookup table for consistency.
+--  @version 1.1.0
+--  @date    2025-02-19
+--  @note    Rename the lookup table for consistency.
 -- =====================================================================================================================
--- @version 1.0.0
--- @date    2025-01-22
--- @note    Initial version of the SBOX module.
+--  @version 1.0.0
+--  @date    2025-01-22
+--  @note    Initial version of the SBOX module.
 -- =====================================================================================================================
 
 library ieee;

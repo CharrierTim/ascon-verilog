@@ -21,18 +21,18 @@
 --  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 --  SOFTWARE.
 -- =====================================================================================================================
--- @file    pkg_ascon.vhd
--- @brief   ASCON package containing type definitions and constants
--- @author  Timothée Charrier
--- @date    2025-01-22
+--  @file    pkg_ascon.vhd
+--  @brief   ASCON package containing type definitions and constants
+--  @author  Timothée Charrier
+--  @date    2025-01-22
 -- =====================================================================================================================
--- @version 1.1.0
--- @date    2025-02-19
--- @note    Rename type definitions and constants for consistency.
+--  @version 1.1.0
+--  @date    2025-02-19
+--  @note    Rename type definitions and constants for consistency.
 -- =====================================================================================================================
--- @version 1.0.0
--- @date    2025-01-22
--- @note    This package defines types and constants used in the ASCON algorithm.
+--  @version 1.0.0
+--  @date    2025-01-22
+--  @note    This package defines types and constants used in the ASCON algorithm.
 -- =====================================================================================================================
 
 library ieee;

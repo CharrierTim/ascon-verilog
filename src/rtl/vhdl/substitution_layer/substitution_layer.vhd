@@ -21,20 +21,20 @@
 --  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 --  SOFTWARE.
 -- =====================================================================================================================
--- @file    substitution_layer.vhd
--- @brief   This module implements the substitution layer of the ASCON 128 cryptographic algorithm. It is composed of
---          the following modules:
---              - sbox
--- @author  Timothée Charrier
--- @date    2025-01-22
+--  @file    substitution_layer.vhd
+--  @brief   This module implements the substitution layer of the ASCON 128 cryptographic algorithm. It is composed of
+--           the following modules:
+--               - sbox
+--  @author  Timothée Charrier
+--  @date    2025-01-22
 -- =====================================================================================================================
--- @version 1.1.0
--- @date    2025-03-23
--- @note    Changed the generic names prefix from nothing to G_
+--  @version 1.1.0
+--  @date    2025-03-23
+--  @note    Changed the generic names prefix from nothing to G_
 -- =====================================================================================================================
--- @version 1.0.0
--- @date    2025-01-22
--- @note    Initial version of the Substitution Layer module.
+--  @version 1.0.0
+--  @date    2025-01-22
+--  @note    Initial version of the Substitution Layer module.
 -- =====================================================================================================================
 
 library ieee;

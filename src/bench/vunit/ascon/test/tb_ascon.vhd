@@ -21,14 +21,14 @@
 --  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 --  SOFTWARE.
 -- =====================================================================================================================
--- @file    tb_ascon.vhd
--- @brief   This module implements the ascon testbench using Vunit.
--- @author  Timothée Charrier
--- @date    2025-06-28
+--  @file    tb_ascon.vhd
+--  @brief   This module implements the ascon testbench using Vunit.
+--  @author  Timothée Charrier
+--  @date    2025-06-28
 -- =====================================================================================================================
--- @version 1.0.0
--- @date    2025-06-28
--- @note    Initial version of the ascon testbench using Vunit.
+--  @version 1.0.0
+--  @date    2025-06-28
+--  @note    Initial version of the ascon testbench using Vunit.
 -- =====================================================================================================================
 
 library ieee;

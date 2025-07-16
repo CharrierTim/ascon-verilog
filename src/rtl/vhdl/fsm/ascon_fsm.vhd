@@ -21,27 +21,27 @@
 --  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 --  SOFTWARE.
 -- =====================================================================================================================
--- @file    ascon_fsm.vhd
--- @brief   Ascon FSM module
--- @author  Timothée Charrier
--- @date    2025-06-05
+--  @file    ascon_fsm.vhd
+--  @brief   Ascon FSM module
+--  @author  Timothée Charrier
+--  @date    2025-06-05
 -- =====================================================================================================================
--- @version 2.0.0
--- @date    2025-06-05
--- @note
---          Implementation now uses a 4-process FSM architecture:
---          - Two sequential processes: state register and output register
---          - Two combinatorial processes: next state logic and output logic
+--  @version 2.0.0
+--  @date    2025-06-05
+--  @note
+--           Implementation now uses a 4-process FSM architecture:
+--           - Two sequential processes: state register and output register
+--           - Two combinatorial processes: next state logic and output logic
 --
---          Reference:
---          [1] C. Cummings and H. Chambers, "Finite State Machine (FSM) Design & Synthesis using SystemVerilog
---              - Part I," SNUG 2019, pp. 1-61. [Online].
---              Available: https://www.sunburst-design.com/papers/CummingsSNUG2019SV_FSM1.pdf
+--           Reference:
+--           [1] C. Cummings and H. Chambers, "Finite State Machine (FSM) Design & Synthesis using SystemVerilog
+--               - Part I," SNUG 2019, pp. 1-61. [Online].
+--               Available: https://www.sunburst-design.com/papers/CummingsSNUG2019SV_FSM1.pdf
 --
 -- =====================================================================================================================
--- @version 1.0.0
--- @date    2025-01-22
--- @note    Initial version of the Ascon FSM module.
+--  @version 1.0.0
+--  @date    2025-01-22
+--  @note    Initial version of the Ascon FSM module.
 -- =====================================================================================================================
 
 library ieee;

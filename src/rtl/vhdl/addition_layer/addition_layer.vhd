@@ -21,18 +21,18 @@
 --  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 --  SOFTWARE.
 -- =====================================================================================================================
--- @file    addition_layer.vhd
--- @brief   This module implements the addition layer of the ASCON 128 cryptographic algorithm.
--- @author  Timothée Charrier
--- @date    2025-01-22
+--  @file    addition_layer.vhd
+--  @brief   This module implements the addition layer of the ASCON 128 cryptographic algorithm.
+--  @author  Timothée Charrier
+--  @date    2025-01-22
 -- =====================================================================================================================
--- @version 1.1.0
--- @date    2025-02-19
--- @note    Changed the lookup table name for consistency and removed non-used assignment.
+--  @version 1.1.0
+--  @date    2025-02-19
+--  @note    Changed the lookup table name for consistency and removed non-used assignment.
 -- =====================================================================================================================
--- @version 1.0.0
--- @date    2025-01-22
--- @note    Initial version of the Addition Layer module.
+--  @version 1.0.0
+--  @date    2025-01-22
+--  @note    Initial version of the Addition Layer module.
 -- =====================================================================================================================
 
 library ieee;

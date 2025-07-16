@@ -21,25 +21,25 @@
 --  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 --  SOFTWARE.
 -- =====================================================================================================================
--- @file    permutation.vhd
--- @brief   This module implements the permutation layer of the ASCON 128 cryptographic algorithm. It is composed of
---          the following modules:
---              - xor_begin
---              - addition_layer
---              - substitution_layer
---              - diffusion_layer
---              - xor_end
---              - registers process
--- @author  Timothée Charrier
--- @date    2025-01-22
+--  @file    permutation.vhd
+--  @brief   This module implements the permutation layer of the ASCON 128 cryptographic algorithm. It is composed of
+--           the following modules:
+--               - xor_begin
+--               - addition_layer
+--               - substitution_layer
+--               - diffusion_layer
+--               - xor_end
+--               - registers process
+--  @author  Timothée Charrier
+--  @date    2025-01-22
 -- =====================================================================================================================
--- @version 1.1.0
--- @date    2025-03-23
--- @note    Changed the generic names prefix from nothing to G_ in substitution_layer instantiation.
+--  @version 1.1.0
+--  @date    2025-03-23
+--  @note    Changed the generic names prefix from nothing to G_ in substitution_layer instantiation.
 -- =====================================================================================================================
--- @version 1.0.0
--- @date    2025-01-22
--- @note    Initial version of the Permutation Layer module.
+--  @version 1.0.0
+--  @date    2025-01-22
+--  @note    Initial version of the Permutation Layer module.
 -- =====================================================================================================================
 
 library ieee;
