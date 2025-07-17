@@ -10,7 +10,10 @@
 # ----------------------------------------------------------------------------------------------------------------------
 
 [libraries.vunit_lib]
+
 files = [
+    # I know this is a lot of files, but it is easiest way to include all files without hundreds of errors or 
+    # warnings
     ".venv/lib/python3.12/site-packages/vunit/vhdl/check/src/check_api-2008p.vhd",
     ".venv/lib/python3.12/site-packages/vunit/vhdl/data_types/src/queue_pkg.vhd",
     ".venv/lib/python3.12/site-packages/vunit/vhdl/data_types/src/codec_builder-2008p.vhd",
@@ -73,7 +76,6 @@ files = [
     ".venv/lib/python3.12/site-packages/vunit/vhdl/data_types/src/queue_pkg-body.vhd",
     ".venv/lib/python3.12/site-packages/vunit/vhdl/logging/src/log_handler_pkg.vhd",
 ]
-
 is_third_party = true
 
 # ----------------------------------------------------------------------------------------------------------------------
