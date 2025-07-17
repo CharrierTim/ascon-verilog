@@ -1,334 +1,298 @@
-######################
- Ascon Implementation
-######################
+Ascon Implementation
+====================
 
-This page contains some details about the SystemVerilog implementation
-of Ascon128.
+This page contains some details about the SystemVerilog implementation of Ascon128.
 
-Most of the information is taken from the **Ascon-based lightweight
-cryptography standards for constrained devices** report :cite:`FIPS800-232`.
+Most of the information is taken from the **Ascon-based lightweight cryptography
+standards for constrained devices** report :cite:`FIPS800-232`.
 
-**************
- Architecture
-**************
+Architecture
+------------
 
-The main goal of this project is to provide a synthesizable
-implementation of the Ascon128 algorithm for data encryption.
+The main goal of this project is to provide a synthesizable implementation of the
+Ascon128 algorithm for data encryption.
 
 Key features of the current implementation:
 
--  **320-bit data-path**: The design uses a 320-bit wide data path.
--  **1 round per cycle**: The hardware implementation processes one
-   round of the algorithm per clock cycle.
+- **320-bit data-path**: The design uses a 320-bit wide data path.
+- **1 round per cycle**: The hardware implementation processes one round of the
+  algorithm per clock cycle.
 
-Following is the block diagram of the Ascon128 hardware implementation.
-It is a high-level representation of the top-level module ``ascon.sv``.
+Following is the block diagram of the Ascon128 hardware implementation. It is a
+high-level representation of the top-level module ``ascon.sv``.
 
 .. image:: ../_static/ascon/ascon128-block-diagram.svg
-   :align: center
-   :width: 100%
-   :alt: Ascon128 Block Diagram
-   :target: ../_static/ascon/ascon128-block-diagram.svg
+    :align: center
+    :width: 100%
+    :alt: Ascon128 Block Diagram
+    :target: ../_static/ascon/ascon128-block-diagram.svg
 
 Following Figure shows the timing diagram of this implementation.
 
 .. image:: ../_static/ascon/ascon128-timing-diagram.svg
-   :align: center
-   :width: 100%
-   :alt: Ascon128 Timing Diagram
-   :target: ../_static/ascon/ascon128-timing-diagram.svg
+    :align: center
+    :width: 100%
+    :alt: Ascon128 Timing Diagram
+    :target: ../_static/ascon/ascon128-timing-diagram.svg
 
-**********
- Glossary
-**********
+Glossary
+--------
 
 .. list-table::
-   :widths: 25 75
-   :header-rows: 1
+    :widths: 25 75
+    :header-rows: 1
 
-   -  -  Term
-      -  Definition
+    - - Term
+      - Definition
+    - - **Ascon128**
+      - A lightweight cryptographic algorithm designed for constrained environments,
+        providing both encryption and authentication.
+    - - **Data Path** (:math:`S`)
+      - The width of the data processed in parallel within the hardware implementation.
+        For Ascon128, it is 320 bits, which is represented as a 5x64-bit words, :math:`S
+        = (S_0, S_1, S_2, S_3, S_4)`.
+    - - **Round** (:math:`r`)
+      - A single iteration of the cryptographic algorithm's internal transformation.
+        Ascon128 processes one round per clock cycle.
+    - - **Key** (:math:`K`)
+      - The secret value used for encryption and decryption. In Ascon128, the key size
+        is 128 bits.
+    - - **Nonce** (:math:`N`)
+      - A unique value used only once for each encryption operation to ensure the same
+        plaintext encrypts to different ciphertexts each time.
+    - - **Plaintext** (:math:`P`)
+      - The original data that is to be encrypted.
+    - - **Ciphertext** (:math:`C`)
+      - The encrypted data produced from the plaintext using the encryption algorithm.
+    - - **Tag** (:math:`T`)
+      - The authentication tag generated during encryption, used to verify the integrity
+        and authenticity of the ciphertext.
+    - - **Permutation** (:math:`p^r` or :math:`p[r]`)
+      - A cryptographic transformation applied to the state of the algorithm, consisting
+        of multiple rounds.
+    - - **State**
+      - The internal representation of data within the algorithm, which is transformed
+        during each round of the permutation.
 
-   -  -  **Ascon128**
-      -  A lightweight cryptographic algorithm designed for constrained
-         environments, providing both encryption and authentication.
+The inputs to the Ascon128 algorithm are the plaintext, key, nonce and associated data.
+The algorithm produces the ciphertext and tag as outputs.
 
-   -  -  **Data Path** (:math:`S`)
+Background
+----------
 
-      -  The width of the data processed in parallel within the hardware
-         implementation. For Ascon128, it is 320 bits, which is
-         represented as a 5x64-bit words, :math:`S = (S_0, S_1, S_2,
-         S_3, S_4)`.
-
-   -  -  **Round** (:math:`r`)
-      -  A single iteration of the cryptographic algorithm's internal
-         transformation. Ascon128 processes one round per clock cycle.
-
-   -  -  **Key** (:math:`K`)
-      -  The secret value used for encryption and decryption. In
-         Ascon128, the key size is 128 bits.
-
-   -  -  **Nonce** (:math:`N`)
-
-      -  A unique value used only once for each encryption operation to
-         ensure the same plaintext encrypts to different ciphertexts
-         each time.
-
-   -  -  **Plaintext** (:math:`P`)
-      -  The original data that is to be encrypted.
-
-   -  -  **Ciphertext** (:math:`C`)
-      -  The encrypted data produced from the plaintext using the
-         encryption algorithm.
-
-   -  -  **Tag** (:math:`T`)
-      -  The authentication tag generated during encryption, used to
-         verify the integrity and authenticity of the ciphertext.
-
-   -  -  **Permutation** (:math:`p^r` or :math:`p[r]`)
-      -  A cryptographic transformation applied to the state of the
-         algorithm, consisting of multiple rounds.
-
-   -  -  **State**
-      -  The internal representation of data within the algorithm, which
-         is transformed during each round of the permutation.
-
-The inputs to the Ascon128 algorithm are the plaintext, key, nonce and
-associated data. The algorithm produces the ciphertext and tag as
-outputs.
-
-************
- Background
-************
-
-The block diagram of the Ascon128 encryption algorithm implemented
-in this project is shown below.
+The block diagram of the Ascon128 encryption algorithm implemented in this project is
+shown below.
 
 .. image:: ../_static/ascon/ascon128-encryption.svg
-   :align: center
-   :width: 100%
-   :alt: Ascon128 Encryption Algorithm
-   :target: ../_static/ascon/ascon128-encryption.svg
+    :align: center
+    :width: 100%
+    :alt: Ascon128 Encryption Algorithm
+    :target: ../_static/ascon/ascon128-encryption.svg
 
 Permutation :math:`p^6` and :math:`p^{12}`
-==========================================
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The core of Ascon128's cryptographic strength lies in its permutation
-functions :math:`p^6` and :math:`p^{12}`. These functions transform the
-320-bit state :math:`S` through three sequential stages:
+The core of Ascon128's cryptographic strength lies in its permutation functions
+:math:`p^6` and :math:`p^{12}`. These functions transform the 320-bit state :math:`S`
+through three sequential stages:
 
-#. **Constant Addition Layer** (:math:`p_C`): Adds round-specific
-   constants to ensure uniqueness per round.
-#. **Substitution Layer** (:math:`p_S`): Applies non-linear S-box
-   operations to provide confusion.
-#. **Linear Diffusion Layer** (:math:`p_L`): Ensures thorough mixing of
-   bits for diffusion.
+1. **Constant Addition Layer** (:math:`p_C`): Adds round-specific constants to ensure
+   uniqueness per round.
+2. **Substitution Layer** (:math:`p_S`): Applies non-linear S-box operations to provide
+   confusion.
+3. **Linear Diffusion Layer** (:math:`p_L`): Ensures thorough mixing of bits for
+   diffusion.
 
 The complete permutation can be expressed as:
 
 .. math::
-   :label: ascon-permutation
+    :label: ascon-permutation
 
-   p(S) = p_L \circ p_S \circ p_C
-   \text{ where }
-   \begin{cases}
-   p_L: \text{Linear diffusion layer providing bit mixing} \\
-   p_S: \text{Non-linear substitution using 5-bit S-boxes} \\
-   p_C: \text{Round constant addition for uniqueness}
-   \end{cases}
+    p(S) = p_L \circ p_S \circ p_C
+    \text{ where }
+    \begin{cases}
+    p_L: \text{Linear diffusion layer providing bit mixing} \\
+    p_S: \text{Non-linear substitution using 5-bit S-boxes} \\
+    p_C: \text{Round constant addition for uniqueness}
+    \end{cases}
 
 The Constant-Addition Layer :math:`p_C`
-=======================================
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The constant addition layer :math:`p_C` is responsible for adding
-round-specific constants to the state. It performs the following
+The constant addition layer :math:`p_C` is responsible for adding round-specific
+constants to the state. It performs the following
 
 .. math::
-   :label: ascon-constant-addition
+    :label: ascon-constant-addition
 
-   S_2 \leftarrow S_2 \oplus c_r
+    S_2 \leftarrow S_2 \oplus c_r
 
 The constant :math:`c_r` is defined as:
 
 .. list-table::
-   :widths: 25 25 50
-   :header-rows: 1
+    :widths: 25 25 50
+    :header-rows: 1
 
-   -  -  Round r of :math:`p^{12}`
-      -  Round r of :math:`p^6`
-      -  Constant :math:`c_r`
-
-   -  -  0
+    - - Round r of :math:`p^{12}`
+      - Round r of :math:`p^6`
+      - Constant :math:`c_r`
+    - - 0
       -
-      -  000000000000000000f0
-
-   -  -  1
+      - 000000000000000000f0
+    - - 1
       -
-      -  000000000000000000e1
-
-   -  -  2
+      - 000000000000000000e1
+    - - 2
       -
-      -  000000000000000000d2
-
-   -  -  3
+      - 000000000000000000d2
+    - - 3
       -
-      -  000000000000000000c3
-
-   -  -  4
+      - 000000000000000000c3
+    - - 4
       -
-      -  000000000000000000b4
-
-   -  -  5
+      - 000000000000000000b4
+    - - 5
       -
-      -  000000000000000000a5
-
-   -  -  6
-      -  0
-      -  00000000000000000096
-
-   -  -  7
-      -  1
-      -  00000000000000000087
-
-   -  -  8
-      -  2
-      -  00000000000000000078
-
-   -  -  9
-      -  3
-      -  00000000000000000069
-
-   -  -  10
-      -  4
-      -  0000000000000000005a
-
-   -  -  11
-      -  5
-      -  0000000000000000004b
+      - 000000000000000000a5
+    - - 6
+      - 0
+      - 00000000000000000096
+    - - 7
+      - 1
+      - 00000000000000000087
+    - - 8
+      - 2
+      - 00000000000000000078
+    - - 9
+      - 3
+      - 00000000000000000069
+    - - 10
+      - 4
+      - 0000000000000000005a
+    - - 11
+      - 5
+      - 0000000000000000004b
 
 The Substitution Layer :math:`p_S`
-==================================
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The substitution layer :math:`p_S` updates the state :math:`S` with 64 parallel
-applications of the 5-bit substitution box SBOX using a lookup table.
-The substitution layer can be expressed as:
+applications of the 5-bit substitution box SBOX using a lookup table. The substitution
+layer can be expressed as:
 
 .. math::
-   :label: ascon-substitution
+    :label: ascon-substitution
 
-   S_i \leftarrow SBOX(S_i) \quad \forall i \in \{0, 1, 2, 3, 4\}
+    S_i \leftarrow SBOX(S_i) \quad \forall i \in \{0, 1, 2, 3, 4\}
 
-In this case, the state S can be interpreted as an array of 64 columns,
-where each column consists of 5 bits processed through the S-box.
+In this case, the state S can be interpreted as an array of 64 columns, where each
+column consists of 5 bits processed through the S-box.
 
 Here is the definition of the S-box lookup table:
 
 .. list-table::
-   :header-rows: 1
-   :widths: 10 10 10 10 10 10 10 10 10 10 10 10 10 10 10 10 10
+    :header-rows: 1
+    :widths: 10 10 10 10 10 10 10 10 10 10 10 10 10 10 10 10 10
 
-   -  -  x
-      -  00
-      -  01
-      -  02
-      -  03
-      -  04
-      -  05
-      -  06
-      -  07
-      -  08
-      -  09
-      -  0a
-      -  0b
-      -  0c
-      -  0d
-      -  0e
-      -  0f
-
-   -  -  SBOX(x)
-      -  4
-      -  b
-      -  1f
-      -  14
-      -  1a
-      -  15
-      -  9
-      -  2
-      -  1b
-      -  5
-      -  8
-      -  12
-      -  1d
-      -  3
-      -  6
-      -  1c
+    - - x
+      - 00
+      - 01
+      - 02
+      - 03
+      - 04
+      - 05
+      - 06
+      - 07
+      - 08
+      - 09
+      - 0a
+      - 0b
+      - 0c
+      - 0d
+      - 0e
+      - 0f
+    - - SBOX(x)
+      - 4
+      - b
+      - 1f
+      - 14
+      - 1a
+      - 15
+      - 9
+      - 2
+      - 1b
+      - 5
+      - 8
+      - 12
+      - 1d
+      - 3
+      - 6
+      - 1c
 
 .. list-table::
-   :header-rows: 1
-   :widths: 10 10 10 10 10 10 10 10 10 10 10 10 10 10 10 10 10
+    :header-rows: 1
+    :widths: 10 10 10 10 10 10 10 10 10 10 10 10 10 10 10 10 10
 
-   -  -  x
-      -  10
-      -  11
-      -  12
-      -  13
-      -  14
-      -  15
-      -  16
-      -  17
-      -  18
-      -  19
-      -  1a
-      -  1b
-      -  1c
-      -  1d
-      -  1e
-      -  1f
+    - - x
+      - 10
+      - 11
+      - 12
+      - 13
+      - 14
+      - 15
+      - 16
+      - 17
+      - 18
+      - 19
+      - 1a
+      - 1b
+      - 1c
+      - 1d
+      - 1e
+      - 1f
+    - - SBOX(x)
+      - 1e
+      - 13
+      - 7
+      - e
+      - 0
+      - d
+      - 11
+      - 18
+      - 10
+      - c
+      - 1
+      - 19
+      - 16
+      - a
+      - f
+      - 17
 
-   -  -  SBOX(x)
-      -  1e
-      -  13
-      -  7
-      -  e
-      -  0
-      -  d
-      -  11
-      -  18
-      -  10
-      -  c
-      -  1
-      -  19
-      -  16
-      -  a
-      -  f
-      -  17
-
-Note that 5-bit inputs are represented in hexadecimal, (e.g., :math:`x=1`
-corresponds to (0, 0, 0, 0, 1)).
+Note that 5-bit inputs are represented in hexadecimal, (e.g., :math:`x=1` corresponds to
+(0, 0, 0, 0, 1)).
 
 The Linear Diffusion Layer :math:`p_L`
-======================================
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The linear diffusion layer :math:`p_L` provides diffusion within each
-64-bit word of the state. It is defined as:
+The linear diffusion layer :math:`p_L` provides diffusion within each 64-bit word of the
+state. It is defined as:
 
 .. math::
-   :label: ascon-linear-diffusion
+    :label: ascon-linear-diffusion
 
-   S_i \leftarrow \Sigma_{i}^{} S_i \text{ for } i \in \{0, 1, 2, 3, 4\}
+    S_i \leftarrow \Sigma_{i}^{} S_i \text{ for } i \in \{0, 1, 2, 3, 4\}
 
 Where each :math:`\Sigma_{i}^{} S_i` is defined as:
 
 .. math::
-   :label: ascon-linear-diffusion-sum
+    :label: ascon-linear-diffusion-sum
 
-   \begin{aligned}
-   \Sigma_{0}(S_0) &= S_0 \oplus (S_0 \gg 19) \oplus (S_0 \gg 28)  \\
-   \Sigma_{1}(S_1) &= S_1 \oplus (S_1 \gg 61) \oplus (S_1 \gg 39) \\
-   \Sigma_{2}(S_2) &= S_2 \oplus (S_2 \gg \phantom{0}1)  \oplus (S_2 \gg \phantom{0}6)  \\
-   \Sigma_{3}(S_3) &= S_3 \oplus (S_3 \gg 10) \oplus (S_3 \gg 17) \\
-   \Sigma_{4}(S_4) &= S_4 \oplus (S_4 \gg \phantom{0}7)  \oplus (S_4 \gg 41)
-   \end{aligned}
+    \begin{aligned}
+    \Sigma_{0}(S_0) &= S_0 \oplus (S_0 \gg 19) \oplus (S_0 \gg 28)  \\
+    \Sigma_{1}(S_1) &= S_1 \oplus (S_1 \gg 61) \oplus (S_1 \gg 39) \\
+    \Sigma_{2}(S_2) &= S_2 \oplus (S_2 \gg \phantom{0}1)  \oplus (S_2 \gg \phantom{0}6)  \\
+    \Sigma_{3}(S_3) &= S_3 \oplus (S_3 \gg 10) \oplus (S_3 \gg 17) \\
+    \Sigma_{4}(S_4) &= S_4 \oplus (S_4 \gg \phantom{0}7)  \oplus (S_4 \gg 41)
+    \end{aligned}
 
 Let's note that :math:`\gg` denotes a cyclic rotation to the right.
-

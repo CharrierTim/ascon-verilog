@@ -1,28 +1,24 @@
-####################
- Bench: Permutation
-####################
+Bench: Permutation
+==================
 
-This module contains the documentation for the Permutation model and
-testbench.
+This module contains the documentation for the Permutation model and testbench.
 
-*******************
- Permutation Model
-*******************
+Permutation Model
+-----------------
 
 permutation_model.py
-====================
+~~~~~~~~~~~~~~~~~~~~
 
 .. automodule:: permutation_model
-   :members:
-   :synopsis: Model for the permutation.
+    :members:
+    :synopsis: Model for the permutation.
 
-******************
- Test Permutation
-******************
+Test Permutation
+----------------
 
 test_permutation.py
-===================
+~~~~~~~~~~~~~~~~~~~
 
 .. automodule:: test_permutation
-   :members:
-   :synopsis: Test for the permutation.
+    :members:
+    :synopsis: Test for the permutation.

@@ -20,7 +20,7 @@ for path in base_path.rglob("*"):
 project = "ascon-verilog"
 copyright: str = f"{datetime.datetime.now(tz=datetime.UTC).year}, Timothée Charrier"
 author = "Timothée Charrier"
-release = "1.0"
+release = "2.0"
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
@@ -66,7 +66,7 @@ html_sidebars = {
     "**": [],
 }
 html_context: dict[str, str] = {
-    "default_mode": "light",
+    "default_mode": "auto",
 }
 
 html_title: sys.LiteralString = f"{project} v{release} Manual"
