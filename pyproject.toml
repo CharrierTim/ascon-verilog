@@ -1,35 +1,39 @@
 [project]
 name = "ascon-verilog"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
     "cocotb @ git+https://github.com/cocotb/cocotb.git@master",
     "pytest",
     "ruff",
     "tabulate",
-    "vunit-hdl @ git+https://github.com/VUnit/vunit.git@master",
     "vsg",
+    "vunit-hdl @ git+https://github.com/VUnit/vunit.git@master",
 ]
 
 [project.optional-dependencies]
 docs = [
+    "docstrfmt",
+    "numpydoc",
     "pydata_sphinx_theme",
-    "sphinx",
     "sphinx_copybutton",
+    "sphinx",
     "sphinxcontrib.bibtex",
 ]
+dev = ["pre-commit"]
 
 [tool.ruff]
 exclude = [
+    "__pypackages__",
+    "_build",
     ".bzr",
     ".direnv",
     ".eggs",
-    ".git",
     ".git-rewrite",
+    ".git",
     ".hg",
     ".ipynb_checkpoints",
     ".mypy_cache",
     ".nox",
-    "oss-cad-suite",
     ".pants.d",
     ".pyenv",
     ".pytest_cache",
@@ -39,12 +43,11 @@ exclude = [
     ".tox",
     ".venv",
     ".vscode",
-    "__pypackages__",
-    "_build",
     "buck-out",
     "build",
     "dist",
     "node_modules",
+    "oss-cad-suite",
     "site-packages",
     "venv",
 ]
