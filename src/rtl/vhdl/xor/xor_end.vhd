@@ -22,7 +22,7 @@
 --  SOFTWARE.
 -- =====================================================================================================================
 --  @file    xor_end.vhd
---  @brief   This module implements the XOR operation at the end of the permutation layer of the ASCON 128 cryptographic.
+--  @brief   This module implements the XOR operation at the end of the permutation layer of the ASCON 128 cryptographic
 --  @author  Timothée Charrier
 --  @date    2025-01-22
 -- =====================================================================================================================
