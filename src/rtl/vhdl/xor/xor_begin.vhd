@@ -45,7 +45,7 @@ library lib_rtl;
 entity XOR_BEGIN is
     port (
         I_STATE           : in    t_state_array;                      -- Input State Array
-        I_DATA            : in    std_logic_vector(64 - 1 downto 0);  -- Input Data to XOR
+        I_DATA            : in    std_logic_vector( 64 - 1 downto 0); -- Input Data to XOR
         I_KEY             : in    std_logic_vector(128 - 1 downto 0); -- Input Key to XOR
         I_ENABLE_XOR_KEY  : in    std_logic;                          -- Enable XOR with Key; active high
         I_ENABLE_XOR_DATA : in    std_logic;                          -- Enable XOR with Data, active high

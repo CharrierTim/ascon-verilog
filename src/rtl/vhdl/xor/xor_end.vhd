@@ -76,9 +76,9 @@ begin
     O_STATE(0) <= I_STATE(0);
     O_STATE(1) <= I_STATE(1);
     O_STATE(2) <= I_STATE(2);
-    O_STATE(3) <= (I_STATE(3) xor I_KEY(127 downto 64)) when I_ENABLE_XOR_KEY else
+    O_STATE(3) <= I_STATE(3) xor I_KEY(127 downto 64) when I_ENABLE_XOR_KEY else
                   I_STATE(3);
-    O_STATE(4) <= (state_part_4_xored_with_lsb xor I_KEY(63 downto 0)) when I_ENABLE_XOR_KEY else
+    O_STATE(4) <= state_part_4_xored_with_lsb xor I_KEY(63 downto 0) when I_ENABLE_XOR_KEY else
                   state_part_4_xored_with_lsb;
 
 end architecture XOR_END_ARCH;
