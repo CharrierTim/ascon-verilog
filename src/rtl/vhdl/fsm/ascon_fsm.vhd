@@ -48,6 +48,10 @@ library ieee;
     use ieee.std_logic_1164.all;
     use ieee.numeric_std.all;
 
+-- =====================================================================================================================
+-- ENTITY
+-- =====================================================================================================================
+
 entity ASCON_FSM is
     port (
         CLOCK                      : in    std_logic;                    -- Clock signal
@@ -74,6 +78,10 @@ entity ASCON_FSM is
         O_RESET_BLOCK_COUNTER      : out   std_logic                     -- Count block start signal, active high
     );
 end entity ASCON_FSM;
+
+-- =====================================================================================================================
+-- ARCHITECTURE
+-- =====================================================================================================================
 
 architecture ASCON_FSM_ARCH of ASCON_FSM is
 

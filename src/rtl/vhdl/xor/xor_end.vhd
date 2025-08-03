@@ -69,9 +69,9 @@ begin
     -- Xor the 4th part of the state with the LSB
     state_part_4_xored_with_lsb <= I_STATE(4)(63 downto 1) & (I_STATE(4)(0) xor I_ENABLE_XOR_LSB);
 
-    --
-    -- Output assignment
-    --
+    -- =================================================================================================================
+    -- Output Assignment
+    -- =================================================================================================================
 
     O_STATE(0) <= I_STATE(0);
     O_STATE(1) <= I_STATE(1);
