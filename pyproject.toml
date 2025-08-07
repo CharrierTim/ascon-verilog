@@ -66,6 +66,7 @@ extend-select = [
     "LOG",     # flake8-logging
     "G",       # flake8-logging-format
     "ISC",     # implicit string concat
+    "TC",      # flake8-typechecking
     "SIM103",  # return the condition directly
     "SIM300",  # yoda conditions
     "RUF100",  # unused noqa
@@ -79,7 +80,6 @@ extend-select = [
     "PYI030",  # unnecessary literal union
 ]
 ignore = [
-
     "E741",    # ambiguous variable name (preference)
     "E501",    # line too long (preference)
     "PLR0912", # Too many branches (>12) (preference)
