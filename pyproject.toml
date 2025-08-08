@@ -19,7 +19,7 @@ docs = [
     "sphinx",
     "sphinxcontrib.bibtex",
 ]
-dev = ["pre-commit"]
+dev = ["pre-commit", "docformatter"]
 
 [tool.ruff]
 exclude = [
