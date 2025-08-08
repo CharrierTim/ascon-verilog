@@ -1,5 +1,4 @@
-"""
-Library for the PermutationModel class.
+"""Library for the PermutationModel class.
 
 It contains the Python model used to verify the Permutation module.
 
@@ -15,8 +14,7 @@ if TYPE_CHECKING:
 
 
 class PermutationModel:
-    """
-    Model for the Permutation module.
+    """Model for the Permutation module.
 
     This class defines the model used to verify the Permutation module.
     """
@@ -30,8 +28,7 @@ class PermutationModel:
 
     @staticmethod
     def rotate_right(value: int, num_bits: int) -> int:
-        """
-        Rotate the bits of a 64-bit integer to the right.
+        """Rotate the bits of a 64-bit integer to the right.
 
         Parameters
         ----------
@@ -44,13 +41,11 @@ class PermutationModel:
         -------
         int
             The rotated value.
-
         """
         return (value >> num_bits) | ((value & (1 << num_bits) - 1) << (64 - num_bits))
 
     def _linear_diffusion_layer(self, state: list[int]) -> list[int]:
-        """
-        Apply the linear diffusion layer.
+        """Apply the linear diffusion layer.
 
         Parameters
         ----------
@@ -61,7 +56,6 @@ class PermutationModel:
         -------
         List[int]
             The updated state after the linear diffusion layer.
-
         """
         rotations: list[tuple[int, list[int]]] = [
             (state[0], [19, 28]),
@@ -84,8 +78,7 @@ class PermutationModel:
         ]
 
     def _substitution_layer(self, state: list[int]) -> list[int]:
-        """
-        Apply the substitution layer (S-box).
+        """Apply the substitution layer (S-box).
 
         Parameters
         ----------
@@ -96,7 +89,6 @@ class PermutationModel:
         -------
         List[int]
             The updated state after the substitution layer.
-
         """
         state[0] ^= state[4]
         state[4] ^= state[3]
@@ -114,8 +106,7 @@ class PermutationModel:
         i_round: int,
         i_state: list[int],
     ) -> list[int]:
-        """
-        Compute the output state based on the current input state.
+        """Compute the output state based on the current input state.
 
         Parameters
         ----------
@@ -127,7 +118,6 @@ class PermutationModel:
         Returns
         -------
         Nothing, only updates the state array.
-
         """
         state: list[int] = i_state.copy()
 
@@ -149,8 +139,7 @@ class PermutationModel:
         dut: HierarchyObject,
         inputs: dict[str, any],
     ) -> None:
-        """
-        Assert the output of the DUT and log the input and output values.
+        """Assert the output of the DUT and log the input and output values.
 
         Parameters
         ----------
@@ -158,7 +147,6 @@ class PermutationModel:
             The device under test (DUT).
         inputs : dict, optional
             The input dictionary.
-
         """
         # Compute the output state
         self.permutation(

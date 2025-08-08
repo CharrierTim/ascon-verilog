@@ -1,5 +1,4 @@
-"""
-Library for the AddLayerModel class.
+"""Library for the AddLayerModel class.
 
 It contains the Python model used to verify the Additional Layer module.
 
@@ -15,8 +14,7 @@ if TYPE_CHECKING:
 
 
 class AddLayerModel:
-    """
-    Model for the AdderConst module.
+    """Model for the AdderConst module.
 
     This class defines the model used to verify the AdderConst module.
     """
@@ -26,15 +24,13 @@ class AddLayerModel:
         *,
         inputs: dict | None = None,
     ) -> None:
-        """
-        Initialize the model.
+        """Initialize the model.
 
         Parameters
         ----------
         inputs : dict, optional
             The initial input dictionary
             Default is None.
-
         """
         if inputs is None:
             inputs = {
@@ -50,8 +46,7 @@ class AddLayerModel:
         i_state: list[int] | None = None,
         i_round: int | None = None,
     ) -> list[int]:
-        """
-        Compute the output state based on the current input state and round.
+        """Compute the output state based on the current input state and round.
 
         Parameters
         ----------
@@ -65,7 +60,6 @@ class AddLayerModel:
         Returns
         -------
         Nothing, only updates the state array.
-
         """
         self.i_round: int = i_round if i_round is not None else 0
         self.i_state = i_state if i_state is not None else [0] * 5
@@ -80,8 +74,7 @@ class AddLayerModel:
         dut: HierarchyObject,
         inputs: dict | None = None,
     ) -> None:
-        """
-        Assert the output of the DUT and log the input and output values.
+        """Assert the output of the DUT and log the input and output values.
 
         Parameters
         ----------
@@ -89,7 +82,6 @@ class AddLayerModel:
             The device under test (DUT).
         inputs : dict, optional
             The input dictionary.
-
         """
         # Compute the expected output
         self.compute(i_state=inputs["i_state"], i_round=inputs["i_round"])

@@ -1,5 +1,4 @@
-"""
-Testbench for the permutation module.
+"""Testbench for the permutation module.
 
 This module tests the permutation module by comparing the
 output of the Python implementation with the verilog implementation.
@@ -52,8 +51,7 @@ INIT_INPUTS = {
 
 
 async def reset_dut_test(dut: HierarchyObject) -> None:
-    """
-    Reset the DUT and verify its initial state.
+    """Reset the DUT and verify its initial state.
 
     Verifies that the output is correctly reset and remains stable.
 
@@ -66,7 +64,6 @@ async def reset_dut_test(dut: HierarchyObject) -> None:
     ------
     RuntimeError
         If the DUT fails to reset.
-
     """
     try:
         # Define the model
@@ -86,8 +83,7 @@ async def reset_dut_test(dut: HierarchyObject) -> None:
 
 @cocotb.test()
 async def permutation_test(dut: HierarchyObject) -> None:
-    """
-    Test the DUT's behavior during normal computation.
+    """Test the DUT's behavior during normal computation.
 
     Verifies that the output is correctly computed.
 
@@ -100,7 +96,6 @@ async def permutation_test(dut: HierarchyObject) -> None:
     ------
     RuntimeError
         If the DUT fails to compute the correct output.
-
     """
     try:
         # Define the model
@@ -172,14 +167,12 @@ async def permutation_test(dut: HierarchyObject) -> None:
 
 
 def test_permutation() -> None:
-    """
-    Function Invoked by the test runner to execute the tests.
+    """Function Invoked by the test runner to execute the tests.
 
     Raises
     ------
     RuntimeError
         If the test fails to build or run.
-
     """
     # Define the simulator to use
     default_simulator: str = "verilator"

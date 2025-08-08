@@ -1,5 +1,4 @@
-"""
-Test the counter functionality.
+"""Test the counter functionality.
 
 Almost identical to the one in the slides, but
 with a few modifications to make it Ruff compliant.
@@ -37,8 +36,7 @@ if TYPE_CHECKING:
 
 
 def get_generics(dut: HierarchyObject) -> dict:
-    """
-    Retrieve the generic parameters from the DUT.
+    """Retrieve the generic parameters from the DUT.
 
     Parameters
     ----------
@@ -49,7 +47,6 @@ def get_generics(dut: HierarchyObject) -> dict:
     -------
     dict
         A dictionary containing the generic parameters.
-
     """
     return {
         "DATA_WIDTH": int(dut.G_DATA_WIDTH.value),
@@ -60,8 +57,7 @@ def get_generics(dut: HierarchyObject) -> dict:
 
 
 def log_generics(dut: HierarchyObject, generics: dict[str, int]) -> None:
-    """
-    Log the generic parameters from the DUT in a table format.
+    """Log the generic parameters from the DUT in a table format.
 
     Parameters
     ----------
@@ -69,7 +65,6 @@ def log_generics(dut: HierarchyObject, generics: dict[str, int]) -> None:
         The device under test (DUT).
     generics : dict
         A dictionary of generic parameters.
-
     """
     table: str = tabulate(
         tabular_data=generics.items(),
@@ -80,8 +75,7 @@ def log_generics(dut: HierarchyObject, generics: dict[str, int]) -> None:
 
 
 async def reset_dut_test(dut: HierarchyObject) -> None:
-    """
-    Reset the DUT and verify its initial state.
+    """Reset the DUT and verify its initial state.
 
     Verifies that the output is correctly reset and remains stable.
 
@@ -89,7 +83,6 @@ async def reset_dut_test(dut: HierarchyObject) -> None:
     ----------
     dut : HierarchyObject
         The device under test (DUT).
-
     """
     try:
         # Log generics
@@ -120,14 +113,12 @@ async def reset_dut_test(dut: HierarchyObject) -> None:
 
 @cocotb.test()
 async def counter_test(dut: HierarchyObject) -> None:
-    """
-    Test the counter functionality.
+    """Test the counter functionality.
 
     Parameters
     ----------
     dut : HierarchyObject
         The device under test (DUT).
-
     """
     try:
         # Get the generics
@@ -183,14 +174,12 @@ async def counter_test(dut: HierarchyObject) -> None:
 
 
 def test_counter_runner() -> None:
-    """
-    Function Invoked by the test runner to execute the tests.
+    """Function Invoked by the test runner to execute the tests.
 
     Raises
     ------
     RuntimeError
         If the test fails to build or run.
-
     """
     # Define the simulator to use
     default_simulator: str = "verilator"

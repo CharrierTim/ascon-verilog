@@ -1,5 +1,4 @@
-"""
-Library for the SboxModel class.
+"""Library for the SboxModel class.
 
 It contains the Python model used to verify the Sbox module.
 
@@ -10,8 +9,7 @@ from __future__ import annotations
 
 
 class SboxModel:
-    """
-    Model for the SBOX module.
+    """Model for the SBOX module.
 
     This class defines the model used to verify the SBOX module.
 
@@ -19,7 +17,6 @@ class SboxModel:
     -------
     compute(i_data: int) -> int
         Compute the output data based on the input data.
-
     """
 
     def __init__(
@@ -27,20 +24,17 @@ class SboxModel:
         *,
         s_table: list[int] | None = None,
     ) -> None:
-        """
-        Initialize the model.
+        """Initialize the model.
 
         Parameters
         ----------
         s_table : list[int]
             The S-Box lookup table.
-
         """
         self.s_table: list[int] | None = s_table
 
     def compute(self, i_data: int) -> int:
-        """
-        Compute the output data based on the input data.
+        """Compute the output data based on the input data.
 
         Parameters
         ----------
@@ -51,6 +45,5 @@ class SboxModel:
         -------
         int
             The computed output data.
-
         """
         return self.s_table[i_data]

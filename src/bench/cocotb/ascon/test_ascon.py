@@ -1,5 +1,4 @@
-"""
-Testbench for the ascon module.
+"""Testbench for the ascon module.
 
 This module tests the ascon top level module by comparing the
 output of the Python implementation with the verilog implementation.
@@ -55,8 +54,7 @@ PLAINTEXT: list[int] = [
 
 
 async def reset_dut_test(dut: HierarchyObject) -> None:
-    """
-    Reset the DUT and verify its initial state.
+    """Reset the DUT and verify its initial state.
 
     Verifies that the output is correctly reset and remains stable.
 
@@ -69,7 +67,6 @@ async def reset_dut_test(dut: HierarchyObject) -> None:
     ------
     RuntimeError
         If the DUT fails to reset.
-
     """
     try:
         # Expected outputs
@@ -95,8 +92,7 @@ async def reset_dut_test(dut: HierarchyObject) -> None:
 
 @cocotb.test()
 async def ascon_top_test(dut: HierarchyObject) -> None:
-    """
-    Test the ascon top module.
+    """Test the ascon top module.
 
     Verifies that the output is correctly computed.
 
@@ -109,7 +105,6 @@ async def ascon_top_test(dut: HierarchyObject) -> None:
     ------
     RuntimeError
         If the DUT fails to compute the correct output.
-
     """
     try:
         # Reset the DUT
@@ -251,14 +246,12 @@ async def ascon_top_test(dut: HierarchyObject) -> None:
 
 
 def test_ascon() -> None:
-    """
-    Function Invoked by the test runner to execute the tests.
+    """Function Invoked by the test runner to execute the tests.
 
     Raises
     ------
     RuntimeError
         If the test fails to build or run.
-
     """
     # Define the simulator to use
     default_simulator: str = "verilator"

@@ -1,8 +1,7 @@
 """VUnit test runner for xor end.
 
-This module sets up the VUnit test environment, adds necessary source files, and runs
-the tests for the xor end implementation.
-
+This module sets up the VUnit test environment, adds necessary source
+files, and runs the tests for the xor end implementation.
 """
 
 import os

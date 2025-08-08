@@ -1,5 +1,4 @@
-"""
-Library for the AsconModel class.
+"""Library for the AsconModel class.
 
 This module contains the Python model used to verify the Ascon module.
 
@@ -19,8 +18,7 @@ def convert_output_to_str(
     dut: HierarchyObject,
     cipher: list[int],
 ) -> dict[str, str]:
-    """
-    Convert the DUT output to a string.
+    """Convert the DUT output to a string.
 
     Parameters
     ----------
@@ -33,7 +31,6 @@ def convert_output_to_str(
     -------
     dict
         The DUT output as a string.
-
     """
     # Get the DUT outputs as integers
     o_tag: int = int(dut.o_tag.value)
@@ -48,8 +45,7 @@ def convert_output_to_str(
 
 
 class AsconModel:
-    """
-    Model for the Ascon module.
+    """Model for the Ascon module.
 
     This class defines the model used to verify the Ascon module.
     """
@@ -61,8 +57,7 @@ class AsconModel:
         inputs: dict[str, int] | None = None,
         plaintext: list[int] | None = None,
     ) -> None:
-        """
-        Initialize the model.
+        """Initialize the model.
 
         Parameters
         ----------
@@ -72,7 +67,6 @@ class AsconModel:
             The initial input dictionary. Default is None.
         plaintext : list, optional
             The plaintext data. Default is None.
-
         """
         self.dut: HierarchyObject = dut
         self.log: SimBaseLog = dut._log
@@ -105,14 +99,12 @@ class AsconModel:
             self.log.warning("The plaintext list contains only zeros.")
 
     def update_inputs(self, inputs: dict[str, int] | None = None) -> None:
-        """
-        Update the input state, data, key, and enable signals of the model.
+        """Update the input state, data, key, and enable signals of the model.
 
         Parameters
         ----------
         inputs : dict, optional
             The new input dictionary. Default is None.
-
         """
         if not inputs:
             return
@@ -127,8 +119,7 @@ class AsconModel:
 
     @staticmethod
     def rotate_right(value: int, num_bits: int) -> int:
-        """
-        Rotate the bits of a 64-bit integer to the right.
+        """Rotate the bits of a 64-bit integer to the right.
 
         Parameters
         ----------
@@ -141,13 +132,11 @@ class AsconModel:
         -------
         int
             The rotated value.
-
         """
         return (value >> num_bits) | ((value & (1 << num_bits) - 1) << (64 - num_bits))
 
     def permutation(self, i_round: int = 0, *, is_first: bool = False) -> None:
-        """
-        Compute the output state based on the current input state.
+        """Compute the output state based on the current input state.
 
         Parameters
         ----------
@@ -155,7 +144,6 @@ class AsconModel:
             The current round number. Default is 0.
         is_first : bool, optional
             True if it is the first permutation, False otherwise. Default is False.
-
         """
         # Create a copy of the input state
         state: list[int] = self.i_state.copy() if is_first else self.o_state.copy()
@@ -179,8 +167,7 @@ class AsconModel:
         self.o_state = state
 
     def _substitution_layer(self, state: list[int]) -> list[int]:
-        """
-        Apply the substitution layer (S-box).
+        """Apply the substitution layer (S-box).
 
         Parameters
         ----------
@@ -191,7 +178,6 @@ class AsconModel:
         -------
         List[int]
             The updated state after the substitution layer.
-
         """
         state[0] ^= state[4]
         state[4] ^= state[3]
@@ -205,8 +191,7 @@ class AsconModel:
         return state
 
     def _linear_diffusion_layer(self, state: list[int]) -> list[int]:
-        """
-        Apply the linear diffusion layer.
+        """Apply the linear diffusion layer.
 
         Parameters
         ----------
@@ -217,7 +202,6 @@ class AsconModel:
         -------
         List[int]
             The updated state after the linear diffusion layer.
-
         """
         rotations: list[tuple[int, list[int]]] = [
             (state[0], [19, 28]),
@@ -240,14 +224,12 @@ class AsconModel:
         ]
 
     def xor_data_begin(self, data: int) -> None:
-        """
-        Perform XOR operation at the beginning with the data.
+        """Perform XOR operation at the beginning with the data.
 
         Parameters
         ----------
         data : int
             The data to XOR with the state.
-
         """
         self.o_state[0] ^= data
         self.log.info(
@@ -256,14 +238,12 @@ class AsconModel:
         )
 
     def xor_key_begin(self, key: int) -> None:
-        """
-        Perform XOR operation at the beginning with the key.
+        """Perform XOR operation at the beginning with the key.
 
         Parameters
         ----------
         key : int
             The key to XOR with the state.
-
         """
         self.o_state[1] ^= (key >> 64) & 0xFFFFFFFFFFFFFFFF
         self.o_state[2] ^= key & 0xFFFFFFFFFFFFFFFF
@@ -304,8 +284,7 @@ class AsconModel:
         self.o_tag[1] = self.o_state[4]
 
     def ascon128(self, inputs: dict[str, int]) -> dict[str, str]:
-        """
-        Compute the output state based on the current input state.
+        """Compute the output state based on the current input state.
 
         Parameters
         ----------
@@ -316,7 +295,6 @@ class AsconModel:
         -------
         dict
             The output state, tag, and cipher.
-
         """
         # Update the input state
         self.update_inputs(inputs=inputs)
@@ -373,14 +351,12 @@ class AsconModel:
         )
 
     def _get_output(self) -> dict[str, str]:
-        """
-        Get the output state, tag, and cipher.
+        """Get the output state, tag, and cipher.
 
         Returns
         -------
         dict
             The output state, tag, and cipher.
-
         """
         output_tag_str: str = f"{self.o_tag[0]:016X}{self.o_tag[1]:016X}"
         output_cipher_str: str = (

@@ -1,5 +1,4 @@
-"""
-Library for the SubstitutionLayerModel class.
+"""Library for the SubstitutionLayerModel class.
 
 It contains the Python model used to verify the Substitution Layer module.
 
@@ -15,8 +14,7 @@ if TYPE_CHECKING:
 
 
 class SubstitutionLayerModel:
-    """
-    Model for the Substitution Layer module.
+    """Model for the Substitution Layer module.
 
     This class defines the model used to verify the Substitution Layer module.
 
@@ -31,7 +29,6 @@ class SubstitutionLayerModel:
         Apply the substitution layer (S-box).
     assert_output(dut: HierarchyObject, inputs: dict | None = None) -> None
         Assert the output of the DUT and log the input and output values.
-
     """
 
     def __init__(
@@ -42,8 +39,7 @@ class SubstitutionLayerModel:
         self.o_state: list[int] = [0] * 5
 
     def _substitution_layer(self, state: list[int]) -> list[int]:
-        """
-        Apply the substitution layer (S-box).
+        """Apply the substitution layer (S-box).
 
         Parameters
         ----------
@@ -54,7 +50,6 @@ class SubstitutionLayerModel:
         -------
         List[int]
             The updated state after the substitution layer.
-
         """
         state[0] ^= state[4]
         state[4] ^= state[3]
@@ -72,8 +67,7 @@ class SubstitutionLayerModel:
         dut: HierarchyObject,
         inputs: dict | None = None,
     ) -> None:
-        """
-        Assert the output of the DUT and log the input and output values.
+        """Assert the output of the DUT and log the input and output values.
 
         Parameters
         ----------
@@ -81,7 +75,6 @@ class SubstitutionLayerModel:
             The device under test (DUT).
         inputs : dict, optional
             The input dictionary.
-
         """
         # Compute the expected output
         self.o_state = self._substitution_layer(state=inputs["i_state"])

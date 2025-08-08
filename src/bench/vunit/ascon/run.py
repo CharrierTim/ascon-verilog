@@ -1,8 +1,7 @@
 """VUnit test runner for ascon top.
 
-This module sets up the VUnit test environment, adds necessary source files, and runs
-the tests for the ascon top implementation.
-
+This module sets up the VUnit test environment, adds necessary source
+files, and runs the tests for the ascon top implementation.
 """
 
 import os

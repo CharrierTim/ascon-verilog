@@ -1,5 +1,4 @@
-"""
-Test the adder module with 10 random values.
+"""Test the adder module with 10 random values.
 
 Almost identical to the one in the slides, but
 with a few modifications to make it Ruff compliant.
@@ -34,14 +33,12 @@ from cocotb_utils import (
 
 @cocotb.test()
 async def adder_10_random_values_test(dut: HierarchyObject) -> None:
-    """
-    Test the adder module with 10 random values.
+    """Test the adder module with 10 random values.
 
     Parameters
     ----------
     dut : HierarchyObject
         The device under test (DUT).
-
     """
     dut.X.value = 0
     dut.Y.value = 0
@@ -63,14 +60,12 @@ async def adder_10_random_values_test(dut: HierarchyObject) -> None:
 
 
 def test_counter_runner() -> None:
-    """
-    Function Invoked by the test runner to execute the tests.
+    """Function Invoked by the test runner to execute the tests.
 
     Raises
     ------
     RuntimeError
         If the test fails to build or run.
-
     """
     # Define the simulator to use
     default_simulator: str = "verilator"

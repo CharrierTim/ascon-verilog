@@ -1,5 +1,4 @@
-"""
-Testbench for the Addition Layer module.
+"""Testbench for the Addition Layer module.
 
 This module tests the Addition Layer module by comparing the
 output of the Python implementation with the VHDL implementation.
@@ -55,8 +54,7 @@ STATE: list[int] = [
 
 
 async def initialize_dut(dut: HierarchyObject, inputs: dict) -> None:
-    """
-    Initialize the DUT with the given inputs.
+    """Initialize the DUT with the given inputs.
 
     Parameters
     ----------
@@ -64,7 +62,6 @@ async def initialize_dut(dut: HierarchyObject, inputs: dict) -> None:
         The device under test (DUT).
     inputs : dict
         The input dictionary.
-
     """
     for key, value in inputs.items():
         getattr(dut, key).value = value
@@ -72,8 +69,7 @@ async def initialize_dut(dut: HierarchyObject, inputs: dict) -> None:
 
 
 async def reset_dut_test(dut: HierarchyObject) -> None:
-    """
-    Reset the DUT and verify its initial state.
+    """Reset the DUT and verify its initial state.
 
     Verifies that the output is correctly reset and remains stable.
 
@@ -86,7 +82,6 @@ async def reset_dut_test(dut: HierarchyObject) -> None:
     ------
     RuntimeError
         If the DUT fails to reset.
-
     """
     try:
         # Define the model
@@ -111,8 +106,7 @@ async def reset_dut_test(dut: HierarchyObject) -> None:
 
 @cocotb.test()
 async def addition_layer_test(dut: HierarchyObject) -> None:
-    """
-    Test the DUT's behavior during normal computation.
+    """Test the DUT's behavior during normal computation.
 
     Verifies that the output is correctly computed.
 
@@ -125,7 +119,6 @@ async def addition_layer_test(dut: HierarchyObject) -> None:
     ------
     RuntimeError
         If the DUT fails to compute the correct output.
-
     """
     try:
         # Define the model
@@ -175,14 +168,12 @@ async def addition_layer_test(dut: HierarchyObject) -> None:
 
 
 def test_addition_layer() -> None:
-    """
-    Function Invoked by the test runner to execute the tests.
+    """Function Invoked by the test runner to execute the tests.
 
     Raises
     ------
     RuntimeError
         If the test fails to build or run.
-
     """
     # Define the simulator to use
     default_simulator: str = "verilator"

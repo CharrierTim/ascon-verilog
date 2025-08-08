@@ -1,5 +1,4 @@
-"""
-Library for the XorEndModel class.
+"""Library for the XorEndModel class.
 
 It contains the Python model used to verify the Xor End module.
 
@@ -15,8 +14,7 @@ if TYPE_CHECKING:
 
 
 class XorEndModel:
-    """
-    Model for the XorEnd module.
+    """Model for the XorEnd module.
 
     This class defines the model used to verify the XorEnd module.
 
@@ -35,7 +33,6 @@ class XorEndModel:
         Perform XOR operation at the end with the least significant bit.
     assert_output(dut: HierarchyObject, inputs: dict) -> None
         Assert the output of the DUT and log the input and output values.
-
     """
 
     def __init__(
@@ -60,8 +57,7 @@ class XorEndModel:
         dut: HierarchyObject,
         inputs: dict | None = None,
     ) -> None:
-        """
-        Assert the output of the DUT and log the input and output values.
+        """Assert the output of the DUT and log the input and output values.
 
         Parameters
         ----------
@@ -69,7 +65,6 @@ class XorEndModel:
             The device under test (DUT).
         inputs : dict, optional
             The input dictionary.
-
         """
         # Set o_state to the input state
         self.o_state = inputs["i_state"].copy()

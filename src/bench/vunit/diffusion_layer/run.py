@@ -1,8 +1,7 @@
 """VUnit test runner for diffusion layer.
 
-This module sets up the VUnit test environment, adds necessary source files, and runs
-the tests for the diffusion layer implementation.
-
+This module sets up the VUnit test environment, adds necessary source
+files, and runs the tests for the diffusion layer implementation.
 """
 
 import os

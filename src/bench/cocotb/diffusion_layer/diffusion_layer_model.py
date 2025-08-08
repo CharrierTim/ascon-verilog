@@ -1,5 +1,4 @@
-"""
-Library for the DiffusionLayerModel class.
+"""Library for the DiffusionLayerModel class.
 
 It contains the Python model used to verify the Diffusion Layer module.
 
@@ -15,10 +14,10 @@ if TYPE_CHECKING:
 
 
 class DiffusionLayerModel:
-    """
-    Model for the Diffusion Layer module.
+    """Model for the Diffusion Layer module.
 
-    This class defines the model used to verify the Diffusion Layer module.
+    This class defines the model used to verify the Diffusion Layer
+    module.
     """
 
     def __init__(
@@ -30,8 +29,7 @@ class DiffusionLayerModel:
 
     @staticmethod
     def rotate_right(value: int, num_bits: int) -> int:
-        """
-        Rotate the bits of a 64-bit integer to the right.
+        """Rotate the bits of a 64-bit integer to the right.
 
         Parameters
         ----------
@@ -44,13 +42,11 @@ class DiffusionLayerModel:
         -------
         int
             The rotated value.
-
         """
         return (value >> num_bits) | ((value & (1 << num_bits) - 1) << (64 - num_bits))
 
     def _linear_diffusion_layer(self, state: list[int]) -> list[int]:
-        """
-        Apply the linear diffusion layer.
+        """Apply the linear diffusion layer.
 
         Parameters
         ----------
@@ -61,7 +57,6 @@ class DiffusionLayerModel:
         -------
         List[int]
             The updated state after the linear diffusion layer.
-
         """
         rotations: list[tuple[int, list[int]]] = [
             (state[0], [19, 28]),
@@ -88,8 +83,7 @@ class DiffusionLayerModel:
         dut: HierarchyObject,
         state: list[int] | None = None,
     ) -> None:
-        """
-        Assert the output of the DUT and log the input and output values.
+        """Assert the output of the DUT and log the input and output values.
 
         Parameters
         ----------
@@ -97,7 +91,6 @@ class DiffusionLayerModel:
             The device under test (DUT).
         state : List[int], optional
             The input state, by default None.
-
         """
         # Compute the expected output
         self.o_state = self._linear_diffusion_layer(state=state)

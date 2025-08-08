@@ -1,5 +1,4 @@
-"""
-Library for utility functions used in the testbenches.
+"""Library for utility functions used in the testbenches.
 
 @author: Timothée Charrier
 """
@@ -26,8 +25,7 @@ if TYPE_CHECKING:
 
 
 def random_signed_value(bitwidth: int) -> int:
-    """
-    Generate a random signed value within the given bitwidth.
+    """Generate a random signed value within the given bitwidth.
 
     Parameters
     ----------
@@ -43,7 +41,6 @@ def random_signed_value(bitwidth: int) -> int:
     ------
     ValueError
         If the bitwidth is not a positive integer.
-
     """
     if not isinstance(bitwidth, int) or bitwidth <= 0:
         error_message: str = (
@@ -63,8 +60,7 @@ def init_hierarchy(
     bitwidth: int | None = None,
     use_random: bool = False,
 ) -> list:
-    """
-    Initialize a hierarchical data structure (1D, 2D, 3D, etc.).
+    """Initialize a hierarchical data structure (1D, 2D, 3D, etc.).
 
     Parameters
     ----------
@@ -79,7 +75,6 @@ def init_hierarchy(
     -------
     list
         Hierarchical structure filled as specified.
-
     """
     if not dims:
         return random_signed_value(bitwidth=bitwidth) if use_random else 0
@@ -101,8 +96,7 @@ async def setup_clock(
     period_ns: int = 10,
     verbose: bool = True,
 ) -> None:
-    """
-    Initialize and start the clock for the DUT.
+    """Initialize and start the clock for the DUT.
 
     Parameters
     ----------
@@ -121,7 +115,6 @@ async def setup_clock(
         If the clock signal is not found in the DUT.
     RuntimeError
         If there is an error setting up the clock.
-
     """
     # Check if the DUT has a clock signal
     if not hasattr(dut, clock_name):
@@ -154,8 +147,7 @@ async def reset_dut(
     reset_high: int = 0,
     verbose: bool = True,
 ) -> None:
-    """
-    Reset the DUT.
+    """Reset the DUT.
 
     This function asserts the reset signal for 'num_cycles' and then deasserts it.
 
@@ -183,7 +175,6 @@ async def reset_dut(
         If the clock or reset signal is not found in the DUT.
     RuntimeError
         If there is an error resetting the DUT.
-
     """
     # Check if the reset_high value is valid
     if reset_high not in [0, 1]:
@@ -232,8 +223,7 @@ async def sys_enable_dut(
     sys_enable_name: str = "i_sys_enable",
     verbose: bool = True,
 ) -> None:
-    """
-    Enable the DUT.
+    """Enable the DUT.
 
     Parameters
     ----------
@@ -254,7 +244,6 @@ async def sys_enable_dut(
         If the DUT does not have a sys_enable signal.
     RuntimeError
         If there is an error enabling the DUT.
-
     """
     # Check if the DUT has a sys_enable signal
     if not hasattr(dut, sys_enable_name):
@@ -295,8 +284,7 @@ async def initialize_dut(
     reset_high: int = 0,
     verbose: bool = True,
 ) -> None:
-    """
-    Initialize the DUT with default values.
+    """Initialize the DUT with default values.
 
     Parameters
     ----------
@@ -330,7 +318,6 @@ async def initialize_dut(
     >>> inputs = {"i_data": 0, "i_valid": 0}
     >>> outputs = {"o_data": 0, "o_valid": 0}
     >>> await initialize_dut(dut, inputs, outputs)
-
     """
     try:
         # Setup the clock
@@ -387,8 +374,7 @@ async def toggle_signal(
     clock_name: str = "clock",
     verbose: bool = True,
 ) -> None:
-    """
-    Toggle a signal between high and low values.
+    """Toggle a signal between high and low values.
 
     Parameters
     ----------
@@ -415,7 +401,6 @@ async def toggle_signal(
     --------
     >>> signal_dict = {"i_valid": 0, "i_ready": 0}
     >>> await toggle_signal(dut, signal_dict, clock_name="clock", verbose=True)
-
     """
     # Check if the DUT has a clock signal
     if not hasattr(dut, clock_name):
@@ -447,8 +432,7 @@ async def toggle_signal(
 
 
 def log_generics(dut: HierarchyObject, generics: dict[str, int]) -> None:
-    """
-    Log the generic parameters from the DUT in a table format.
+    """Log the generic parameters from the DUT in a table format.
 
     Parameters
     ----------
@@ -456,7 +440,6 @@ def log_generics(dut: HierarchyObject, generics: dict[str, int]) -> None:
         The device under test (DUT).
     generics : dict
         A dictionary of generic parameters.
-
     """
     table: str = tabulate(
         tabular_data=generics.items(),
@@ -467,8 +450,7 @@ def log_generics(dut: HierarchyObject, generics: dict[str, int]) -> None:
 
 
 def get_dut_state(dut: HierarchyObject) -> dict:
-    """
-    Get the state of the DUT at a given time.
+    """Get the state of the DUT at a given time.
 
     Parameters
     ----------
@@ -489,7 +471,6 @@ def get_dut_state(dut: HierarchyObject) -> dict:
     --------
     >>> state = get_dut_state(dut)
     >>> print(state)
-
     """
     state = {}
     for attr in dut._sub_handles:
@@ -505,8 +486,7 @@ def get_dut_state(dut: HierarchyObject) -> dict:
 
 
 def generate_coverage_report_verilator(dat_file: Path, output_folder: Path) -> None:
-    """
-    Generate the coverage report.
+    """Generate the coverage report.
 
     This function generates the coverage report using the verilator_coverage
     and genhtml commands. The coverage report is stored in the output_folder/coverage
@@ -525,7 +505,6 @@ def generate_coverage_report_verilator(dat_file: Path, output_folder: Path) -> N
         If the genhtml executable is not found in the PATH.
     SystemExit
         If the coverage report generation fails.
-
     """
     # Check if the vcover executable is available
     genhtml_path: str | None = shutil.which(cmd="genhtml")
@@ -584,8 +563,7 @@ def generate_coverage_report_verilator(dat_file: Path, output_folder: Path) -> N
 
 
 def generate_coverage_report_questa(ucdb_file: Path, output_folder: Path) -> None:
-    """
-    Generate the coverage report in HTML format.
+    """Generate the coverage report in HTML format.
 
     Parameters
     ----------
@@ -600,7 +578,6 @@ def generate_coverage_report_questa(ucdb_file: Path, output_folder: Path) -> Non
         If the vcover executable is not found in the PATH.
     RuntimeError
         If the coverage report generation fails.
-
     """
     # Check if the vcover executable is available
     vcover_path: str | None = shutil.which(cmd="vcover")

@@ -1,5 +1,4 @@
-"""
-Testbench for the sbox module.
+"""Testbench for the sbox module.
 
 This module tests the sbox module by comparing the
 output of the Python implementation with the VHDL implementation.
@@ -70,8 +69,7 @@ S_TABLE: list[int] = [
 
 
 async def reset_dut_test(dut: HierarchyObject) -> None:
-    """
-    Reset the DUT and verify its initial state.
+    """Reset the DUT and verify its initial state.
 
     Parameters
     ----------
@@ -82,7 +80,6 @@ async def reset_dut_test(dut: HierarchyObject) -> None:
     ------
     RuntimeError
         If the DUT fails to reset.
-
     """
     try:
         # Define the model
@@ -111,8 +108,7 @@ async def reset_dut_test(dut: HierarchyObject) -> None:
 
 @cocotb.test()
 async def sbox_test(dut: HierarchyObject) -> None:
-    """
-    Test the DUT's behavior during normal computation.
+    """Test the DUT's behavior during normal computation.
 
     Verifies that the output is correctly computed.
 
@@ -125,7 +121,6 @@ async def sbox_test(dut: HierarchyObject) -> None:
     ------
     RuntimeError
         If the DUT fails to compute the correct output.
-
     """
     try:
         # Define the model
@@ -166,14 +161,12 @@ async def sbox_test(dut: HierarchyObject) -> None:
 
 
 def test_sbox() -> None:
-    """
-    Function Invoked by the test runner to execute the tests.
+    """Function Invoked by the test runner to execute the tests.
 
     Raises
     ------
     RuntimeError
         If the test fails to build or run.
-
     """
     # Define the simulator to use
     default_simulator: str = "verilator"

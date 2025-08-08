@@ -1,8 +1,7 @@
 """VUnit test runner for substitution layer.
 
-This module sets up the VUnit test environment, adds necessary source files, and runs
-the tests for the substitution layer implementation.
-
+This module sets up the VUnit test environment, adds necessary source
+files, and runs the tests for the substitution layer implementation.
 """
 
 import os

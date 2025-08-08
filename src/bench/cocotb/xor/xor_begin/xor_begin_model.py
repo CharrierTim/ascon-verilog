@@ -1,5 +1,4 @@
-"""
-Library for the XorBeginModel class.
+"""Library for the XorBeginModel class.
 
 It contains the Python model used to verify the Xor Begin module.
 
@@ -15,8 +14,7 @@ if TYPE_CHECKING:
 
 
 class XorBeginModel:
-    """
-    Model for the XorBegin module.
+    """Model for the XorBegin module.
 
     This class defines the model used to verify the XorBegin module.
 
@@ -33,7 +31,6 @@ class XorBeginModel:
         Perform XOR operation at the beginning with the key.
     assert_output(dut: HierarchyObject, inputs: dict) -> None
         Assert the output of the DUT and log the input and output values.
-
     """
 
     def __init__(
@@ -44,26 +41,22 @@ class XorBeginModel:
         self.o_state: list[int] = [0] * 5
 
     def xor_data_begin(self, data: int) -> None:
-        """
-        Perform XOR operation at the beginning with the data.
+        """Perform XOR operation at the beginning with the data.
 
         Parameters
         ----------
         data : int
             The data to XOR with the state.
-
         """
         self.o_state[0] ^= data
 
     def xor_key_begin(self, key: int) -> None:
-        """
-        Perform XOR operation at the beginning with the key.
+        """Perform XOR operation at the beginning with the key.
 
         Parameters
         ----------
         key : int
             The key to XOR with the state.
-
         """
         self.o_state[1] ^= (key >> 64) & 0xFFFFFFFFFFFFFFFF
         self.o_state[2] ^= key & 0xFFFFFFFFFFFFFFFF
@@ -73,8 +66,7 @@ class XorBeginModel:
         dut: HierarchyObject,
         inputs: dict | None = None,
     ) -> None:
-        """
-        Assert the output of the DUT and log the input and output values.
+        """Assert the output of the DUT and log the input and output values.
 
         Parameters
         ----------
@@ -82,7 +74,6 @@ class XorBeginModel:
             The device under test (DUT).
         inputs : dict, optional
             The input dictionary.
-
         """
         # Set o_state to the input state
         self.o_state = inputs["i_state"].copy()
