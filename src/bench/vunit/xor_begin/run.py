@@ -1,11 +1,12 @@
-"""
-VUnit test runner for xor begin.
+"""VUnit test runner for xor begin.
 
-This module sets up the VUnit test environment, adds necessary source files,
-and runs the tests for the xor begin implementation.
+This module sets up the VUnit test environment, adds necessary source files, and runs
+the tests for the xor begin implementation.
+
 """
 
 import os
+import shutil
 import sys
 from pathlib import Path
 
@@ -13,8 +14,20 @@ from vunit import VUnit
 from vunit.ui.library import Library
 from vunit.ui.source import SourceFileList
 
-# Define the simulation tool
-VUNIT_SIMULATOR: str = "nvc"
+# Define the simulation tool:
+#   1. NVC              (default)
+#   2. GHDL             (fallback)
+#   3. Questa/ModelSim  (fallback)
+
+if shutil.which("nvc"):
+    VUNIT_SIMULATOR: str = "nvc"
+elif shutil.which("ghdl"):
+    VUNIT_SIMULATOR: str = "ghdl"
+elif shutil.which("vsim"):
+    VUNIT_SIMULATOR: str = "vsim"
+else:
+    print("No supported simulator found")
+    sys.exit(status=1)
 os.environ["VUNIT_SIMULATOR"] = os.environ.get("VUNIT_SIMULATOR", default=VUNIT_SIMULATOR)
 
 # Define the source and bench paths

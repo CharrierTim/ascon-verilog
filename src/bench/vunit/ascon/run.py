@@ -1,11 +1,12 @@
-"""
-VUnit test runner for ascon top.
+"""VUnit test runner for ascon top.
 
-This module sets up the VUnit test environment, adds necessary source files,
-and runs the tests for the ascon top implementation.
+This module sets up the VUnit test environment, adds necessary source files, and runs
+the tests for the ascon top implementation.
+
 """
 
 import os
+import shutil
 import sys
 from pathlib import Path
 
@@ -13,8 +14,21 @@ from vunit import VUnit
 from vunit.ui.library import Library
 from vunit.ui.source import SourceFileList
 
-# Define the simulation tool
-VUNIT_SIMULATOR: str = "nvc"
+# Define the simulation tool:
+#   1. NVC              (default)
+#   2. GHDL             (fallback)
+#   3. Questa/ModelSim  (fallback)
+
+if shutil.which("nvc"):
+    VUNIT_SIMULATOR: str = "nvc"
+elif shutil.which("ghdl"):
+    VUNIT_SIMULATOR: str = "ghdl"
+elif shutil.which("vsim"):
+    VUNIT_SIMULATOR: str = "vsim"
+else:
+    print("No supported simulator found")
+    sys.exit(status=1)
+
 os.environ["VUNIT_SIMULATOR"] = os.environ.get("VUNIT_SIMULATOR", default=VUNIT_SIMULATOR)
 
 # Define the source and bench paths
@@ -38,5 +52,11 @@ LIB_SRC.add_source_files(pattern=SRC_ROOT / "**" / "*.vhd")
 LIB_BENCH: SourceFileList = VU.add_library(library_name=bench_library_name)
 LIB_BENCH.add_source_files(pattern=BENCH_ROOT / "*.vhd")
 
+# Reduce warnings from Vunit when compiling with GHDL
+if VUNIT_SIMULATOR == "ghdl":
+    VU.set_compile_option(name="ghdl.a_flags", value=["--warn-no-hide"])
+
+# Disable IEEE warnings at 0 ns
 VU.set_sim_option(name="disable_ieee_warnings", value=True)
+
 VU.main()
