@@ -1,7 +1,6 @@
-###########
 References
-###########
+==========
 
 .. bibliography::
-   :all:
-   :style: unsrt
+    :all:
+    :style: unsrt
