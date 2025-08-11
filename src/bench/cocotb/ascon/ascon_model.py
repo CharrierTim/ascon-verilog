@@ -353,10 +353,7 @@ class AsconModel:
     def _get_output(self) -> dict[str, str]:
         """Get the output state, tag, and cipher.
 
-        Returns
-        -------
-        dict
-            The output state, tag, and cipher.
+        Returns ------- dict     The output state, tag, and cipher.
         """
         output_tag_str: str = f"{self.o_tag[0]:016X}{self.o_tag[1]:016X}"
         output_cipher_str: str = (
