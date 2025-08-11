@@ -248,10 +248,7 @@ async def ascon_top_test(dut: HierarchyObject) -> None:
 def test_ascon() -> None:
     """Function Invoked by the test runner to execute the tests.
 
-    Raises
-    ------
-    RuntimeError
-        If the test fails to build or run.
+    Raises ------ RuntimeError     If the test fails to build or run.
     """
     # Define the simulator to use
     default_simulator: str = "verilator"

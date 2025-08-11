@@ -169,10 +169,7 @@ async def permutation_test(dut: HierarchyObject) -> None:
 def test_permutation() -> None:
     """Function Invoked by the test runner to execute the tests.
 
-    Raises
-    ------
-    RuntimeError
-        If the test fails to build or run.
+    Raises ------ RuntimeError     If the test fails to build or run.
     """
     # Define the simulator to use
     default_simulator: str = "verilator"
