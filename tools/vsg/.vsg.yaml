@@ -3161,7 +3161,7 @@ rule:
 
     package_016:
         # This rule checks for valid suffixes on package identifiers. The default package suffix is _pkg.
-        disable: true
+        disable: False
         exceptions: []
         fixable: false
         severity: Warning
@@ -3169,10 +3169,10 @@ rule:
 
     package_017:
         # This rule checks for valid prefixes on package identifiers. The default package prefix is pkg_.
-        disable: false
+        disable: True
         exceptions: []
         fixable: false
-        prefixes: ["pkg_"]
+        prefixes: [pkg_]
         severity: Warning
 
     package_018:
@@ -3478,20 +3478,9 @@ rule:
     port_011:
         # This rule checks for valid prefixes on port identifiers. The default port prefixes are: I_, O_, IO_.
         disable: false
-        exceptions: ["CLK", SCL_", "SDA_"]
+        exceptions: ["CLK", "SCL_", "SDA_"]
         fixable: false
-        prefixes:
-            [
-                "I_",
-                "O_",
-                "IO_",
-                "PAD_",
-                "CLK_",
-                "CLOCK",
-                "RST_",
-                "RESET_",
-                "REG_",
-            ]
+        prefixes: ["I_", "O_", "IO_", "PAD_", "CLK_", "RST_", "REG_"]
         severity: Warning
 
     port_012:
@@ -4095,7 +4084,7 @@ rule:
         # This rule checks the alignment of the <= and := operators over consecutive sequential assignments in the process_statement_part.
         blank_line_ends_group: no
         case_control_statements_ends_group: yes
-        comment_line_ends_group: no
+        comment_line_ends_group: yes
         compact_alignment: yes
         if_control_statements_ends_group: yes
         loop_control_statements_ends_group: yes
