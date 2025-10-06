@@ -192,7 +192,7 @@ begin
                 reg_valid_cipher <= valid_cipher;
 
                 -- Done signal
-                reg_done         <= done;
+                reg_done <= done;
 
                 -- Round counter logic
                 if (reset_round_counter_to_6 = '1') then
