@@ -57,8 +57,8 @@ entity PERMUTATION is
         G_NUM_SBOXES : integer := 64 -- Number of SBOXES in the Substitution Layer
     );
     port (
-        CLOCK                   : in    std_logic;                          -- Clock signal
-        RESET_N                 : in    std_logic;                          -- Reset signal, active low
+        CLK                     : in    std_logic;                          -- Clock signal
+        RST_N                   : in    std_logic;                          -- Reset signal, active low
         I_SYS_ENABLE            : in    std_logic;                          -- System enable signal, active high
         I_MUX_SELECT            : in    std_logic;                          -- Mux select signal, active high
         I_ENABLE_XOR_KEY_BEGIN  : in    std_logic;                          -- Enable XOR with Key, active high
@@ -172,17 +172,17 @@ begin
     -- REGISTER PROCESS
     -- =================================================================================================================
 
-    p_reg : process (CLOCK, RESET_N) is
+    p_reg : process (CLK, RST_N) is
     begin
 
-        if (RESET_N = '0') then
+        if (RST_N = '0') then
 
             -- Default values
             state_output_reg <= (others => (others => '0'));
             o_cipher_reg     <= (others => '0');
             o_tag_reg        <= (others => '0');
 
-        elsif (rising_edge(CLOCK)) then
+        elsif (rising_edge(CLK)) then
 
             if (I_SYS_ENABLE = '1') then
 

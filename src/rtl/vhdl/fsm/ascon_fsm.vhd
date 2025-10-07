@@ -54,8 +54,8 @@ library ieee;
 
 entity ASCON_FSM is
     port (
-        CLOCK                      : in    std_logic;                    -- Clock signal
-        RESET_N                    : in    std_logic;                    -- Reset signal, active low
+        CLK                        : in    std_logic;                    -- Clock signal
+        RST_N                      : in    std_logic;                    -- Reset signal, active low
         I_SYS_ENABLE               : in    std_logic;                    -- System enable signal, active high
         I_START                    : in    std_logic;                    -- Start signal, active high
         I_DATA_VALID               : in    std_logic;                    -- Data valid signal, active high
@@ -140,12 +140,12 @@ begin
     -- FSM State Register
     -- =================================================================================================================
 
-    p_state_register : process (CLOCK, RESET_N) is
+    p_state_register : process (CLK, RST_N) is
     begin
 
-        if (RESET_N = '0') then
+        if (RST_N = '0') then
             current_state <= STATE_IDLE;
-        elsif (rising_edge(CLOCK)) then
+        elsif (rising_edge(CLK)) then
             if (I_SYS_ENABLE = '1') then
                 current_state <= next_state;
             else
@@ -417,10 +417,10 @@ begin
     -- Output Register Process
     -- =================================================================================================================
 
-    p_output_register : process (CLOCK, RESET_N) is
+    p_output_register : process (CLK, RST_N) is
     begin
 
-        if (RESET_N = '0') then
+        if (RST_N = '0') then
             O_VALID_CIPHER             <= '0';
             O_DONE                     <= '0';
             O_MUX_SELECT               <= '1';
@@ -436,7 +436,7 @@ begin
             O_RESET_ROUND_COUNTER_TO_0 <= '0';
             O_ENABLE_BLOCK_COUNTER     <= '0';
             O_RESET_BLOCK_COUNTER      <= '0';
-        elsif (rising_edge(CLOCK)) then
+        elsif (rising_edge(CLK)) then
             if (I_SYS_ENABLE = '1') then
                 O_VALID_CIPHER             <= next_o_valid_cipher;
                 O_DONE                     <= next_o_done;

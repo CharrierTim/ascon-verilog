@@ -52,8 +52,8 @@ library lib_rtl;
 
 entity ASCON is
     port (
-        CLOCK          : in    std_logic;                          -- Clock signal
-        RESET_N        : in    std_logic;                          -- Reset signal, active low
+        CLK            : in    std_logic;                          -- Clock signal
+        RST_N          : in    std_logic;                          -- Reset signal, active low
         I_SYS_ENABLE   : in    std_logic;                          -- System enable signal, active high
         I_START        : in    std_logic;                          -- Start signal, active high
         I_DATA_VALID   : in    std_logic;                          -- Data valid signal, active high
@@ -111,8 +111,8 @@ begin
 
     inst_ascon_fsm : entity lib_rtl.ascon_fsm
         port map (
-            CLOCK                      => CLOCK,
-            RESET_N                    => RESET_N,
+            CLK                        => CLK,
+            RST_N                      => RST_N,
             I_SYS_ENABLE               => I_SYS_ENABLE,
             I_START                    => I_START,
             I_DATA_VALID               => I_DATA_VALID,
@@ -151,8 +151,8 @@ begin
 
     INST_PERMUTATION : entity lib_rtl.permutation
         port map (
-            CLOCK                   => CLOCK,
-            RESET_N                 => RESET_N,
+            CLK                     => CLK,
+            RST_N                   => RST_N,
             I_SYS_ENABLE            => I_SYS_ENABLE,
             I_MUX_SELECT            => mux_select,
             I_ENABLE_XOR_KEY_BEGIN  => enable_xor_key_begin,
@@ -174,10 +174,10 @@ begin
     -- COUNTERS PROCESS
     -- =================================================================================================================
 
-    p_counters : process (CLOCK, RESET_N) is
+    p_counters : process (CLK, RST_N) is
     begin
 
-        if (RESET_N = '0') then
+        if (RST_N = '0') then
 
             -- Default values
             round_counter    <= (others => '0');
@@ -185,7 +185,7 @@ begin
             reg_valid_cipher <= '0';
             reg_done         <= '0';
 
-        elsif (rising_edge(CLOCK)) then
+        elsif (rising_edge(CLK)) then
             if (I_SYS_ENABLE = '1') then
 
                 -- Valid cipher

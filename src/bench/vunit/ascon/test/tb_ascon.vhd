@@ -68,7 +68,7 @@ architecture TB_ASCON_ARCH of TB_ASCON is
     -- =================================================================================================================
 
     -- Clock period for the testbench
-    constant C_CLOCK_PERIOD   : time := 10 ns;
+    constant C_CLK_PERIOD     : time := 10 ns;
 
     -- List of plaintexts used in the testbench
     constant C_PLAINTEXT_LIST : t_slv_array(0 to 4) :=
@@ -121,8 +121,8 @@ begin
 
     dut : entity lib_rtl.ascon
         port map (
-            CLOCK          => tb_clock,
-            RESET_N        => tb_reset_n,
+            CLK            => tb_clock,
+            RST_N          => tb_reset_n,
             I_SYS_ENABLE   => tb_i_sys_enable,
             I_START        => tb_i_start,
             I_DATA_VALID   => tb_i_data_valid,
@@ -136,7 +136,7 @@ begin
         );
 
     -- =================================================================================================================
-    -- CLOCK GENERATION
+    -- CLK GENERATION
     -- =================================================================================================================
 
     p_clock_gen : process is
@@ -144,9 +144,9 @@ begin
         tb_clock <= '0';
 
         l_clock_gen : loop
-            wait for C_CLOCK_PERIOD / 2;
+            wait for C_CLK_PERIOD / 2;
             tb_clock <= '1';
-            wait for C_CLOCK_PERIOD / 2;
+            wait for C_CLK_PERIOD / 2;
             tb_clock <= '0';
         end loop l_clock_gen;
 
@@ -290,7 +290,7 @@ begin
                 -- Toggle the start signal
                 proc_toggle_high_signal(tb_i_start, "tb_i_start");
 
-                wait for 20 * C_CLOCK_PERIOD;
+                wait for 20 * C_CLK_PERIOD;
 
                 -- Associated data processing
                 info("-----------------------------------------------------------------------------");
@@ -326,13 +326,13 @@ begin
                         -- Wait for the done signal to be asserted
                         wait until rising_edge(tb_o_done);
                     else
-                        wait for 20 * C_CLOCK_PERIOD;
+                        wait for 20 * C_CLK_PERIOD;
                     end if;
 
                 end loop;
 
                 -- Wait some clock cycles
-                wait for 5 * C_CLOCK_PERIOD;
+                wait for 5 * C_CLK_PERIOD;
 
                 info("-----------------------------------------------------------------------------");
                 info("Verifying Ascon cipher outputs and authentication tag...");
