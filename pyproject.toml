@@ -2,7 +2,7 @@
 name = "ascon-verilog"
 version = "0.2.0"
 dependencies = [
-    "cocotb @ git+https://github.com/cocotb/cocotb.git@master",
+    "cocotb",
     "pytest",
     "ruff",
     "tabulate",
