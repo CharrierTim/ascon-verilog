@@ -1,5 +1,6 @@
-ascon-verilog Documentation
-===========================
+#############################
+ ascon-verilog Documentation
+#############################
 
 .. image:: https://github.com/CharrierTim/ascon-verilog/actions/workflows/build-test.yml/badge.svg
     :target: https://github.com/CharrierTim/ascon-verilog/actions/workflows/build-test.yml
@@ -9,8 +10,9 @@ ascon-verilog Documentation
     :target: https://github.com/CharrierTim/ascon-verilog/actions/workflows/build-deploy-docs.yml
     :alt: Documentation Status
 
-Introduction
-------------
+**************
+ Introduction
+**************
 
 This project provides synthesizable implementations of the Ascon 128 algorithm in both
 SystemVerilog and VHDL, using open-source tools. You can choose between two equivalent
@@ -34,7 +36,7 @@ Mines de Saint-Étienne`_.
 You can find a `Cocotb Presentation`_ at the root of the repository.
 
 Table of Contents
-~~~~~~~~~~~~~~~~~
+=================
 
 .. toctree::
     :maxdepth: 1
@@ -47,7 +49,7 @@ Table of Contents
     files/references
 
 Installation
-~~~~~~~~~~~~
+============
 
 To get started with the project, follow the installation instructions provided in the
 `Getting Started`_ guide.
