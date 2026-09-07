@@ -1,5 +1,6 @@
-Getting Started
-===============
+#################
+ Getting Started
+#################
 
 This project provides two equivalent implementations of the ASCON-128 algorithm. Choose
 the implementation that best fits your needs:
@@ -12,8 +13,9 @@ the implementation that best fits your needs:
     You can install both flows if you want to compare implementations or work with both
     HDLs.
 
-Common Prerequisites
---------------------
+**********************
+ Common Prerequisites
+**********************
 
 Before you begin, ensure you have the following:
 
@@ -25,7 +27,7 @@ Before you begin, ensure you have the following:
     If you are using Windows, I recommend using WSL.
 
 Setup WSL (Windows Users Only)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+==============================
 
 Install WSL with Ubuntu 24.04 in a PowerShell:
 
@@ -36,7 +38,7 @@ Install WSL with Ubuntu 24.04 in a PowerShell:
 For more information, refer to the `WSL documentation`_.
 
 Clone the Repository
-~~~~~~~~~~~~~~~~~~~~
+====================
 
 Open the Ubuntu terminal and clone the repository:
 
@@ -58,7 +60,7 @@ Upgrade the System:
     sudo apt upgrade
 
 Install Python
-~~~~~~~~~~~~~~
+==============
 
 Python is used for running scripts and managing dependencies for both flows:
 
@@ -83,13 +85,14 @@ If you want to install the documentation dependencies you can do so with:
 
     pip install -e ".[docs]"
 
-SystemVerilog Flow
-------------------
+********************
+ SystemVerilog Flow
+********************
 
 Choose this flow if you want to work with the SystemVerilog implementation.
 
 Install Verilator
-~~~~~~~~~~~~~~~~~
+=================
 
 .. note::
 
@@ -106,7 +109,7 @@ Verilator is the SystemVerilog simulator used to compile and run the testbenches
 one of the following methods to install Verilator:
 
 OSS CAD Suite (Recommended)
-+++++++++++++++++++++++++++
+---------------------------
 
 Download and install the latest OSS-CAD-Suite_ release, which includes Verilator and
 other useful tools:
@@ -119,7 +122,7 @@ other useful tools:
     source oss-cad-suite/environment
 
 Build from Source
-+++++++++++++++++
+-----------------
 
 For the latest version, you can build Verilator from source (see `Verilator Installation
 Guide`_):
@@ -143,7 +146,7 @@ Guide`_):
     sudo make install
 
 Ubuntu Repository (Not Recommended)
-+++++++++++++++++++++++++++++++++++
+-----------------------------------
 
 The version in Ubuntu's repository might be outdated:
 
@@ -152,7 +155,7 @@ The version in Ubuntu's repository might be outdated:
     sudo apt install verilator
 
 Running SystemVerilog Tests
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+===========================
 
 Test the SystemVerilog implementation with Cocotb:
 
@@ -166,20 +169,21 @@ Test the SystemVerilog implementation with Cocotb:
     cd src/bench/cocotb/ascon
     make
 
-VHDL Flow
----------
+***********
+ VHDL Flow
+***********
 
 Choose this flow if you want to work with the VHDL implementation. If you want to use
 GHDL, you can use the one provided in the OSS-CAD-Suite. Otherwise, you can use NVC.
 
 Install NVC (VHDL Simulator)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+============================
 
 NVC_ is a free open-source VHDL simulator that supports VHDL-93, VHDL-2002, VHDL-2008,
 and VHDL-2019.
 
 OSS CAD Suite (Recommended)
-+++++++++++++++++++++++++++
+---------------------------
 
 NVC is included in the OSS-CAD-Suite. If you haven't installed it yet:
 
@@ -191,7 +195,7 @@ NVC is included in the OSS-CAD-Suite. If you haven't installed it yet:
     source oss-cad-suite/environment
 
 Build from Source
-+++++++++++++++++
+-----------------
 
 For the latest version, you can build NVC from source:
 
@@ -211,14 +215,14 @@ For the latest version, you can build NVC from source:
     sudo make install
 
 Ubuntu Repository
-+++++++++++++++++
+-----------------
 
 .. code-block:: bash
 
     sudo apt install nvc
 
 Running VHDL Tests
-~~~~~~~~~~~~~~~~~~
+==================
 
 Test the VHDL implementation with VUnit:
 
@@ -231,11 +235,12 @@ Test the VHDL implementation with VUnit:
     cd src/bench/vunit/ascon
     python run.py
 
-Optional Tools
---------------
+****************
+ Optional Tools
+****************
 
 Install lcov (Code Coverage)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+============================
 
 lcov_ is used to generate code coverage reports for SystemVerilog flow only:
 
@@ -243,30 +248,31 @@ lcov_ is used to generate code coverage reports for SystemVerilog flow only:
 
     sudo apt install lcov
 
-Tools Information
------------------
+*******************
+ Tools Information
+*******************
 
 This project supports both SystemVerilog and VHDL implementations of the ASCON-128
 encryption algorithm. Each flow uses different tools optimized for the respective HDL.
 
 SystemVerilog Flow Tools
-~~~~~~~~~~~~~~~~~~~~~~~~
+========================
 
 Verilator
-+++++++++
+---------
 
 Verilator_ is a free software Verilog/SystemVerilog simulator used for the SystemVerilog
 implementation.
 
 Cocotb
-++++++
+------
 
 Cocotb_ is a coroutine-based co-simulation testbench environment for verifying
 VHDL/Verilog/SystemVerilog RTL using Python. It is used to write testbenches for the
 SystemVerilog modules and run simulations.
 
 Verible
-+++++++
+-------
 
 Verible_ is a suite of SystemVerilog tools that includes a linter and formatter. I used
 it as a linter and formatter for the SystemVerilog code. The tool is not required to run
@@ -274,47 +280,47 @@ the project. The formatting rules are defined in the ``.vscode/settings.json`` f
 you want to use it, you can install the `Verible VSCode Extension`_.
 
 VHDL Flow Tools
-~~~~~~~~~~~~~~~
+===============
 
 NVC
-+++
+---
 
 NVC_ is a free open-source VHDL simulator that supports VHDL-93, VHDL-2002, VHDL-2008,
 and VHDL-2019. It's used for simulating the VHDL implementation of the ASCON modules.
 NVC provides excellent performance and supports modern VHDL features.
 
 VUnit
-+++++
+-----
 
 VUnit_ is an open-source unit testing framework for VHDL/SystemVerilog. It's used to
 write and run unit tests for the VHDL modules. VUnit provides features like test
 discovery, automatic test runner generation, and comprehensive test reporting.
 
 Common Tools
-~~~~~~~~~~~~
+============
 
 These tools are used across both flows:
 
 Ruff
-++++
+----
 
 Ruff_ is a linter and formatter for Python source code. It is used to ensure the code is
 clean and readable for both Cocotb and VUnit testbenches.
 
 Pytest
-++++++
+------
 
 Pytest_ is a testing framework that makes it easy to write simple tests and scales to
 support complex functional testing for applications and libraries.
 
 lcov
-++++
+----
 
 lcov_ is a tool used to generate HTML coverage reports for both SystemVerilog and VHDL
 flows.
 
 Surfer
-++++++
+------
 
 Most testbenches generate a ``*.vcd`` or ``*.fst`` file that can be visualized using a
 waveform viewer.
