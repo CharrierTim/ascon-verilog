@@ -1,5 +1,6 @@
-References
-==========
+############
+ References
+############
 
 .. bibliography::
     :all:
