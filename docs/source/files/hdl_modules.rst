@@ -1,5 +1,6 @@
-HDL Modules
-===========
+#############
+ HDL Modules
+#############
 
 This page contains the HDL modules that are used in the Ascon implementation.
 
@@ -14,8 +15,9 @@ while the VHDL version uses VUnit for testing with NVC.
 
 Generated using TerosHDL_.
 
-Top-level Module
-----------------
+******************
+ Top-level Module
+******************
 
 .. raw:: html
 
@@ -23,8 +25,9 @@ Top-level Module
         <iframe src="../_static/hdl_modules/ascon.html" style="width: 100%; height: 100%; border: none;"></iframe>
     </div>
 
-Control Module
---------------
+****************
+ Control Module
+****************
 
 .. raw:: html
 
@@ -32,8 +35,9 @@ Control Module
         <iframe src="../_static/hdl_modules/ascon_fsm.html" style="width: 100%; height: 100%; border: none;"></iframe>
     </div>
 
-HDL Submodules
---------------
+****************
+ HDL Submodules
+****************
 
 .. raw:: html
 
