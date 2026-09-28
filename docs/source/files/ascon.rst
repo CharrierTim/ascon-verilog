@@ -1,13 +1,15 @@
-Ascon Implementation
-====================
+######################
+ Ascon Implementation
+######################
 
 This page contains some details about the SystemVerilog implementation of Ascon128.
 
 Most of the information is taken from the **Ascon-based lightweight cryptography
 standards for constrained devices** report :cite:`FIPS800-232`.
 
-Architecture
-------------
+**************
+ Architecture
+**************
 
 The main goal of this project is to provide a synthesizable implementation of the
 Ascon128 algorithm for data encryption.
@@ -35,8 +37,9 @@ Following Figure shows the timing diagram of this implementation.
     :alt: Ascon128 Timing Diagram
     :target: ../_static/ascon/ascon128-timing-diagram.svg
 
-Glossary
---------
+**********
+ Glossary
+**********
 
 .. list-table::
     :widths: 25 75
@@ -77,8 +80,9 @@ Glossary
 The inputs to the Ascon128 algorithm are the plaintext, key, nonce and associated data.
 The algorithm produces the ciphertext and tag as outputs.
 
-Background
-----------
+************
+ Background
+************
 
 The block diagram of the Ascon128 encryption algorithm implemented in this project is
 shown below.
@@ -90,7 +94,7 @@ shown below.
     :target: ../_static/ascon/ascon128-encryption.svg
 
 Permutation :math:`p^6` and :math:`p^{12}`
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+==========================================
 
 The core of Ascon128's cryptographic strength lies in its permutation functions
 :math:`p^6` and :math:`p^{12}`. These functions transform the 320-bit state :math:`S`
@@ -117,7 +121,7 @@ The complete permutation can be expressed as:
     \end{cases}
 
 The Constant-Addition Layer :math:`p_C`
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+=======================================
 
 The constant addition layer :math:`p_C` is responsible for adding round-specific
 constants to the state. It performs the following
@@ -174,7 +178,7 @@ The constant :math:`c_r` is defined as:
       - 0000000000000000004b
 
 The Substitution Layer :math:`p_S`
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+==================================
 
 The substitution layer :math:`p_S` updates the state :math:`S` with 64 parallel
 applications of the 5-bit substitution box SBOX using a lookup table. The substitution
@@ -272,7 +276,7 @@ Note that 5-bit inputs are represented in hexadecimal, (e.g., :math:`x=1` corres
 (0, 0, 0, 0, 1)).
 
 The Linear Diffusion Layer :math:`p_L`
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+======================================
 
 The linear diffusion layer :math:`p_L` provides diffusion within each 64-bit word of the
 state. It is defined as:
