@@ -1,14 +1,16 @@
-Bench: Xor Begin and Xor End Layers
-===================================
+#####################################
+ Bench: Xor Begin and Xor End Layers
+#####################################
 
 This module contains the documentation for the Xor Begin and Xor End Layers and the
 testbenches.
 
-Xor Begin
----------
+***********
+ Xor Begin
+***********
 
 Model
-~~~~~
+=====
 
 .. automodule:: xor_begin_model
     :members:
@@ -17,18 +19,19 @@ Model
     :synopsis: Model for the Xor Begin Layer.
 
 Testbench
-~~~~~~~~~
+=========
 
 .. automodule:: test_xor_begin
     :members:
     :show-inheritance:
     :synopsis: Test for the Xor Begin Layer.
 
-Xor End
--------
+*********
+ Xor End
+*********
 
 Model
-~~~~~
+=====
 
 .. automodule:: xor_end_model
     :members:
@@ -37,7 +40,7 @@ Model
     :synopsis: Model for the Xor End Layer.
 
 Testbench
-~~~~~~~~~
+=========
 
 .. automodule:: test_xor_end
     :members:
