@@ -1,13 +1,15 @@
-Bench: Diffusion Layer
-======================
+########################
+ Bench: Diffusion Layer
+########################
 
 This module contains the documentation for the diffusion layer model and testbench.
 
-Diffusion Layer Model
----------------------
+***********************
+ Diffusion Layer Model
+***********************
 
 diffusion_layer_model.py
-~~~~~~~~~~~~~~~~~~~~~~~~
+========================
 
 .. automodule:: diffusion_layer_model
     :members:
@@ -15,11 +17,12 @@ diffusion_layer_model.py
     :exclude-members: _*
     :synopsis: Model for the diffusion layer.
 
-Test Diffusion Layer
---------------------
+**********************
+ Test Diffusion Layer
+**********************
 
 test_diffusion_layer.py
-~~~~~~~~~~~~~~~~~~~~~~~
+=======================
 
 .. automodule:: test_diffusion_layer
     :members:

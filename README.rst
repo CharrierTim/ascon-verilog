@@ -1,5 +1,6 @@
-ascon-verilog Documentation
-===========================
+#############################
+ ascon-verilog Documentation
+#############################
 
 .. image:: https://github.com/CharrierTim/ascon-verilog/actions/workflows/build-test.yml/badge.svg
     :target: https://github.com/CharrierTim/ascon-verilog/actions/workflows/build-test.yml
@@ -11,8 +12,9 @@ ascon-verilog Documentation
 
 Read the documentation online: https://charriertim.github.io/ascon-verilog/
 
-Introduction
-------------
+**************
+ Introduction
+**************
 
 This project provides synthesizable implementations of the Ascon 128 algorithm in both
 SystemVerilog and VHDL, using open-source tools. You can choose between two equivalent
@@ -33,8 +35,9 @@ The project is organized as follows:
 This project is an improvement of a project I did during my studies at the `École des
 Mines de Saint-Étienne`_.
 
-Installation
-------------
+**************
+ Installation
+**************
 
 To get started with the project, follow the installation instructions provided in the
 `Getting Started`_ guide.
